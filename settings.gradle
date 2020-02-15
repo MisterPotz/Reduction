@@ -1,0 +1,2 @@
+include ':app', ':calculation_sdk'
+rootProject.name='Reduction'
