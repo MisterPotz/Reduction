@@ -2,6 +2,8 @@ package com.reducetechnologies.reduction
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import timber.log.Timber
+
 
 class MainActivity : AppCompatActivity() {
 
