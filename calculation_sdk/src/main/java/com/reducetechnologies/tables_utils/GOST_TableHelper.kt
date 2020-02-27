@@ -10,7 +10,12 @@ object GOSTableContract {
     const val G_0 = "coeff_g0_2_4"
     const val SOURCE_DATA = "source_data_2_7"
     const val K_C = "2.6"
-    const val RA = "R_A"
+    const val RA40 = "R_A"
+    const val MODULES = "module_standart"
+    const val EDData = "eddata"
+    const val HRC = "HRC"
+    const val SGTT = "SGTT"
+    const val TIP_Tipre = "tipre_tip"
 }
 
 

@@ -1,0 +1,76 @@
+{
+  "rows": [
+    {
+      "TIPRE": 1,
+      "TIP": {
+        "improv": 3.15,
+        "hard": 3.3,
+        "cement": 3.8
+      }
+    },
+    {
+      "TIPRE": 2,
+      "TIP": {
+        "improv": 5.9,
+        "hard": 6.2,
+        "cement": 7.2
+      }
+    },
+    {
+      "TIPRE": 3,
+      "TIP": {
+        "improv": 3.5,
+        "hard": 3.75,
+        "cement": 5.15
+      }
+    },
+    {
+      "TIPRE": 4,
+      "TIP": {
+        "improv": 3.9,
+        "hard": 4.3,
+        "cement": 4.9
+      }
+    },
+    {
+      "TIPRE": 5,
+      "TIP": {
+        "improv": 3.75,
+        "hard": 3.9,
+        "cement": 4.5
+      }
+    },
+    {
+      "TIPRE": 6,
+      "TIP": {
+        "improv": 4.15,
+        "hard": 4.4,
+        "cement": 5.1
+      }
+    },
+    {
+      "TIPRE": 7,
+      "TIP": {
+        "improv": 6.1,
+        "hard": 6.35,
+        "cement": 7.5
+      }
+    },
+    {
+      "TIPRE": 8,
+      "TIP": {
+        "improv": 4.3,
+        "hard": 4.45,
+        "cement": 5.1
+      }
+    },
+    {
+      "TIPRE": 9,
+      "TIP": {
+        "improv": 3.7,
+        "hard": 3.85,
+        "cement": 5.25
+      }
+    }
+    ]
+}

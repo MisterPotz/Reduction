@@ -196,4 +196,226 @@ class RepositoryUnitTest {
         // Проверяем что табличка не нулевая. Если не выкинуло ошибку и табличка не нуль - тест можно считать пройденным
         assertNotNull(sourceTable)
     }
+
+    @org.junit.Test
+    fun obtain_khe_kfe_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+        val table = constMainTable()
+        val cursor = repository
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            .buildQuery {
+                When(
+                    Query.Clause(
+                        Columns.TITLE.castString(),
+                        Query.Operations.EQ,
+                        // Здесь ты пытаешься получить табличку с KHE и KFE - это верно!
+                        GOSTableContract.FATIGUE_CALCULATION_23
+                    )
+                )
+            }.setReader(CursorCommonItemReader)
+            .create()
+
+        val item = cursor.getSingle()
+       /**
+       Но вот здесь ты получаешься из additional накастить SOURCETABLE - это другая табличка
+        Ты должен здесь использовать класс таблички, релевантной KHE и KFE
+
+        val gson = SourceDataTable.prepareGson()
+        val sourceTable = gson.fromJson(
+            item.additional,
+            FatigueTable::class.java
+        )
+
+        На этот класс [FatigueTable] (штука в квадратных скобках кликабельна) уже был юнит тест,
+        можно найти по этому классу в модуле database.
+
+        */
+       // посмотри на этот класс
+        val gson = FatigueTable.prepareGson()
+        val fatigue = gson.fromJson(item.additional!!, FatigueTable::class.java)
+        //assertNotNull(sourceTable)
+        assertTrue(fatigue.rows[0].kHE == 1f)
+    }
+
+    @org.junit.Test
+    fun obtain_ra40_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+        val table = constMainTable()
+        val cursor = repository
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            .buildQuery {
+                When(
+                    Query.Clause(
+                        Columns.TITLE.castString(),
+                        Query.Operations.EQ,
+                        GOSTableContract.RA40
+                    )
+                )
+            }.setReader(CursorCommonItemReader)
+            .create()
+
+        val item = cursor.getSingle()
+        /**
+         *  Здесь ты препаришь gson специфичный именно для класса SourceDataTable - а не для своего класса.
+         *  val gson = SourceDataTable.prepareGson()
+         *  Но это не неправильно, все бы работало и так. Просто это сбивает с толку и подвержено ошибкам при
+         *  будущих изменениях этих классов.
+         *
+         * 1 ) У тебя два варианта. Первый - прокинуть в компанион RA40 метод prepareGson от GsonRegister
+         * 2) Поскольку твой класс содержит примитивные данные и структура без полиморфизма, ты
+         * можешь сделать вот так:
+         *  val gson = GsonBuilder().create() - этого конретно В ЭТОМ случае будет достаточно
+         *
+         *  Еще добавь плиз json RA40 в корневую папку проекта в папку additional_resources
+         */
+        val gson = GsonBuilder().create()
+        val sourceTable = gson.fromJson(
+            item.additional!!,
+            RA40Table::class.java
+        )
+        /**
+         * Небольшой косяк с названиями
+         * @See RA40Table
+         */
+        assertNotNull(sourceTable.list)
+        assertTrue(sourceTable.list[0] == 10f)
+    }
+
+    @org.junit.Test
+    fun obtain_modules_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+        val table = constMainTable()
+        val cursor = repository
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            .buildQuery {
+                When(
+                    Query.Clause(
+                        Columns.TITLE.castString(),
+                        Query.Operations.EQ,
+                        GOSTableContract.MODULES
+                    )
+                )
+            }.setReader(CursorCommonItemReader)
+            .create()
+
+        val item = cursor.getSingle()
+        val gson = GsonBuilder().create()
+        val sourceTable = gson.fromJson(
+            item.additional!!,
+            StandartModulesTable::class.java
+        )
+        /**
+         * Небольшой косяк с названиями
+         * @See RA40Table
+         */
+        assertNotNull(sourceTable.list)
+        assertTrue(sourceTable.list[0] == 0.2f)
+    }
+
+    @org.junit.Test
+    fun obtain_eddata_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+        val table = constMainTable()
+        val cursor = repository
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            .buildQuery {
+                When(
+                    Query.Clause(
+                        Columns.TITLE.toString(),
+                        Query.Operations.EQ,
+                        GOSTableContract.EDData
+                    )
+                )
+            }.setReader(CursorCommonItemReader)
+            .create()
+        val item = cursor.getSingle()
+        val gson = GsonBuilder().create()
+        val sourceTable = gson.fromJson(
+            item.additional,
+            EDDataTable::class.java
+        )
+        assertNotNull(sourceTable.map)
+        assertTrue(sourceTable.map[3].peds[2] == 950)
+        assertNotNull(sourceTable.map[9])
+        assertNotNull(sourceTable.map[9].h1eds[3])
+    }
+
+    @org.junit.Test
+    fun obtain_hrc_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+        val table = constMainTable()
+        val cursor = repository
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            .buildQuery {
+                When(
+                    Query.Clause(
+                        Columns.TITLE.toString(),
+                        Query.Operations.EQ,
+                        GOSTableContract.HRC
+                    )
+                )
+            }.setReader(CursorCommonItemReader)
+            .create()
+        val item = cursor.getSingle()
+        val gson = GsonBuilder().create()
+        val sourceTable = gson.fromJson(
+            item.additional,
+            HRCTable::class.java
+        )
+        assertNotNull(sourceTable.HRC)
+        assertTrue(sourceTable.HRC[2][1] == 59.0f)
+    }
+
+    @org.junit.Test
+    fun obtain_sgtt_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+        val table = constMainTable()
+        val cursor = repository
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            .buildQuery {
+                When(
+                    Query.Clause(
+                        Columns.TITLE.toString(),
+                        Query.Operations.EQ,
+                        GOSTableContract.SGTT
+                    )
+                )
+            }.setReader(CursorCommonItemReader)
+            .create()
+        val item = cursor.getSingle()
+        val gson = GsonBuilder().create()
+        val sourceTable = gson.fromJson(
+            item.additional,
+            SGTTTable::class.java
+        )
+        assertNotNull(sourceTable.SGTT)
+        assertTrue(sourceTable.SGTT[2][1] == 780)
+    }
+
+    @org.junit.Test
+    fun obtain_tip_tipre_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+        val table = constMainTable()
+        val cursor = repository
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            .buildQuery {
+                When(
+                    Query.Clause(
+                        Columns.TITLE.toString(),
+                        Query.Operations.EQ,
+                        GOSTableContract.TIP_Tipre
+                    )
+                )
+            }.setReader(CursorCommonItemReader)
+            .create()
+        val item = cursor.getSingle()
+        val gson = GsonBuilder().create()
+        val sourceTable = gson.fromJson(
+            item.additional,
+            Tip_TipreTable::class.java
+        )
+        assertNotNull(sourceTable.rows)
+        assertTrue(sourceTable.rows[4].TIP.cement == 4.5f)
+    }
+
 }

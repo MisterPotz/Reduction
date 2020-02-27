@@ -164,6 +164,7 @@ class MathTextField(
  * [title] - название поля ввода
  * [hintText] - информация об ожидаемой информации (допустимый диапазон, тип переменной)
  */
+//Где здесь ниже поле, с которого будем забирать значение?
 class InputTextField(
     val title: String,
     val hintText: String,
@@ -235,6 +236,5 @@ class InputListField(
     Field(fieldId = fieldId, type = FieldType.INPUT_COMBO_BOX, tags = tags) {
     var chosenListOption: Int? = null
 }
-
 
 
