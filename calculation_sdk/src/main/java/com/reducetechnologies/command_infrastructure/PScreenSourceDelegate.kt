@@ -9,7 +9,6 @@ import com.reducetechnologies.command_infrastructure.p_screens.OutputPScreen
 import com.reducetechnologies.command_infrastructure.p_screens.StandbyPScreen
 import com.reducetechnologies.di.CalculationsComponent
 import com.reducetechnologies.specificationsAndRequests.Specifications
-import com.sun.org.apache.xpath.internal.operations.Bool
 import kotlin.math.PI
 
 // contains calculation classes
@@ -58,9 +57,10 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
                     isBad = true
                     changePlanetarTwoStepU(pScreen = pScreen, nextInputPScreen = nextInputPScreen)
                 }
-                //Если где-то что-то не прошло, возвращаем пскрин
+                //Если где-то что-то не прошло, встраиваем в очередь (или всё же просто возвращаем?)
+                //новый PScreen
                 if (isBad) {
-//                    preparedStack.add(nextInputPScreen.getPScreen())
+                    preparedStack.add(nextInputPScreen.getPScreen())
                     // Хорошо бы еще возникшие ошибки указывать
                     return nextInputPScreen.getPScreen()
                 } else {
@@ -111,7 +111,7 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
         //LH
         val LH = (pScreen.fields.find { it.fieldId == 6 }!!.typeSpecificData as InputTextSpec)
             .additional.answer!!.toInt()
-        val NRR = (pScreen.fields.find { it.fieldId == 7 }!!.typeSpecificData as InputListSpec)
+        val NRR = (pScreen.fields.find { it.fieldId == 7 }!!.typeSpecificData as InputTextSpec)
             .additional.answer!!.toInt()
         val KOL = (pScreen.fields.find { it.fieldId == 8 }!!.typeSpecificData as InputTextSpec)
             .additional.answer!!.toInt()
