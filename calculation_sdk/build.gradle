@@ -22,4 +22,7 @@ dependencies {
 
     implementation libraries.kotlinLogger
     testImplementation libraries.kotlinLogger
+
+    implementation libraries.kotlinCoroutines
+    testImplementation libraries.kotlinCoroutines
 }
