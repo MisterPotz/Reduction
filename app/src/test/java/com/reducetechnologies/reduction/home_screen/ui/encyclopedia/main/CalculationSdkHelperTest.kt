@@ -3,7 +3,7 @@
 //import androidx.arch.core.executor.ArchTaskExecutor
 //import androidx.arch.core.executor.TaskExecutor
 //import com.reducetechnologies.command_infrastructure.*
-//import com.reducetechnologies.di.CalculationSdkComponent
+//import com.reducetechnologies.reduction.di.CalculationSdkComponent
 //import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
 //import io.mockk.every
 //import io.mockk.mockk

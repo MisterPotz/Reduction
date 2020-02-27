@@ -4,23 +4,40 @@ import com.reducetechnologies.command_infrastructure.*
 import com.reduction_technologies.database.tables_utils.OneSidedDomain
 import com.reduction_technologies.database.tables_utils.TwoSidedDomain
 
-internal object InputPScreen {
-    private val pScreen : PScreen = PScreen(
-        "Ввод данных",
-        fields = InputPScreenFields.getFields()
-    )
+internal class InputPScreen {
+    private val pScreen : PScreen
+    private val inputPScreenFields: InputPScreenFields
+    constructor() {
+        inputPScreenFields = InputPScreenFields()
+        this.pScreen = PScreen(
+            "InputData",
+            fields = inputPScreenFields.getStandartFields()
+        )
+    }
+    constructor(inputPScreen: PScreen) {
+        inputPScreenFields = InputPScreenFields(inputPScreen.fields as MutableList<PField>)
+        this.pScreen = PScreen(
+            title = inputPScreen.title,
+            fields = inputPScreenFields.getFields()
+        )
+    }
+
+    fun changeField(ID: Int, min: Float? = null, max: Float? = null, newDefault: Int? = null, newHint: String? = null) {
+        inputPScreenFields.changeField(ID = ID, min = min, max = max, newDefault = newDefault, newHint = newHint)
+    }
 
     fun getPScreen() : PScreen {
         return pScreen
     }
 }
-internal object InputPScreenFields {
+internal class InputPScreenFields() {
     private lateinit var fields: MutableList<PField>
 
     private val mainText = PField(
         pFieldType = PFieldType.TEXT,
         typeSpecificData = TextSpec(
-            text = "Введите все необходимые данные о подбираемом редукторе"
+            text = "Введите все необходимые данные о подбираемом редукторе",
+            additional = AdditionalText(TextType.HEADLINE)
         ),
         fieldId = 1
     )
@@ -46,6 +63,7 @@ internal object InputPScreenFields {
                     "input_schemes/13.jpg",
                     "input_schemes/14.jpg"
                 )
+                //answer = 3//Это только для теста, потом убрать
                 //задать потом encyclopediaId; answer как я понимаю не нужен
             )
         ),
@@ -54,7 +72,7 @@ internal object InputPScreenFields {
     private val isED = PField(
         pFieldType = PFieldType.INPUT_LIST,
         typeSpecificData = InputListSpec(
-            title = "Будет ли подбираться редуктор?",
+            title = "Будет ли подбираться электродвигатель?",
             default = null,
             additional = AdditionalInputList(
                 options = listOf(
@@ -70,7 +88,7 @@ internal object InputPScreenFields {
     private val TT = PField(
         pFieldType = PFieldType.INPUT_TEXT,
         typeSpecificData = InputTextSpec(
-            title = "Вращающий момент на тихоходном валу",
+            title = "Вращающий момент на тихоходном валу, Н*м",
             type = InputTextType.FLOAT,
             default = null,
             additional = AdditionalInputText(
@@ -86,7 +104,7 @@ internal object InputPScreenFields {
     private val NT = PField(
         pFieldType = PFieldType.INPUT_TEXT,
         typeSpecificData = InputTextSpec(
-            title = "Частота вращения тихоходного вала",
+            title = "Частота вращения тихоходного вала, об/мин",
             type = InputTextType.FLOAT,
             default = null,
             additional = AdditionalInputText(
@@ -102,7 +120,7 @@ internal object InputPScreenFields {
     private val LH = PField(
         pFieldType = PFieldType.INPUT_TEXT,
         typeSpecificData = InputTextSpec(
-            title = "Суммарное время работы (ресурс)",
+            title = "Суммарное время работы (ресурс), часы",
             type = InputTextType.INTEGER,
             default = "10000",
             additional = AdditionalInputText(
@@ -130,7 +148,7 @@ internal object InputPScreenFields {
     private val KOL = PField(
         pFieldType = PFieldType.INPUT_TEXT,
         typeSpecificData = InputTextSpec(
-            title = "Серийность (в год)",
+            title = "Серийность (в год), штук",
             type = InputTextType.INTEGER,
             default = "10000",
             additional = AdditionalInputText(
@@ -172,6 +190,7 @@ internal object InputPScreenFields {
                     OneSidedDomain(">=", 1.6F),
                     OneSidedDomain("<", 64F)
                 )
+                //answer = "9"//Это только для теста, потом убрать
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -225,7 +244,7 @@ internal object InputPScreenFields {
             additional = AdditionalInputText(
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 0F),
-                    OneSidedDomain("<", 1000000F)
+                    OneSidedDomain("<=", 2F)
                 )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
@@ -240,8 +259,8 @@ internal object InputPScreenFields {
             default = "1.0",
             additional = AdditionalInputText(
                 domain = TwoSidedDomain(
-                    OneSidedDomain(">=", 0F),
-                    OneSidedDomain("<", 1000000F)
+                    OneSidedDomain(">=", 1F),
+                    OneSidedDomain("<=", 1.1F)
                 )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
@@ -253,11 +272,11 @@ internal object InputPScreenFields {
         typeSpecificData = InputTextSpec(
             title = "Коэффициент высоты модификации головки зуба",
             type = InputTextType.FLOAT,
-            default = "0.4",
+            default = "0",
             additional = AdditionalInputText(
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 0F),
-                    OneSidedDomain("<", 1000000F)
+                    OneSidedDomain("<=", 0.45F)
                 )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
@@ -281,13 +300,93 @@ internal object InputPScreenFields {
         fieldId = 17
     )
 
+    //Вторичный конструктор
+    constructor(fields: MutableList<PField>) : this() {
+        this.fields = fields
+    }
+
     private fun setFields(){
         fields = mutableListOf(
             mainText, gearSchemes, isED, TT, NT, LH, NRR, KOL, U0, UREMA, optionalParameters, ALF,
             KPD, HL, HA, HG, C
         )
     }
-    fun getFields() : List<PField> {
+
+    private fun changeGearSchemesField(newDefault: Int): PField {
+        return PField(
+            pFieldType = PFieldType.INPUT_PICTURE,
+            typeSpecificData = InputPictureSpec(
+                title = "Схемы редукторов:",
+                default = newDefault,//ну или 1, самый первый короче просто
+                additional = AdditionalInputImage(
+                    imagePaths = listOf(
+                        "input_schemes/1.jpg",
+                        "input_schemes/2.jpg",
+                        "input_schemes/3.jpg",
+                        "input_schemes/4.jpg",
+                        "input_schemes/5.jpg",
+                        "input_schemes/6.jpg",
+                        "input_schemes/7.jpg",
+                        "input_schemes/8.jpg",
+                        "input_schemes/9.jpg",
+                        "input_schemes/10.jpg",
+                        "input_schemes/11.jpg",
+                        "input_schemes/12.jpg",
+                        "input_schemes/13.jpg",
+                        "input_schemes/14.jpg"
+                    )
+                    //задать потом encyclopediaId; answer как я понимаю не нужен
+                )
+            ),
+            fieldId = 2
+        )
+    }
+
+    private fun changeUField(min: Float, max: Float, newHint: String): PField {
+        return PField(
+            pFieldType = PFieldType.INPUT_TEXT,
+            typeSpecificData = InputTextSpec(
+                title = "Желаемое максимальное передаточное отношение редуктора",
+                type = InputTextType.FLOAT,
+                default = null,
+                additional = AdditionalInputText(
+                    hint = newHint,
+                    domain = TwoSidedDomain(
+                        OneSidedDomain(">=", min),
+                        OneSidedDomain("<", max)
+                    )
+                )
+                //задать потом encyclopediaId; answer как я понимаю не нужен
+            ),
+            fieldId = 10
+        )
+    }
+    /**
+     * Используется для изменения значений полей
+     */
+    fun changeField(ID: Int, min: Float? = null, max: Float? = null, newDefault: Int? = null, newHint: String? = null){
+        val pField: PField? =
+        fields.find {
+            it.fieldId == ID
+        }
+        when (pField!!.fieldId) {
+            2 -> fields[pField.fieldId-1] = changeGearSchemesField(newDefault = newDefault!!)
+            10 -> fields[pField.fieldId-1] = changeUField(min = min!!, max = max!!, newHint = newHint!!)
+        }
+        //fields[pField.fieldId-1] = PField()
+    }
+
+    /**
+     * Используется, если мы уже применяли вторичный конструктор и изменяли поля
+     */
+    fun getFields() : MutableList<PField>{
+        return fields
+    }
+
+    /**
+     * Используется только для получения самого стандартного экрана
+     */
+    fun getStandartFields() : MutableList<PField> {
         setFields()
         return fields
     }

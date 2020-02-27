@@ -2,9 +2,9 @@ package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
 import android.content.Context
 import androidx.lifecycle.*
-import com.reducetechnologies.di.CalculationSdkComponent
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.common_item_util.CommonItemUtils
+import com.reduction_technologies.database.di.GOSTableStorage
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PScreenSwitcher
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.SimplePositionSaver
@@ -16,12 +16,14 @@ import com.reduction_technologies.database.helpers.Repository
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Provider
+import androidx.lifecycle.viewModelScope
+import timber.log.Timber
 
 @ApplicationScope
 class SharedViewModel @Inject constructor(
-    private val context : Context,
+    private val context: Context,
     private val repository: Repository,
-    private val componentFactory: Provider<CalculationSdkComponent.Factory>,
+    private val storageProvider: Provider<GOSTableStorage>,
     private val appLocale: AppLocale
 ) : ViewModel() {
 
@@ -31,17 +33,18 @@ class SharedViewModel @Inject constructor(
 
     val commonItemUtils = CommonItemUtils()
 
-    val calcSdkHelper: CalculationSdkHelper =
-        CalculationSdkHelper(
-            componentFactory
-        )
+    val calcSdkHelper: CalculationSdkHelper by lazy {
+        CalculationSdkHelper(storageProvider)
+    }
 
-    var savedEncyclopediaScreenState : SimplePositionSaver? = null
+    var savedEncyclopediaScreenState: SimplePositionSaver? = null
 
-    private var pScreenSwitcher : PScreenSwitcher? = null
+    private var pScreenSwitcher: PScreenSwitcher? = null
 
     private val _allEncyclopdiaItems: LiveData<List<CommonItem>> by lazy {
-        updateAllEncyclopediaItems()
+        runBlocking {
+            repository.getEncyclopediaItems()
+        }
     }
 
     private val sortedByTagItems: LiveData<Map<CategoryTag, List<CommonItem>>> by lazy {
@@ -51,21 +54,20 @@ class SharedViewModel @Inject constructor(
     }
 
     fun getAllEncyclopediaItems(): LiveData<List<CommonItem>> {
-        updateAllEncyclopediaItems()
+        fetchEncyclopediaItems()
         return _allEncyclopdiaItems
     }
 
-    private fun updateAllEncyclopediaItems(): LiveData<List<CommonItem>> {
-        val task = viewModelScope.async {
+    private fun fetchEncyclopediaItems() {
+        viewModelScope.launch {
             repository.getEncyclopediaItems()
-        }
-        return runBlocking {
-            task.await()
         }
     }
 
     fun getAllSortedItems(): LiveData<Map<CategoryTag, List<CommonItem>>> {
-        updateAllEncyclopediaItems()
+        viewModelScope.launch {
+            repository.getEncyclopediaItems()
+        }
         return sortedByTagItems
     }
 
@@ -80,15 +82,15 @@ class SharedViewModel @Inject constructor(
         return true
     }
 
-    fun isCalculationActive() : Boolean {
+    fun isCalculationActive(): Boolean {
         return calcSdkHelper.isActive
     }
 
-    fun screenSwitcher() : PScreenSwitcher? {
+    fun screenSwitcher(): PScreenSwitcher? {
         return pScreenSwitcher
     }
 
-    fun mapCategoryToLocal(categoryTag: CategoryTag) : String {
+    fun mapCategoryToLocal(categoryTag: CategoryTag): String {
         return when (categoryTag) {
             CategoryTag.TABLE -> context.getString(R.string.tables)
             CategoryTag.VARIABLE -> context.getString(R.string.variables)

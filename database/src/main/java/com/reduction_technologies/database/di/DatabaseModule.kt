@@ -9,9 +9,8 @@ import dagger.Component
 import dagger.Module
 import dagger.Provides
 
-@Module
+@Module()
 class DatabaseModule(val context: Context, val locale: AppLocale) {
-
     private fun constantDatabaseHelper(): ConstantDatabaseHelper {
         return ConstantDatabaseHelper(context)
     }
@@ -31,11 +30,10 @@ class DatabaseModule(val context: Context, val locale: AppLocale) {
 
     @Provides
     @ApplicationScope
-    fun locale() : AppLocale {
+    fun locale(): AppLocale {
         return locale
     }
 }
-
 
 @Component(modules = [DatabaseModule::class])
 @ApplicationScope

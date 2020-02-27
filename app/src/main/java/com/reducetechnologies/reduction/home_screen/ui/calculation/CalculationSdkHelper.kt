@@ -1,15 +1,9 @@
 package com.reducetechnologies.reduction.home_screen.ui.calculation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import com.reducetechnologies.command_infrastructure.CalculationResults
-import com.reducetechnologies.command_infrastructure.CalculationSdk
-import com.reducetechnologies.command_infrastructure.PScreen
-import com.reducetechnologies.command_infrastructure.WrappedPScreen
-import com.reducetechnologies.di.CalculationSdkComponent
-import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PScreenSwitcher
-import com.reduction_technologies.database.helpers.LiveDataClassStorage
+import com.reducetechnologies.command_infrastructure.*
+import com.reducetechnologies.di.CalculationModule
+import com.reducetechnologies.di.DaggerCalculationsComponent
+import com.reduction_technologies.database.di.GOSTableStorage
 import java.lang.IllegalStateException
 import javax.inject.Provider
 
@@ -18,8 +12,8 @@ import javax.inject.Provider
  * Адаптирует выводы calculation sdk к единому выводу - стек прошедших скринов и текущий
  */
 class CalculationSdkHelper(
-    private val calculationSdkComponentFactory: Provider<CalculationSdkComponent.Factory>
-) {
+    private val tableProvider: Provider<GOSTableStorage>
+    ) {
     var isActive = false
         private set
     var onSessionStopped: ((CalculationResults) -> Unit)? = null
@@ -27,8 +21,10 @@ class CalculationSdkHelper(
     private var calculationSdk: CalculationSdk? = null
 
     private fun reinitCalculationSdk() {
-        calculationSdk = calculationSdkComponentFactory.get().build().getBuilder().buildSdk(null)
-    }
+        val calculationModule = CalculationModule(tableProvider.get().obtain())
+        val component = DaggerCalculationsComponent.builder().calculationModule(calculationModule).build()
+        calculationSdk = CalculationSdkBuilder(component).buildSdk()
+}
 
     private fun reinit() {
         isActive = true

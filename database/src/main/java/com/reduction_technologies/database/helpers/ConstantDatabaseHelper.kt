@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.reducetechnologies.tables_utils.TableHolder
 import com.reduction_technologies.database.databases_utils.*
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 
@@ -104,7 +105,9 @@ internal class ConstantDatabaseHelper(val context: Context) :
                 )
             }
             .setReader(CursorCommonItemReader).create()
+        Timber.i("Before extracting list")
         val list = cursor.getList()
+        Timber.i("Extracted list")
         return list.extractTableHolder()
     }
 

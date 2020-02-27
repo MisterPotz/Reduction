@@ -44,10 +44,19 @@ data class InputPictureSpec(
 // InputList
 data class AdditionalInputList(val options: List<String>, val encyclodpediaId: Int? = null, var answer: Int? = null, val hint: String? = null)
 
+//Сделал пока, просто чтобы выдать лист результатов
+
+data class AdditionalTextList(val options: List<String>, val encyclodpediaId: Int? = null, val hint: String? = null)
+
 data class InputListSpec(
     val title: String,
     val default: Int?,
     val additional: AdditionalInputList
+) : PTypeSpecific
+
+data class TextListSpec(
+    val title: String,
+    val additionalTextList: AdditionalTextList
 ) : PTypeSpecific
 
 // TextField

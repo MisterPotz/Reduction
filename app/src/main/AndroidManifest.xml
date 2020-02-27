@@ -3,16 +3,18 @@
     package="com.reducetechnologies.reduction">
 
     <application
+        android:name=".android.util.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".android.util.App">
+        android:theme="@style/AppTheme">
+        <activity android:name=".home_screen.ui.encyclopedia.main.item.ItemActivity"></activity>
         <activity android:name=".home_screen.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

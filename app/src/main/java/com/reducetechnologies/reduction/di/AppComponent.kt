@@ -1,6 +1,6 @@
 package com.reducetechnologies.reduction.di
 
-import com.reducetechnologies.di.CalculationSdkComponent
+import com.reduction_technologies.database.di.GOSTableStorage
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFragment
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.FlowFragment
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.EncyclopediaFragment
@@ -17,5 +17,5 @@ interface AppComponent {
     fun inject(fragment: CalculationFragment)
     fun inject(fragment: FlowFragment)
 
-    fun calcSdkBuilder(): Provider<CalculationSdkComponent.Factory>
+    fun calculationStorage() : Provider<GOSTableStorage>
 }
