@@ -36,4 +36,7 @@ dependencies {
     implementation project(":calculation_sdk")
     implementation libraries.timberLogger
     testImplementation libraries.timberLogger
+
+    implementation libraries.kotlinCoroutines
+    testImplementation libraries.kotlinCoroutines
 }
