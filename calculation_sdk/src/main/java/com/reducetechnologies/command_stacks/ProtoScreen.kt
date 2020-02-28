@@ -5,9 +5,22 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 /**
- * Кдасс для ззранения
+ * Кдасс для хранения прото-экранов. Фиговина, которую может строить бэк, и которую фронт должен
+ * отображать на экранчике. Прото скрины фигачатся в некий стек, инкапсулированный в наследник
+ * интерфейса общения бэка с фронтом.
  */
 abstract class ProtoScreen {
+    /**
+     * Могут быть несколько типов протоэкранов.
+     * [OUTPUT_SCREEN] - экран просто выводит информацию, у него нет элементов вводв
+     * [INPUT_SCREEN] - экран может запрашивать информацию, которую бэк должен проверять в обязательном
+     * порядке
+     */
+    enum class ProtoScreenType{
+        OUTPUT_SCREEN,
+        INPUT_SCREEN
+    }
+    abstract val protoScreenType : ProtoScreenType
     // Заголовок карточки
     abstract val titlePane: String
 
