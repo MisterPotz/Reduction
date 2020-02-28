@@ -8,12 +8,12 @@ apply plugin: "androidx.navigation.safeargs"
 
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion compileApi
+    buildToolsVersion rBuildToolsVersion
     defaultConfig {
         applicationId "com.reducetechnologies.reduction"
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdkVersion minApi
+        targetSdkVersion targetApi
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -58,4 +58,6 @@ dependencies {
 
     implementation libraries.kotlinCoroutines
     testImplementation libraries.kotlinCoroutines
+
+    implementation project(':database')
 }
