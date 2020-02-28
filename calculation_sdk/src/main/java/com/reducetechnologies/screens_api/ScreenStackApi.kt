@@ -4,7 +4,7 @@ import com.reducetechnologies.command_stacks.ProtoScreen
 
 /**
  * Предоставляет АПИ для общения фронта с бэком для передачи последним первому необходимых
- * прототипов экранов, которые фронт может отображать у себя.
+ * прототипов экранов, которые фронт может отображать у себя. Это внешний интерфейс
  */
 interface ScreenStackApi {
     fun getProtoScreen(request: ProtoScreenRequest): ProtoScreenResponse
@@ -32,4 +32,6 @@ sealed class ProtoScreenResponse
 
 data class ErrorResponse(val msg: String) : ProtoScreenResponse()
 
-data class CommonResponse(val protoScreen: ProtoScreen) : ProtoScreenResponse()
+data class CommonResponse(val protoScreen: ProtoScreen, val isLastScreen : Boolean) : ProtoScreenResponse()
+
+data class FinalResponse(val protoScreen: ProtoScreen) : ProtoScreenResponse()
