@@ -8,6 +8,7 @@ private val logger = KotlinLogging.logger { }
 
 /**
  * Shouldn't be constructed directly outside of this class
+ * TODO("Добавить красивый стектрейс в случае ошибки на каком-либо селекторе")
  */
 class SelectionTree private constructor(
     private val string: String = "root",
@@ -38,7 +39,7 @@ class SelectionTree private constructor(
         conditions: List<() -> Boolean>,
         actions: List<SelectionTree.() -> Unit>
     ) {
-        if (conditions.size != actions.size)
+        if (conditions.size != actions.size && conditions.size + 1 != actions.size)
             throw Exception("wrong sizes")
         // Настраиваем связи между селекшн-деревьями
         val newSelectionTree = SelectionTree(selectionName, this, conditions, actions)
@@ -69,6 +70,15 @@ class SelectionTree private constructor(
                 oneIsTrue = true
                 index = condition.index
             }
+        }
+        // Если ни одно из условий не выполнилось - просто возвратиться
+        if (!oneIsTrue){
+            return
+        }
+        // Логика для случая когда ни одно из условий не выполнилось и количество условий на единицу
+        // иеньше количества экшнов. Если количество экшнов и условий не равно по-другому, это ошибка
+        if (conditions.size + 1 == actions.size && !oneIsTrue) {
+            index = actions.size - 1
         }
         // Логируем выполнение метода
         logMethod("method: ${index} invoked")
@@ -239,21 +249,21 @@ fun `как делается по тупому`() {
 }
 
 fun `как делается по-пацански в натуре йоу`() {
-    var `твердость колеса`: Int = 340
-    var `твердость шестерни`: Int = 450
+    var `твердость колеса`: Int = 350
+    var `твердость шестерни`: Int = 360
     //далее следует какая-то тупая, абсолютно ебейшая логика со своими селекторами
     // пусть оно будет медленнее, но зато логи кошерные
     SelectionTree.rootSelection {
         select("Сравнение тупого говна", TreeBuilder.build
             .c { `твердость колеса` <= 350 && `твердость шестерни` <= 350 }
             .c { `твердость колеса` <= 350 && `твердость шестерни` >= 350 }
-            .c { `твердость колеса` >= 350 && `твердость шестерни` >= 350 }
+            .c { `твердость колеса` > 350 && `твердость шестерни` >= 350 }
             .a { logger.info { "Победил Леликов" } }
             .a {
                 logger.info { "Победил Дунаев" }
                 // Еще тупая логика, а дерево решений-то все растет, мать его
                 select("Следующий этап сравнений говен", TreeBuilder.build
-                    .c { 2 + 2 == 4 }
+                    .c { 2 + 1 == 4 }
                     .c { 0 + 0 == 1 }
                     .a {
                         println("Победила математика")
@@ -264,13 +274,16 @@ fun `как делается по-пацански в натуре йоу`() {
                             .a { logger.info { false } }
                             .a { logger.info { true } })
                     }
-                    .a { println("Победил Шильников") })
+                    .a { println("Победил Шильников") }
+                    .a { println("Победила Вселенная (или  просто else - ведь всего знать нельзя!") })
                 logger.info { "Еще какая-то логика, хз зачем" }
                 select("Проверочный селектор", TreeBuilder.build
                     .c { 13 >= 4 }
                     .c { 2 > 3 }
                     .a { }
-                    .a { })
+                    .a { }
+                    .a { println("Здесь нет ошибки -  выполнится в случае else") }
+                    /*.a { println("А вот здесь уже будет") }*/)
             }
             .a { logger.info { "some other logics" } })
         println("in root body")
