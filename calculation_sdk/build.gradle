@@ -29,4 +29,13 @@ dependencies {
     // Необходимо для работы логгера kotlinLogger
     implementation libraries.forKotlinLogger
     testImplementation libraries.forKotlinLogger
+
+    testImplementation libraries.junit
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
