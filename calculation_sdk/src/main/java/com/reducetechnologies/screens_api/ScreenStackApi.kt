@@ -32,6 +32,6 @@ sealed class ProtoScreenResponse
 
 data class ErrorResponse(val msg: String) : ProtoScreenResponse()
 
-data class CommonResponse(val protoScreen: ProtoScreen, val isLastScreen : Boolean) : ProtoScreenResponse()
+data class CommonResponse(val protoScreen: ProtoScreen) : ProtoScreenResponse()
 
 data class FinalResponse(val protoScreen: ProtoScreen) : ProtoScreenResponse()

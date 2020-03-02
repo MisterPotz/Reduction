@@ -39,13 +39,13 @@ constructor(private val protoScreenManager: ProtoScreenManager) : ScreenStackApi
 
     private fun onInitialRequest(): ProtoScreenResponse {
         val response = protoScreenManager.getNext(null, ProtoScreenManager.State.INITIAL)
-        return CommonResponse(response, protoScreenManager.isLast())
-    }
+        return CommonResponse(response)
+}
 
     private fun onCommonRequest(request: CommonRequest): ProtoScreenResponse {
         val response = protoScreenManager.getNext(protoScreen = request.lastScreen)
         val isLast = protoScreenManager.isLast()
-        return CommonResponse(response, isLast)
+        return CommonResponse(response)
     }
 }
 

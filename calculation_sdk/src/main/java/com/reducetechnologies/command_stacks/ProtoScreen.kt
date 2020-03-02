@@ -5,43 +5,62 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 /**
+ * Отображает логику, которая должна быть связанной с этим протоскрином.
+ * [MUST_BE_FILLED] - экран должен быть сначал заполнен на беке какими-то значениями прежде чем
+ * возвращаться пользователю
+ * [HAS_INPUT] - после показа юзеру, экран возвращается с заполненными значениями, которые
+ * должны быть проверены на беке.
+ * Если значения лажовые - перепоказать пользователю экран с указанием ошибки
+ * Если значения норм - можно переходить к следующему экрану если таковой имеется.
+ * Этим тегом можно помечать и поля.
+ */
+enum class RequiredProcessing {
+    MUST_BE_FILLED, HAS_INPUT
+}
+
+interface Taggable {
+    val tags: List<RequiredProcessing>
+}
+
+/**
  * Кдасс для хранения прото-экранов. Фиговина, которую может строить бэк, и которую фронт должен
  * отображать на экранчике. Прото скрины фигачатся в некий стек, инкапсулированный в наследник
  * интерфейса общения бэка с фронтом.
  */
-abstract class ProtoScreen {
-    /**
-     * Могут быть несколько типов протоэкранов.
-     * [OUTPUT_SCREEN] - экран просто выводит информацию, у него нет элементов вводв
-     * [INPUT_SCREEN] - экран может запрашивать информацию, которую бэк должен проверять в обязательном
-     * порядке
-     */
-    enum class ProtoScreenType {
-        OUTPUT_SCREEN,
-        INPUT_SCREEN
-    }
-
-    abstract val protoScreenType: ProtoScreenType
+abstract class ProtoScreen(
     // Заголовок карточки
-    abstract val titlePane: String
-
+    val titlePane: String,
     // Идентификатор прото-экрана для опознавания бэком
-    abstract val protoScreenId: Int
-
+    val protoScreenId: Int,
     // Список полей, присущих этому прото-экрану
-    abstract var fields: List<Field>
+    val fields: List<Field>
+) : Taggable {
+    // Список меток для этой карточки, заполняется при инициализации
+    // Может сделать что-то типа билдера протоскрина?
+    // Субклассы протоскрина должны предоставить функцию заполнения тагов по ProtoScreen
+    abstract override val tags: MutableList<RequiredProcessing>
 
-    // Checks if proto screen has input fields
+    // Checks if proto screen has input fields and therefore has to be validated
     fun hasInput(): Boolean {
-        return fields.fold(false) { left, rigth ->
+        /*return fields.fold(false) { left, rigth ->
             return left || when (rigth.type) {
                 Field.FieldType.INPUT_TEXT,
                 Field.FieldType.INPUT_COMBO_BOX,
                 Field.FieldType.INPUT_IMAGE -> true
                 else -> false
             }
-        }
+        }*/
+        return RequiredProcessing.HAS_INPUT in tags
     }
+
+    // Cheks if has validatable fields
+    fun hasInlatableFields(): Boolean {
+        return RequiredProcessing.MUST_BE_FILLED in tags
+    }
+
+    // Проаналазировать список полей и заполнить на их основе список меток, присущих данному Protoscreen
+    // Фабричный метод для тегов
+    abstract fun fillTags()
 }
 
 /**
@@ -51,7 +70,17 @@ abstract class ProtoScreen {
 abstract class Field(
     val fieldId: Int,
     val type: FieldType
-) {
+) : Taggable {
+    final override val tags: MutableList<RequiredProcessing> = MutableList(0) { }
+
+    constructor(
+        fieldId: Int,
+        type: FieldType,
+        tags: List<RequiredProcessing> = listOf()
+    ) : this(fieldId,type) {
+        this.tags.addAll(tags)
+    }
+
     /**
      * [SIMPLE_TEXT] - обычный описательный текст
      * [SIMPLE_IMAGE] - обычная картинка
@@ -76,7 +105,9 @@ abstract class Field(
 class SimpleTextField(
     val text: String,
     fieldId: Int
-) : Field(fieldId = fieldId, type = FieldType.SIMPLE_TEXT)
+) : Field(fieldId = fieldId, type = FieldType.SIMPLE_TEXT) {
+
+}
 
 /**
  * Класс для зранения информации о картинке. Изображение передается через закодированную строку в
@@ -91,6 +122,7 @@ class SimpleImageField(
  * Класс, хранящий информацию по подсказке. Может иметь: текст, картинку.
  * Если ни одна из переменных не будет определена - будет ошибка, т.к. если используется подсказка,
  * она не может быть пустой.
+ * Но пока непонятно, понадобится ли он на самом деле.
  */
 data class Hint(val name: String, var mainText: String? = null, var mainImage: String? = null) {
     init {
@@ -126,6 +158,7 @@ class InputTextField(
 ) :
     Field(fieldId = fieldId, type = FieldType.INPUT_TEXT) {
     var error: String? = null
+    var inputText: String? = null
 
     constructor(
         title: String,
@@ -165,7 +198,9 @@ class InputPicturesField(
     val hintText: String,
     fieldId: Int
 ) :
-    Field(fieldId = fieldId, type = FieldType.INPUT_IMAGE)
+    Field(fieldId = fieldId, type = FieldType.INPUT_IMAGE) {
+    var chosenPictureOption: Int? = null
+}
 
 /**
  * [options] - список с вариантами, где нужно выбрать один из них
@@ -179,7 +214,9 @@ class InputListField(
     val hintText: String,
     fieldId: Int
 ) :
-    Field(fieldId = fieldId, type = FieldType.INPUT_COMBO_BOX)
+    Field(fieldId = fieldId, type = FieldType.INPUT_COMBO_BOX) {
+    var chosenListOption: Int? = null
+}
 
 
 
