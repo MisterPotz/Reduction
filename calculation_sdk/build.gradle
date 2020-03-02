@@ -27,5 +27,6 @@ dependencies {
     testImplementation libraries.kotlinCoroutines
 
     // Необходимо для работы логгера kotlinLogger
-    implementation "org.slf4j:slf4j-simple:1.7.26"
+    implementation libraries.forKotlinLogger
+    testImplementation libraries.forKotlinLogger
 }
