@@ -56,15 +56,14 @@ data class InputData(
     val OMEG: Float,
     val NW: Int,
     val NZAC: Array<Int>,
-    val NZAC1: Int,
-    val NZAC2: Int,
     val NWR: Int,
     val BKAN: Int,
     val SIGN: Int,
     val CONSOL: Int,
     val KPD: Float,
     val IST: Int,
-    val wheelType: Specifications.WheelType
+    val wheelType: Specifications.WheelType,
+    val wheelSubtype: Array<Specifications.WheelSubtype>
 )
 
 data class ReducerOptionTemplate(

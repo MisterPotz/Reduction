@@ -35,12 +35,12 @@ object Specifications{
      * [SPUR] - прямозубое колесо
      * [HELICAL] - косозубое колесо
      * [CHEVRON] - шевронное буквой V
-     * [DOUBLE_CHEVRON] - колесо, разбиенное на два полушеврона
+     * [DOUBLE_CHEVRON] - колесо, разбиенное на два полушеврона - его не существует, это
+     * CHEVRON с BKAN
      * [NP] - это индекс типа передачи: 1 - цилиндрическая косозубая, 2 - коническая с круглым
      * зубом, 3 - любая прямозубая
      */
-    enum class WheelSubtype(val NP: Int){SPUR(3), HELICAL(1), CHEVRON(1),
-        DOUBLE_CHEVRON(1)}
+    enum class WheelSubtype(val NP: Int){SPUR(3), HELICAL(1), CHEVRON(1)}
 }
 
 data class EngineRequest(val doCalculate : Boolean)
