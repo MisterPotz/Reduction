@@ -3,7 +3,6 @@ package com.reducetechnologies.calculation_util
 import mu.KotlinLogging
 import java.lang.StringBuilder
 
-
 private val logger = KotlinLogging.logger { }
 
 /**
@@ -217,79 +216,4 @@ class TreeBuilder {
         val build: TreeBuilder
             get() = TreeBuilder()
     }
-}
-
-fun `как делается по тупому`() {
-    var a: Int = 5
-    var b: Int = 8
-    SelectionTree.rootSelection {
-        select(
-            "1st matcher",
-            listOf(
-                { a <= 5 && b > 7 },
-                { a <= 5 && b == 7 }),
-            listOf<SelectionTree.() -> Unit>(
-                {
-                    println("a is $a <= 5 && b is $b > 7")
-                }, {
-                    println("a is $a <= 5 && b is $b >= 7")
-                    select(
-                        "2nd matcher",
-                        listOf({ a == 4 }, { a == 2 }, { b == 6 }),
-                        listOf<SelectionTree.() -> Unit>(
-                            { println("first condition") },
-                            { println("second condition") },
-                            { println("three ") })
-                    )
-                    println("in 2nd body")
-                })
-        )
-        println("in 1 st body")
-    }
-}
-
-fun `как делается по-пацански в натуре йоу`() {
-    var `твердость колеса`: Int = 350
-    var `твердость шестерни`: Int = 360
-    //далее следует какая-то тупая, абсолютно ебейшая логика со своими селекторами
-    // пусть оно будет медленнее, но зато логи кошерные
-    SelectionTree.rootSelection {
-        select("Сравнение тупого говна", TreeBuilder.build
-            .c { `твердость колеса` <= 350 && `твердость шестерни` <= 350 }
-            .c { `твердость колеса` <= 350 && `твердость шестерни` >= 350 }
-            .c { `твердость колеса` > 350 && `твердость шестерни` >= 350 }
-            .a { logger.info { "Победил Леликов" } }
-            .a {
-                logger.info { "Победил Дунаев" }
-                // Еще тупая логика, а дерево решений-то все растет, мать его
-                select("Следующий этап сравнений говен", TreeBuilder.build
-                    .c { 2 + 1 == 4 }
-                    .c { 0 + 0 == 1 }
-                    .a {
-                        println("Победила математика")
-                        // ПОжалуй еще посравниваем, это так весело!
-                        select("Просто фан", TreeBuilder.build
-                            .c { false }
-                            .c { true }
-                            .a { logger.info { false } }
-                            .a { logger.info { true } })
-                    }
-                    .a { println("Победил Шильников") }
-                    .a { println("Победила Вселенная (или  просто else - ведь всего знать нельзя!") })
-                logger.info { "Еще какая-то логика, хз зачем" }
-                select("Проверочный селектор", TreeBuilder.build
-                    .c { 13 >= 4 }
-                    .c { 2 > 3 }
-                    .a { }
-                    .a { }
-                    .a { println("Здесь нет ошибки -  выполнится в случае else") }
-                    /*.a { println("А вот здесь уже будет") }*/)
-            }
-            .a { logger.info { "some other logics" } })
-        println("in root body")
-    }
-}
-
-fun main(args: Array<String>) {
-    `как делается по-пацански в натуре йоу`()
 }
