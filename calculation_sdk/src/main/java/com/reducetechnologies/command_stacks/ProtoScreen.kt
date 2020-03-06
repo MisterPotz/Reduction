@@ -38,7 +38,7 @@ abstract class ProtoScreen(
     // Список меток для этой карточки, заполняется при инициализации
     // Может сделать что-то типа билдера протоскрина?
     // Субклассы протоскрина должны предоставить функцию заполнения тагов по ProtoScreen
-    abstract override val tags: MutableList<RequiredProcessing>
+    override val tags: List<RequiredProcessing> = Companion.tags(fields)
 
     // Checks if proto screen has input fields and therefore has to be validated
     fun hasInput(): Boolean {
@@ -61,6 +61,18 @@ abstract class ProtoScreen(
     // Проаналазировать список полей и заполнить на их основе список меток, присущих данному Protoscreen
     // Фабричный метод для тегов
     abstract fun fillTags()
+
+    companion object {
+        fun tags(fields: List<Field>): List<RequiredProcessing> {
+            val set: HashSet<RequiredProcessing> = HashSet()
+            for (field in fields) {
+                for (tag in field.tags) {
+                    set.add(tag)
+                }
+            }
+            return set.toList()
+        }
+    }
 }
 
 /**
@@ -69,18 +81,9 @@ abstract class ProtoScreen(
  */
 abstract class Field(
     val fieldId: Int,
-    val type: FieldType
+    val type: FieldType,
+    final override val tags: List<RequiredProcessing>
 ) : Taggable {
-    final override val tags: MutableList<RequiredProcessing> = MutableList(0) { }
-
-    constructor(
-        fieldId: Int,
-        type: FieldType,
-        tags: List<RequiredProcessing> = listOf()
-    ) : this(fieldId,type) {
-        this.tags.addAll(tags)
-    }
-
     /**
      * [SIMPLE_TEXT] - обычный описательный текст
      * [SIMPLE_IMAGE] - обычная картинка
@@ -104,8 +107,9 @@ abstract class Field(
  */
 class SimpleTextField(
     val text: String,
-    fieldId: Int
-) : Field(fieldId = fieldId, type = FieldType.SIMPLE_TEXT) {
+    fieldId: Int,
+    tags: List<RequiredProcessing>
+) : Field(fieldId = fieldId, type = FieldType.SIMPLE_TEXT, tags = tags) {
 
 }
 
@@ -115,8 +119,9 @@ class SimpleTextField(
  */
 class SimpleImageField(
     val encodedImage: String,
-    fieldId: Int
-) : Field(fieldId = fieldId, type = FieldType.SIMPLE_IMAGE)
+    fieldId: Int,
+    tags: List<RequiredProcessing>
+) : Field(fieldId = fieldId, type = FieldType.SIMPLE_IMAGE, tags = tags)
 
 /**
  * Класс, хранящий информацию по подсказке. Может иметь: текст, картинку.
@@ -140,12 +145,20 @@ data class Hint(val name: String, var mainText: String? = null, var mainImage: S
  * Все эти пояснения и т.д.должны храниться в SQLite  БД, где каждая строка - относится к какому-то
  * термину, а в столбцах таблички на той же строке - соответствующие пояснения, определения и т.д.
  */
-abstract class HintField(val hint: Hint, fieldId: Int, fieldType: Field.FieldType) :
-    Field(fieldId = fieldId, type = fieldType) {
+abstract class HintField(
+    val hint: Hint, fieldId: Int,
+    fieldType: Field.FieldType,
+    tags: List<RequiredProcessing>
+) :
+    Field(fieldId = fieldId, type = fieldType, tags = tags) {
 }
 
-class MathTextField(val textWithMaths: String, fieldId: Int, fieldType: Field.FieldType) :
-    Field(fieldId = fieldId, type = fieldType)
+class MathTextField(
+    val textWithMaths: String, fieldId: Int,
+    fieldType: Field.FieldType,
+    tags: List<RequiredProcessing>
+) :
+    Field(fieldId = fieldId, type = fieldType, tags = tags)
 
 /**
  * [title] - название поля ввода
@@ -154,9 +167,10 @@ class MathTextField(val textWithMaths: String, fieldId: Int, fieldType: Field.Fi
 class InputTextField(
     val title: String,
     val hintText: String,
-    fieldId: Int
+    fieldId: Int,
+    tags: List<RequiredProcessing>
 ) :
-    Field(fieldId = fieldId, type = FieldType.INPUT_TEXT) {
+    Field(fieldId = fieldId, type = FieldType.INPUT_TEXT, tags = tags) {
     var error: String? = null
     var inputText: String? = null
 
@@ -164,8 +178,9 @@ class InputTextField(
         title: String,
         hintText: String,
         error: String,
-        fieldId: Int
-    ) : this(title, hintText, fieldId) {
+        fieldId: Int,
+        tags: List<RequiredProcessing>
+    ) : this(title, hintText, fieldId, tags) {
         this.error = error
     }
 
@@ -178,7 +193,7 @@ class InputTextField(
         fun copyWithError(copied: InputTextField, error: String): InputTextField {
             var input: InputTextField? = null
             copied.apply {
-                input = InputTextField(title, hintText, error, fieldId)
+                input = InputTextField(title, hintText, error, fieldId, tags)
             }
             return input!!
         }
@@ -196,9 +211,10 @@ class InputPicturesField(
     val encodedImages: List<String>,
     val title: String,
     val hintText: String,
-    fieldId: Int
+    fieldId: Int,
+    tags: List<RequiredProcessing>
 ) :
-    Field(fieldId = fieldId, type = FieldType.INPUT_IMAGE) {
+    Field(fieldId = fieldId, type = FieldType.INPUT_IMAGE, tags = tags) {
     var chosenPictureOption: Int? = null
 }
 
@@ -208,13 +224,15 @@ class InputPicturesField(
  * [hintText] - информация об ожидаемой информации (допустимый диапазон, тип переменной)
  * В этом классе пока нет поля error, так как лист фиксирован и любой из вариантов должен быть верным
  */
+// TODO сделать для input fields автоматическую простановку тага "принимает ввод"
 class InputListField(
     val options: List<String>,
     val title: String,
     val hintText: String,
-    fieldId: Int
+    fieldId: Int,
+    tags: List<RequiredProcessing>
 ) :
-    Field(fieldId = fieldId, type = FieldType.INPUT_COMBO_BOX) {
+    Field(fieldId = fieldId, type = FieldType.INPUT_COMBO_BOX, tags = tags) {
     var chosenListOption: Int? = null
 }
 

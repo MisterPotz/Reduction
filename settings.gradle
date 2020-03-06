@@ -1,2 +1,2 @@
-include ':app', ':calculation_sdk', ":database"
+include ':app', ':calculation_sdk'
 rootProject.name='Reduction'
