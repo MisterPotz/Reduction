@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Reduction</string>
+    <string name="title_activity_home">Reduction</string>
+    <string name="title_encyclopedia">Энциклопедия</string>
+    <string name="title_calculation">Расчет</string>
+    <string name="title_favorites">Закладки</string>
 </resources>
