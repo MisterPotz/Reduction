@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 
 import com.reducetechnologies.reduction.R
+import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
 import kotlinx.android.synthetic.main.favorites_main_fragment.*
+import timber.log.Timber
 
 class FavoritesMain : Fragment() {
     companion object {
@@ -23,6 +25,8 @@ class FavoritesMain : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        SingletoneContextCounter.fragments++
+        Timber.i("in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
         return inflater.inflate(R.layout.favorites_main_fragment, container, false)
     }
 
@@ -54,5 +58,38 @@ class FavoritesMain : Fragment() {
             // текущего на другой - откреплять все колбеки, где используются navcontroller
             findNavController().navigate(action)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("in onResume: current fragment amount: ${SingletoneContextCounter.fragments}")
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.i("in onPause: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.i("in onStop: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        SingletoneContextCounter.fragments--
+        Timber.i("in onDestroyView: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.i("in onDestroy: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
 }

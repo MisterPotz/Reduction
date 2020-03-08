@@ -46,7 +46,7 @@ class FavoritesHostFragment : WithOwnNavController() {
     ): View? {
         favoritesViewModel =
             ViewModelProvider(this).get(FavoritesHostViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_favorites, container, false)
+        val root = inflater.inflate(R.layout.fragment_favorites_host, container, false)
         navHostFragment = childFragmentManager.findFragmentById(R.id.favorites_nav_host_fragment) as NavHostFragment
 
         /*childFragmentManager.setPrimaryNavigationFragment(navHostFragment)*/
@@ -54,13 +54,41 @@ class FavoritesHostFragment : WithOwnNavController() {
         childFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHostFragment).commit()
 
         SingletoneContextCounter.fragments++
-        Timber.i("FavoritesFragment in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
+        Timber.i("in onCrereateView: current fragment amount: ${SingletoneContextCounter.fragments}")
        // setupCallbacks()
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("in onResume: current fragment amount: ${SingletoneContextCounter.fragments}")
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
+
     }
 
     override fun onPause() {
         super.onPause()
         Timber.i("in onPause: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.i("in onStop: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        SingletoneContextCounter.fragments--
+        Timber.i("in onDestroyView: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.i("in onDestroy: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
 }

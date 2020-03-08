@@ -21,7 +21,7 @@ import com.reducetechnologies.command_stacks.ProtoScreen
  *  Если правильный - выдать следующий
  */
 class ScreenStackApiImpl
-    constructor(private val protoScreenManager: ProtoScreenManager): ScreenStackApi {
+constructor(private val protoScreenManager: ProtoScreenManager) : ScreenStackApi {
     /**
      * Не должно быть такого, что сразу несколько потоков будут запрашивать или пополнять
      * данный массив, доступ только из одного потока
@@ -37,13 +37,13 @@ class ScreenStackApiImpl
         }
     }
 
-    private fun onInitialRequest() : ProtoScreenResponse {
+    private fun onInitialRequest(): ProtoScreenResponse {
         val response = protoScreenManager.getNext(null, ProtoScreenManager.State.INITIAL)
         return CommonResponse(response, protoScreenManager.isLast())
     }
 
-    private fun onCommonRequest(request: CommonRequest) : ProtoScreenResponse {
-        val response =  protoScreenManager.getNext(protoScreen = request.lastScreen)
+    private fun onCommonRequest(request: CommonRequest): ProtoScreenResponse {
+        val response = protoScreenManager.getNext(protoScreen = request.lastScreen)
         val isLast = protoScreenManager.isLast()
         return CommonResponse(response, isLast)
     }
@@ -51,8 +51,8 @@ class ScreenStackApiImpl
 
 // Принимает прото скрин с данными ввода и сообщает, был он верным или нет
 // На основании результатов внутри субкласса этого интерфейса могут быть внутренние сайд-эффекты
-interface ProtoScreenValidator{
-    fun processAndValidateRequest(protoScreen: ProtoScreen) : Boolean
+interface ProtoScreenValidator {
+    fun processAndValidateRequest(protoScreen: ProtoScreen): Boolean
 }
 
 /**
@@ -63,26 +63,27 @@ interface ProtoScreenValidator{
  * он с помощью механизма билдера сможет наполнить поля нужной инофй, затем добавит это в
  * наблюдаемый элемент этого класса или в сам этот класс, и потом массив карточек пополнится.
  */
-abstract class ProtoScreenManager : ProtoScreenValidator{
-    enum class State{INITIAL}
-    // Задается вручную
-    private val screenArray : Array<ProtoScreen> = arrayOf()
+abstract class ProtoScreenManager : ProtoScreenValidator {
+    enum class State { INITIAL }
 
-    private var currentCounter : Int = 0
+    // Задается вручную
+    private val screenArray: Array<ProtoScreen> = arrayOf()
+
+    private var currentCounter: Int = 0
 
     /**
      * Only one of the functions must be called at once
      * increment inner counter
      */
-    abstract protected fun processLast(type: State) : Boolean
+    abstract protected fun processLast(type: State): Boolean
 
-    abstract protected fun processLast(protoScreen: ProtoScreen) : Boolean
+    abstract protected fun processLast(protoScreen: ProtoScreen): Boolean
 
-    abstract fun getNext(protoScreen: ProtoScreen?, type: State? = null) : ProtoScreen
+    abstract fun getNext(protoScreen: ProtoScreen?, type: State? = null): ProtoScreen
 
-    abstract fun isLast() : Boolean
+    abstract fun isLast(): Boolean
 
-    fun hasMore() : Boolean {
+    fun hasMore(): Boolean {
         return currentCounter < screenArray.size
     }
 }

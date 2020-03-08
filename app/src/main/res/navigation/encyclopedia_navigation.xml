@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/encyclopedia_navigation"
-    app:startDestination="@id/encyclopediaFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/encyclopedia_global_navigation"
+    app:startDestination="@id/navigation_encyclopedia">
 
     <fragment
-        android:id="@+id/encyclopediaFragment"
+        android:id="@+id/navigation_encyclopedia"
         android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.EncyclopediaFragment"
-        android:label="EncyclopediaFragment" />
+        android:label="EncyclopediaFragment"
+        tools:layout="@layout/fragment_encyclopedia_main"
+        >
+        <action
+            android:id="@+id/action_encyclopediaFragment_to_itemFragment"
+            app:destination="@id/item_fragment"
+            app:popUpTo="@+id/navigation_encyclopedia" />
+    </fragment>
+    <fragment
+        android:id="@+id/item_fragment"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.item.ItemFragment"
+        android:label="item_fragment"
+        tools:layout="@layout/item_fragment" >
+        <argument
+            android:name="title"
+            app:argType="string"
+            android:defaultValue="Some title" />
+    </fragment>
 </navigation>

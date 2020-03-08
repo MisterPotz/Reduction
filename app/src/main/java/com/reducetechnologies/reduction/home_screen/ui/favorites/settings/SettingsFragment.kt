@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 
 import com.reducetechnologies.reduction.R
+import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
 import kotlinx.android.synthetic.main.settings_fragment.*
+import timber.log.Timber
 
 class SettingsFragment : Fragment() {
 
@@ -26,6 +28,8 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        SingletoneContextCounter.fragments++
+        Timber.i("in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
         return inflater.inflate(R.layout.settings_fragment, container, false)
     }
 
@@ -35,5 +39,38 @@ class SettingsFragment : Fragment() {
             Observer<String> { t -> fragment_input.text = t })
         // Здесь я обращаюсь к mutablelivedata но лучше бы так конечно не делать напрямую
         viewModel.text.value = args.myArg
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("in onResume: current fragment amount: ${SingletoneContextCounter.fragments}")
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.i("in onPause: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.i("in onStop: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        SingletoneContextCounter.fragments--
+        Timber.i("in onDestroyView: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.i("in onDestroy: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
 }
