@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_global_favorites"
+    app:startDestination="@id/navigation_favorites">
+
+    <fragment
+        android:id="@+id/navigation_favorites"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.favorites.main.FavoritesMain"
+        android:label="@string/title_favorites"
+        tools:layout="@layout/favorites_main_fragment">
+        <action
+            android:id="@+id/action_navigation_favorites_to_navigation_favorites_settings"
+            app:destination="@id/navigation_favorites_settings"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/navigation_favorites">
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_favorites_settings"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.favorites.settings.SettingsFragment"
+        android:label="settings"
+        tools:layout="@layout/settings_fragment">
+        <argument
+            android:name="myArg"
+            app:argType="string"
+            android:defaultValue="no input given" />
+    </fragment>
+
+</navigation>

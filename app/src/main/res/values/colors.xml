@@ -9,6 +9,8 @@
     <color name="colorSecondaryLight">#ffeebb</color>
     <color name="colorSecondaryDark">#c28c5d</color>
 
-    <color name="colorPrimaryText">#000000</color>
+    <color name="colorOnPrimary">#2B2B2B</color>
     <color name="colorSecondaryText">#000000</color>
+
+    <color name="background">#EEEEEE</color>
 </resources>
