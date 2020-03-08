@@ -1,4 +1,4 @@
-package com.reducetechnologies.reduction.home_screen.ui.encyclopedia
+package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

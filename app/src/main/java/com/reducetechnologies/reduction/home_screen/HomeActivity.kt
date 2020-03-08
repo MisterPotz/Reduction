@@ -5,18 +5,15 @@ import androidx.annotation.IdRes
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.NavController
 import timber.log.Timber
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.navigation.fragment.findNavController
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFragment
-import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.EncyclopediaFragment
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.EncyclopediaFragment
 import com.reducetechnologies.reduction.home_screen.ui.favorites.FavoritesHostFragment
 import com.reducetechnologies.reduction.home_screen.ui.favorites.WithOwnNavController
 import kotlinx.android.synthetic.main.activity_home.*
-import java.lang.IllegalStateException
 
 object SingletoneContextCounter {
     var fragments: Int = 0
@@ -116,7 +113,8 @@ class HomeActivity : FragmentActivity() {
             for (i in fragmentsList) {
                 when (i.type) {
                     TabType.CALCULATION -> i.fragment = CalculationFragment()
-                    TabType.ENCYCLOPEDIA -> i.fragment = EncyclopediaFragment()
+                    TabType.ENCYCLOPEDIA -> i.fragment =
+                        EncyclopediaFragment()
                     TabType.FAVORITES -> i.fragment = FavoritesHostFragment()
                 }
             }

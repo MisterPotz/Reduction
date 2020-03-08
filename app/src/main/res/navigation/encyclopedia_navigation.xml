@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/encyclopedia_navigation"
+    app:startDestination="@id/encyclopediaFragment">
+
+    <fragment
+        android:id="@+id/encyclopediaFragment"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.EncyclopediaFragment"
+        android:label="EncyclopediaFragment" />
+</navigation>
