@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -27,9 +28,8 @@ abstract class WithOwnNavController : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.i("in onCreate, setting setRetainInstance -> true")
+        Timber.i("in onCreate, setting setRetainInstance -> false")
         // Retain this fragment across configuration changes.
-        setRetainInstance(true)
     }
 }
 
@@ -40,17 +40,18 @@ class FavoritesHostFragment : WithOwnNavController() {
     init {
         Timber.i("FavoritesNavHost constructor constructor, debugInt: $debugInt")
     }
+
     override fun getNavFragment(): NavHostFragment {
-        return navHostFragment
+        return navHostFragment!!
     }
 
     override fun getNavController(): NavController {
-        return navController
+        return navController!!
     }
 
     private lateinit var favoritesViewModel: FavoritesHostViewModel
-    private lateinit var navController: NavController
-    private lateinit var navHostFragment: NavHostFragment
+    private var navController: NavController? = null
+    private var navHostFragment: NavHostFragment? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -63,6 +64,7 @@ class FavoritesHostFragment : WithOwnNavController() {
         Timber.i("Fragment onCreate: $childFragmentManager in $this, debugInt: $debugInt")
     }
 
+    // Here a fragment must be created
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,7 +73,6 @@ class FavoritesHostFragment : WithOwnNavController() {
         favoritesViewModel =
             ViewModelProvider(this).get(FavoritesHostViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_favorites_host, container, false)
-
 
         SingletoneContextCounter.fragments++
         Timber.i("Fragment onCreateView: $childFragmentManager in $this, debugInt: $debugInt")
@@ -82,15 +83,17 @@ class FavoritesHostFragment : WithOwnNavController() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Finding fragment
         navHostFragment =
             childFragmentManager.findFragmentById(R.id.favorites_nav_host_fragment) as NavHostFragment
+        navController = navHostFragment!!.navController
 
         /*childFragmentManager.setPrimaryNavigationFragment(navHostFragment)*/
-        navController = navHostFragment.navController
         childFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHostFragment)
             .commit()
 
-        Timber.i("Nav controller: ${navHostFragment.findNavController()}")
+        Timber.i("Nav controller: ${navHostFragment!!.findNavController()}")
     }
 
     override fun onResume() {
@@ -103,6 +106,13 @@ class FavoritesHostFragment : WithOwnNavController() {
         super.onStart()
         Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        //navHostFragment.setInitialSavedState()
+        super.onSaveInstanceState(outState)
+        // Saving instance state of navhostfragment
+        childFragmentManager.saveFragmentInstanceState(navHostFragment!!)
     }
 
     override fun onPause() {

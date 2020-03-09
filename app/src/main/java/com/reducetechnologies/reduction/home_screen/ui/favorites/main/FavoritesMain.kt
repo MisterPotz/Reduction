@@ -37,7 +37,9 @@ class FavoritesMain : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         debugInt++
-        setRetainInstance(false)
+        // Must not be called now as we are trying to achieve the saving of state via
+        // FragmentManager#saveInstanceState
+        // setRetainInstance(false)
         Timber.i("Fragment onCreate: $childFragmentManager in $this, debugInt: $debugInt")
     }
 
@@ -59,6 +61,7 @@ class FavoritesMain : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(FavoritesMainViewModel::class.java)
+        Timber.i("NavController : ${findNavController()}")
         setupCallbacks()
     }
 
