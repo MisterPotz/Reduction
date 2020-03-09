@@ -1,5 +1,6 @@
 package com.reducetechnologies.reduction.home_screen.ui.favorites.main
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +15,13 @@ import kotlinx.android.synthetic.main.favorites_main_fragment.*
 import timber.log.Timber
 
 class FavoritesMain : Fragment() {
+    // Mutable debugging data
+    var debugInt = 0
+
+    init {
+        Timber.i("FavoritesMain constructor constructor, debugInt: $debugInt")
+    }
+
     companion object {
         fun newInstance() =
             FavoritesMain()
@@ -21,13 +29,31 @@ class FavoritesMain : Fragment() {
 
     private lateinit var viewModel: FavoritesMainViewModel
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Timber.i("Fragment onAttach childFragmentManager: $childFragmentManager in $this")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        debugInt++
+        setRetainInstance(false)
+        Timber.i("Fragment onCreate: $childFragmentManager in $this, debugInt: $debugInt")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         SingletoneContextCounter.fragments++
+        Timber.i("Fragment onCreateView: $childFragmentManager in $this, debugInt: $debugInt")
         Timber.i("in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
         return inflater.inflate(R.layout.favorites_main_fragment, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Timber.i("Nav controller: ${findNavController()}")
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

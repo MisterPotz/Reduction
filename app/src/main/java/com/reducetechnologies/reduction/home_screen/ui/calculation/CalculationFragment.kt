@@ -32,8 +32,6 @@ class CalculationFragment : WithOwnNavController() {
         savedInstanceState: Bundle?
     ): View? {
         calculationViewModel = ViewModelProvider(this).get(CalculationViewModel::class.java)
-        Timber.i("in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
-
         val root = inflater.inflate(R.layout.fragment_calculation, container, false)
         val textView: TextView = root.findViewById(R.id.text_dashboard)
         calculationViewModel.text.observe(viewLifecycleOwner, Observer {

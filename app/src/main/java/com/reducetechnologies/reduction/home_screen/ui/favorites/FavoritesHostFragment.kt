@@ -34,6 +34,12 @@ abstract class WithOwnNavController : Fragment() {
 }
 
 class FavoritesHostFragment : WithOwnNavController() {
+    // Mutable debugging data
+    var debugInt = 0
+
+    init {
+        Timber.i("FavoritesNavHost constructor constructor, debugInt: $debugInt")
+    }
     override fun getNavFragment(): NavHostFragment {
         return navHostFragment
     }
@@ -48,11 +54,13 @@ class FavoritesHostFragment : WithOwnNavController() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Timber.i("Fragment childFragmentManager: $childFragmentManager in $this")
+        Timber.i("Fragment onAttach childFragmentManager: $childFragmentManager in $this")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        debugInt++
+        Timber.i("Fragment onCreate: $childFragmentManager in $this, debugInt: $debugInt")
     }
 
     override fun onCreateView(
@@ -63,6 +71,17 @@ class FavoritesHostFragment : WithOwnNavController() {
         favoritesViewModel =
             ViewModelProvider(this).get(FavoritesHostViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_favorites_host, container, false)
+
+
+        SingletoneContextCounter.fragments++
+        Timber.i("Fragment onCreateView: $childFragmentManager in $this, debugInt: $debugInt")
+        Timber.i("in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
+        // setupCallbacks()
+        return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         navHostFragment =
             childFragmentManager.findFragmentById(R.id.favorites_nav_host_fragment) as NavHostFragment
 
@@ -71,10 +90,7 @@ class FavoritesHostFragment : WithOwnNavController() {
         childFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHostFragment)
             .commit()
 
-        SingletoneContextCounter.fragments++
-        Timber.i("in onCrereateView: current fragment amount: ${SingletoneContextCounter.fragments}")
-        // setupCallbacks()
-        return root
+        Timber.i("Nav controller: ${navHostFragment.findNavController()}")
     }
 
     override fun onResume() {
