@@ -1,5 +1,6 @@
 package com.reducetechnologies.reduction.home_screen.ui.favorites
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +29,7 @@ abstract class WithOwnNavController : Fragment() {
         super.onCreate(savedInstanceState)
         Timber.i("in onCreate, setting setRetainInstance -> true")
         // Retain this fragment across configuration changes.
-        setRetainInstance(true);
+        setRetainInstance(true)
     }
 }
 
@@ -44,6 +45,15 @@ class FavoritesHostFragment : WithOwnNavController() {
     private lateinit var favoritesViewModel: FavoritesHostViewModel
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Timber.i("Fragment childFragmentManager: $childFragmentManager in $this")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,6 +101,8 @@ class FavoritesHostFragment : WithOwnNavController() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Timber.i("Fragment childFragmentManager: $childFragmentManager")
+
         SingletoneContextCounter.fragments--
         Timber.i("in onDestroyView: current fragment amount: ${SingletoneContextCounter.fragments}")
     }

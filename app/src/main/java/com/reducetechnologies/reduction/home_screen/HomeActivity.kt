@@ -48,8 +48,9 @@ class HomeActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         Timber.plant(Timber.DebugTree())
         setContentView(R.layout.activity_home)
-        Timber.v("Home Activity created")
+        Timber.v("Home Activity created: $this")
 
+        Timber.i("Activity supportFragmentManager: $supportFragmentManager")
         // initFragments должен обязательно быть только в onCreate - если выполнять его позже
         // по Lifecycle (в onStart) - будут спауниться лишние фрагменты и порождать дичайшие галюны
         initFragments()
