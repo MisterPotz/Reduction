@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.annotation.IdRes
 import androidx.core.view.get
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import androidx.navigation.NavController
 import timber.log.Timber
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -12,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFragment
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.EncyclopediaNavHost
-import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.EncyclopediaFragment
 import com.reducetechnologies.reduction.home_screen.ui.favorites.FavoritesHostFragment
 import com.reducetechnologies.reduction.home_screen.ui.favorites.WithOwnNavController
 import kotlinx.android.synthetic.main.activity_home.*
@@ -51,6 +49,7 @@ class HomeActivity : FragmentActivity() {
         Timber.plant(Timber.DebugTree())
         setContentView(R.layout.activity_home)
         Timber.v("Home Activity created")
+
         // initFragments должен обязательно быть только в onCreate - если выполнять его позже
         // по Lifecycle (в onStart) - будут спауниться лишние фрагменты и порождать дичайшие галюны
         initFragments()
@@ -101,25 +100,45 @@ class HomeActivity : FragmentActivity() {
             }
 
         init {
-            for (i in fragmentsList) {
-                when (i.type) {
-                    TabType.CALCULATION -> i.fragment = CalculationFragment()
-                    TabType.ENCYCLOPEDIA -> i.fragment =
-                        EncyclopediaNavHost()
-                    TabType.FAVORITES -> i.fragment = FavoritesHostFragment()
-                }
-            }
             onCreated()
         }
 
-        fun onCreated() {
-            bottomNavigationView.menu[1].isChecked = true
-            fragmentsList.forEachIndexed { index, fragment ->
-                if (index != active) {
-                    fm.beginTransaction().add(fragment).hide(fragment).commit()
+        fun pickFragment(fragmentWrapped: FragmentWrapped) {
+            when (fragmentWrapped.type) {
+                TabType.CALCULATION -> fragmentWrapped.fragment = CalculationFragment()
+                TabType.ENCYCLOPEDIA -> fragmentWrapped.fragment =
+                    EncyclopediaNavHost()
+                TabType.FAVORITES -> fragmentWrapped.fragment = FavoritesHostFragment()
+            }
+        }
+
+        /**
+         * Uses fragment manager to get saved instances of fragments if such exist.
+         * This can happen for example, when screen orientation is changed
+         */
+
+        fun pickUpFromSaved(fragment: FragmentWrapped) {
+            fm.findFragmentByTag(fragment.type.TAG).let {
+                if (it == null) {
+                    // не нашли у фрагмент менеджера каких-то ссылок на указанный фрагмент
+                    // создаем новый
+                    pickFragment(fragment)
+                    // Сохраняем фрагмент в fm
+                    fm.beginTransaction().add(fragment).commit()
                 } else {
-                    fm.beginTransaction().add(fragment).show(fragment).commit()
+                    fragment.fragment = it as WithOwnNavController
                 }
+            }
+        }
+
+        fun onCreated() {
+            // Выставляем нужную позицию выбранной
+            bottomNavigationView.menu[active].isChecked = true
+            bottomNavigationView.selectedItemId = active
+
+            // Filling fragment instances
+            fragmentsList.forEach {
+                pickUpFromSaved(it)
             }
             bottomNavigationView.setOnNavigationItemSelectedListener { item ->
                 active = fragmentsList.indexOfFirst {
@@ -128,7 +147,7 @@ class HomeActivity : FragmentActivity() {
                 showActive()
                 true
             }
-            bottomNavigationView.selectedItemId = active
+            showActive()
         }
 
         fun showActive() {
