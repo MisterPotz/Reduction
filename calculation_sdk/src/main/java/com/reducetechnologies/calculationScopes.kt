@@ -369,13 +369,13 @@ data class EDScope(
 
 //это класс для функции DOPN, здесь будут храниться все её инициализируемые переменные
 data class DOPNScope(
-    var SGHD: Int,
-    var wheelsSGHD: Array<Int>,
-    var SGHMD: Int,
-    var wheelsSGHMD: Array<Int>,
-    var wheelsSGFD: Array<Int>,
-    var wheelsSGFMD: Array<Int>,
-    var wheelsKFC: Array<Float>
+    var SGHD: Int = null,
+    var wheelsSGHD: Array<Int> = null,
+    var SGHMD: Int = null,
+    var wheelsSGHMD: Array<Int> = null,
+    var wheelsSGFD: Array<Int> = null,
+    var wheelsSGFMD: Array<Int> = null,
+    var wheelsKFC: Array<Float> = null
 
 
 )
