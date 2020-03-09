@@ -1,69 +1,62 @@
-package com.reducetechnologies.reduction.home_screen.ui.encyclopedia
+package com.reducetechnologies.reduction.home_screen.ui.favorites_experimental
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
+import com.reducetechnologies.reduction.home_screen.ui.favorites.FavoritesHostViewModel
 import com.reducetechnologies.reduction.home_screen.ui.favorites.WithOwnNavController
 import timber.log.Timber
 
-class EncyclopediaNavHost : WithOwnNavController() {
-    override fun getNavFragment(): NavHostFragment {
-        return navHostFragment!!
+class FavoritesExpNavHost : NavHostFragment(){
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Timber.i("Fragment onAttach childFragmentManager: $childFragmentManager in $this")
     }
 
-    override fun getNavController(): NavController {
-        return navController!!
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Timber.i("Fragment onCreate: $childFragmentManager in $this")
     }
-
-    private var navController: NavController? = null
-    private var navHostFragment: NavHostFragment? = null
-
-    companion object {
-        fun newInstance() = EncyclopediaNavHost()
-    }
-
-    private lateinit var viewModel: EncyclopediaNavHostViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //val root = inflater.inflate(R.layout.fragment_favorites_host, container, false)
+        val root = FrameLayout(context!!)
+        this.navController.setGraph(R.navigation.favorites_navigation)
+
         SingletoneContextCounter.fragments++
+        Timber.i("Fragment onCreateView: $childFragmentManager in $this")
         Timber.i("in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
-        val root = inflater.inflate(R.layout.fragment_encyclopedia_host, container, false)
-        // Нужно получить navHost
-        // Мб здесь просто нужно проверять, вдруг у нас уже есть navhostfragment. Инстанс то navhost'а у нас не пропадает
+        // setupCallbacks()
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (navHostFragment == null) {
-            navHostFragment =
-                childFragmentManager.findFragmentById(R.id.encyclopedia_nav_host_fragment) as NavHostFragment
-            navController = navHostFragment!!.navController
-        }
+//        if (navHostFragment == null) {
+//            navHostFragment =
+//                childFragmentManager.findFragmentById(R.id.favorites_nav_host_fragment) as NavHostFragment
+//            navController = navHostFragment!!.navController
+//        }
 
         /*childFragmentManager.setPrimaryNavigationFragment(navHostFragment)*/
-        childFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHostFragment)
-            .commit()
+//        childFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHostFragment)
+//            .commit()
 
-        Timber.i("Nav controller: ${navHostFragment!!.findNavController()}")
-    }
-
-    // Вообще, сеттить primarynavigationfragment - не оч идкя, потому что он в рамках активности создается всего один раз
-    // Лучше это делать где-нибудь, когда фокус возвращается данному фрагменту
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(EncyclopediaNavHostViewModel::class.java)
+        //Timber.i("Nav controller: ${navHostFragment!!.findNavController()}")
     }
 
     override fun onResume() {
@@ -78,6 +71,11 @@ class EncyclopediaNavHost : WithOwnNavController() {
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        //navHostFragment.setInitialSavedState()
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onPause() {
         super.onPause()
         Timber.i("in onPause: current fragment amount: ${SingletoneContextCounter.fragments}")
@@ -90,6 +88,8 @@ class EncyclopediaNavHost : WithOwnNavController() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Timber.i("Fragment childFragmentManager: $childFragmentManager")
+
         SingletoneContextCounter.fragments--
         Timber.i("in onDestroyView: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
@@ -98,4 +98,5 @@ class EncyclopediaNavHost : WithOwnNavController() {
         super.onDestroy()
         Timber.i("in onDestroy: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
+
 }

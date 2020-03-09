@@ -27,9 +27,8 @@ abstract class WithOwnNavController : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.i("in onCreate, setting setRetainInstance -> true")
+        Timber.i("in onCreate, setting setRetainInstance -> false")
         // Retain this fragment across configuration changes.
-        setRetainInstance(true)
     }
 }
 
@@ -41,16 +40,16 @@ class FavoritesHostFragment : WithOwnNavController() {
         Timber.i("FavoritesNavHost constructor constructor, debugInt: $debugInt")
     }
     override fun getNavFragment(): NavHostFragment {
-        return navHostFragment
+        return navHostFragment!!
     }
 
     override fun getNavController(): NavController {
-        return navController
+        return navController!!
     }
 
     private lateinit var favoritesViewModel: FavoritesHostViewModel
-    private lateinit var navController: NavController
-    private lateinit var navHostFragment: NavHostFragment
+    private var navController: NavController? = null
+    private var navHostFragment: NavHostFragment? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -72,7 +71,6 @@ class FavoritesHostFragment : WithOwnNavController() {
             ViewModelProvider(this).get(FavoritesHostViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_favorites_host, container, false)
 
-
         SingletoneContextCounter.fragments++
         Timber.i("Fragment onCreateView: $childFragmentManager in $this, debugInt: $debugInt")
         Timber.i("in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
@@ -82,15 +80,17 @@ class FavoritesHostFragment : WithOwnNavController() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navHostFragment =
-            childFragmentManager.findFragmentById(R.id.favorites_nav_host_fragment) as NavHostFragment
+        if (navHostFragment == null) {
+            navHostFragment =
+                childFragmentManager.findFragmentById(R.id.favorites_nav_host_fragment) as NavHostFragment
+            navController = navHostFragment!!.navController
+        }
 
         /*childFragmentManager.setPrimaryNavigationFragment(navHostFragment)*/
-        navController = navHostFragment.navController
         childFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHostFragment)
             .commit()
 
-        Timber.i("Nav controller: ${navHostFragment.findNavController()}")
+        Timber.i("Nav controller: ${navHostFragment!!.findNavController()}")
     }
 
     override fun onResume() {
@@ -103,6 +103,11 @@ class FavoritesHostFragment : WithOwnNavController() {
         super.onStart()
         Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        //navHostFragment.setInitialSavedState()
+        super.onSaveInstanceState(outState)
     }
 
     override fun onPause() {

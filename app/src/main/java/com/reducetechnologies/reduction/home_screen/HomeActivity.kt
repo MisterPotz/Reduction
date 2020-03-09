@@ -2,13 +2,12 @@ package com.reducetechnologies.reduction.home_screen
 
 import android.os.Bundle
 import androidx.annotation.IdRes
-import androidx.core.view.get
-import androidx.core.view.iterator
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import timber.log.Timber
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.fragment.NavHostFragment
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFragment
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.EncyclopediaNavHost
@@ -60,6 +59,7 @@ class HomeActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         restoredState = savedInstanceState != null
         Timber.plant(debugTree)
+
         setContentView(R.layout.activity_home)
         Timber.i("Home Activity created: $this")
         debugInt++
@@ -82,6 +82,9 @@ class HomeActivity : FragmentActivity() {
 
     override fun onResume() {
         bottomFragmentController.recheckOnResume()
+        if (Timber.treeCount() == 0) {
+            Timber.plant(debugTree)
+        }
         super.onResume()
     }
 
@@ -89,7 +92,7 @@ class HomeActivity : FragmentActivity() {
         super.onPause()
         Timber.i("Activity stopped, cutting down debug tree")
         // Uprooting the tree, so it doens't spawn multiplied messages across logs
-        Timber.uproot(debugTree)
+        Timber.uprootAll()
     }
 
     /*override fun onNavigateUp(): Boolean {
@@ -120,10 +123,11 @@ class HomeActivity : FragmentActivity() {
     ) {
         companion object {
             const val CURRENT_ACTIVE = "CURRENT_ACTIVE"
+            const val NAVIGATION_FRAGMENT_STATE = "NAVIGATION_FRAGMENT_STATE"
         }
 
         val fragmentsList: List<FragmentWrapped> = listOf<FragmentWrapped>(
-            FragmentWrapped(TabType.CALCULATION),
+            /*FragmentWrapped(TabType.CALCULATION),*/
             FragmentWrapped(TabType.ENCYCLOPEDIA),
             FragmentWrapped(TabType.FAVORITES)
         )
@@ -143,6 +147,10 @@ class HomeActivity : FragmentActivity() {
             onCreated()
         }
 
+        private fun navigationStateTag(int: Int) : String {
+            return NAVIGATION_FRAGMENT_STATE + int.toString()
+        }
+
         fun pickFragment(fragmentWrapped: FragmentWrapped) {
             when (fragmentWrapped.type) {
                 TabType.CALCULATION -> fragmentWrapped.fragment = CalculationFragment()
@@ -152,12 +160,26 @@ class HomeActivity : FragmentActivity() {
             }
         }
 
+        fun saveNavigationState(fragmentWrapped: FragmentWrapped, int: Int, bundle: Bundle) {
+            val savedState = fragmentWrapped.fragment!!.getNavController().saveState()
+            bundle.putBundle(navigationStateTag(int), savedState)
+        }
+
         fun onSaveInstanceState(bundle: Bundle) {
             bundle.putInt(BottomFragmentController.CURRENT_ACTIVE, active)
+            fragmentsList.forEachIndexed{ i, fragment ->
+                saveNavigationState(fragment, i, bundle)
+            }
         }
 
         fun onRestoreInstanceState(bundle: Bundle) {
             active = bundle.getInt(CURRENT_ACTIVE)
+            fragmentsList.forEachIndexed { index, fragmentWrapped ->
+                fragmentWrapped.fragment!!.getNavController().apply {
+                    val restored = bundle.getBundle(navigationStateTag(index))
+                    restoreState(restored)
+                }
+            }
         }
         /**
          * Uses fragment manager to get saved instances of fragments if such exist.
