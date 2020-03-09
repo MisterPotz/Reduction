@@ -1,5 +1,6 @@
 package com.reducetechnologies.reduction.home_screen.ui.favorites
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,10 +21,16 @@ import timber.log.Timber
  * cannot be at the current moment be officially registered via Android Components Framework.
  * So we use our custom implementation of navcontroller to deal with that case.
  */
-abstract class  WithOwnNavController : Fragment(){
-    abstract fun getNavController() : NavController
-    abstract fun getNavFragment() : NavHostFragment
+abstract class WithOwnNavController : Fragment() {
+    abstract fun getNavController(): NavController
+    abstract fun getNavFragment(): NavHostFragment
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Timber.i("in onCreate, setting setRetainInstance -> true")
+        // Retain this fragment across configuration changes.
+        setRetainInstance(true)
+    }
 }
 
 class FavoritesHostFragment : WithOwnNavController() {
@@ -39,6 +46,15 @@ class FavoritesHostFragment : WithOwnNavController() {
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Timber.i("Fragment childFragmentManager: $childFragmentManager in $this")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,15 +63,17 @@ class FavoritesHostFragment : WithOwnNavController() {
         favoritesViewModel =
             ViewModelProvider(this).get(FavoritesHostViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_favorites_host, container, false)
-        navHostFragment = childFragmentManager.findFragmentById(R.id.favorites_nav_host_fragment) as NavHostFragment
+        navHostFragment =
+            childFragmentManager.findFragmentById(R.id.favorites_nav_host_fragment) as NavHostFragment
 
         /*childFragmentManager.setPrimaryNavigationFragment(navHostFragment)*/
         navController = navHostFragment.navController
-        childFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHostFragment).commit()
+        childFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHostFragment)
+            .commit()
 
         SingletoneContextCounter.fragments++
         Timber.i("in onCrereateView: current fragment amount: ${SingletoneContextCounter.fragments}")
-       // setupCallbacks()
+        // setupCallbacks()
         return root
     }
 
@@ -83,6 +101,8 @@ class FavoritesHostFragment : WithOwnNavController() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Timber.i("Fragment childFragmentManager: $childFragmentManager")
+
         SingletoneContextCounter.fragments--
         Timber.i("in onDestroyView: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
