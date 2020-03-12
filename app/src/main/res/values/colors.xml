@@ -1,20 +1,60 @@
-<!--?xml version="1.0" encoding="UTF-8"?-->
-<resources>
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--    &lt;!&ndash; <color name="colorPrimary">#6578a5</color> &ndash;&gt;-->
+    <!--    <color name="colorPrimary">#008577</color>-->
+    <!--    <color name="colorPrimaryDark">#00574B</color>-->
+    <!--    &lt;!&ndash;    <color name="colorSecondary">#f7bc8b</color>&ndash;&gt;-->
+    <!--    <color name="colorSecondary">#7e53c5</color>-->
+
+    <!--    <color name="colorPrimaryLight">#95a7d7</color>-->
+
+
+    <!--    <color name="colorSecondaryLight">#ffeebb</color>-->
+    <!--    <color name="colorSecondaryDark">#c28c5d</color>-->
+
+    <!--    <color name="colorOnPrimary">#2B2B2B</color>-->
+    <!--    <color name="colorSecondaryText">#000000</color>-->
+
+    <!--    <color name="background">#EEEEEE</color>-->
+
+    <!--    <color name="colorAccent">#7e53c5</color>-->
+
     <!-- <color name="colorPrimary">#6578a5</color> -->
-    <color name="colorSecondary">#f7bc8b</color>
 
-    <color name="colorPrimaryLight">#95a7d7</color>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+<!--    <color name="colorPrimary">#1E88E5</color>-->
+<!--    <color name="colorPrimaryDark">#005cb2</color>-->
+<!--    &lt;!&ndash;    <color name="colorSecondary">#f7bc8b</color>&ndash;&gt;-->
+<!--    <color name="colorSecondary">#ff9c10</color>-->
 
-    <color name="colorSecondaryLight">#ffeebb</color>
-    <color name="colorSecondaryDark">#c28c5d</color>
+<!--    <color name="colorPrimaryLight">#6ab7ff</color>-->
 
-    <color name="colorOnPrimary">#2B2B2B</color>
-    <color name="colorSecondaryText">#000000</color>
+
+<!--    <color name="colorSecondaryLight">#ffcd4d</color>-->
+<!--    <color name="colorSecondaryDark">#c66d00</color>-->
+
+<!--    <color name="colorOnPrimary">#FFFFFF</color>-->
+<!--    <color name="colorSecondaryText">#000000</color>-->
+
+<!--    <color name="background">#EEEEEE</color>-->
+
+<!--    <color name="colorAccent">#ff9c10</color>-->
+<resources>
+    <color name="colorPrimary">#1976d2</color>
+    <color name="colorPrimaryDark">#004ba0</color>
+    <!--    <color name="colorSecondary">#f7bc8b</color>-->
+    <color name="colorSecondary">#ff520c</color>
+
+    <color name="colorPrimaryLight">#63a4ff</color>
+
+
+    <color name="colorSecondaryLight">#ff8641</color>
+    <color name="colorSecondaryDark">#c41200</color>
+
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSecondaryText">#232F34</color>
+    <color name="colorOnSecondary">#232F34</color>
 
     <color name="background">#EEEEEE</color>
 
-    <color name="colorAccent">#7e53c5</color>
-
+    <color name="colorAccent">@color/colorSecondary</color>
 </resources>
+

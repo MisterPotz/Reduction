@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/calculation_navigation"
+    app:startDestination="@id/calculationFragment">
+
+    <fragment
+        android:id="@+id/calculationFragment"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFragment"
+        android:label="CalculationFragment"
+        tool:layout="@layout/fragment_calculation"/>
+</navigation>

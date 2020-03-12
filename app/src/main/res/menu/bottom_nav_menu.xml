@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_calculation"
+        android:id="@+id/calculation_navigation"
         android:icon="@drawable/ic_calculation_black_24dp"
         android:title="@string/title_calculation" />
 
     <item
-        android:id="@+id/navigation_encyclopedia"
+        android:id="@+id/encyclopedia_global_navigation"
         android:icon="@drawable/ic_encyclopedia_black_24dp"
         android:title="@string/title_encyclopedia" />
 
     <item
-        android:id="@+id/navigation_favorites"
+        android:id="@+id/favorites_navigation"
         android:icon="@drawable/ic_favorites_black_24dp"
         android:title="@string/title_favorites" />
 
