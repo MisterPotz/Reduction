@@ -12,7 +12,8 @@
         app:title="Five"
         app:titleTextAppearance="@style/Headline5"
         android:theme="@style/ActionBar"
-        >
+        app:menu="@menu/encyclopedia_menu"
+    >
 
     </com.google.android.material.appbar.MaterialToolbar>
 

@@ -7,4 +7,5 @@
     <dimen name="material_top_margin">8dp</dimen>
 
     <dimen name="card_outer_margin">8dp</dimen>
+    <dimen name="mtrl_list_single_item">48dp</dimen>
 </resources>

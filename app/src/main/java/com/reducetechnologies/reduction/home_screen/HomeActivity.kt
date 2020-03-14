@@ -2,6 +2,7 @@ package com.reducetechnologies.reduction.home_screen
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -30,7 +31,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar!!)
 
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
@@ -64,6 +65,12 @@ class HomeActivity : AppCompatActivity() {
             setupActionBarWithNavController(navController)
         })
         currentNavController = controller
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Inflating menu
+//        menuInflater.inflate(R.menu.see,menu)
+        return true
     }
 
     override fun onSupportNavigateUp(): Boolean {

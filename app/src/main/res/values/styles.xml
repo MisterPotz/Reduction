@@ -20,6 +20,9 @@
 <!--        Необходимо для кастомного тулбара-->
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+
+        <item name="popupMenuStyle">@style/Widget.MaterialComponents.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
     </style>
 
     <style name="ActionBar" parent="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
@@ -72,8 +75,18 @@
         <item name="android:textColor">@color/colorOnSecondary</item>
     </style>
 
+    <style name="Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+
+    </style>
+
     <style name="Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
+
+    <style name="SpacedList" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
     </style>
 
 </resources>

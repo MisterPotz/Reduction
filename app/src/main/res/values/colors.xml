@@ -53,7 +53,6 @@
     <color name="colorSecondaryText">#232F34</color>
     <color name="colorOnSecondary">#232F34</color>
 
-
     <color name="background">#EEEEEE</color>
     <color name="editTextBackground">#A5A2A2</color>
     <color name="colorAccent">@color/colorSecondary</color>
