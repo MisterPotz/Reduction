@@ -45,16 +45,17 @@
 
     <color name="colorPrimaryLight">#63a4ff</color>
 
-
+    <color name="colorPrimaryText">#232F34</color>
     <color name="colorSecondaryLight">#ff8641</color>
     <color name="colorSecondaryDark">#c41200</color>
 
-    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnPrimary">#E9E9E9</color>
     <color name="colorSecondaryText">#232F34</color>
     <color name="colorOnSecondary">#232F34</color>
 
-    <color name="background">#EEEEEE</color>
 
+    <color name="background">#EEEEEE</color>
+    <color name="editTextBackground">#A5A2A2</color>
     <color name="colorAccent">@color/colorSecondary</color>
 </resources>
 

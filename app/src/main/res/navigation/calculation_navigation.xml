@@ -4,10 +4,9 @@
     xmlns:tool="http://schemas.android.com/tools"
     android:id="@+id/calculation_navigation"
     app:startDestination="@id/calculationFragment">
-
     <fragment
         android:id="@+id/calculationFragment"
         android:name="com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFragment"
-        android:label="CalculationFragment"
+        android:label="@string/title_calculation"
         tool:layout="@layout/fragment_calculation"/>
 </navigation>

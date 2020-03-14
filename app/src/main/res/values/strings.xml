@@ -4,4 +4,15 @@
     <string name="title_encyclopedia">Энциклопедия</string>
     <string name="title_calculation">Расчет</string>
     <string name="title_favorites">Закладки</string>
+
+    <!-- Flow control -->
+    <string name="control_prev">Назад</string>
+    <string name="control_next">Дальше</string>
+
+    <string name="calculation_process_description">Описание процесса расчета</string>
+
+    <string name="descr_new_calculation">Новый расчет</string>
+
+    <string name="descr_expand">Раскрыть</string>
+    <string name="descr_collapse">Скрыть</string>
 </resources>

@@ -11,7 +11,8 @@ class EncyclopediaViewModel : ViewModel() {
     }
 
     // Categories list that will be loaded from SQL data
-    protected val categoriesList : MutableLiveData<List<String>> = MutableLiveData(listOf("Category 1", "Category 2", "Category 3"))
+    protected val categoriesList : MutableLiveData<List<String>> =
+        MutableLiveData(listOf("Category 1", "Category 2", "Category 3"))
 
     fun categoriesListLD() : LiveData<List<String>> {
         return categoriesList

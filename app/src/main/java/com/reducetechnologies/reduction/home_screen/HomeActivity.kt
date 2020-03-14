@@ -1,7 +1,10 @@
 package com.reducetechnologies.reduction.home_screen
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import timber.log.Timber
 import androidx.lifecycle.LiveData
@@ -11,6 +14,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.setupWithNavController
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.apptoolbar.*
 
 object SingletoneContextCounter {
     var fragments: Int = 0
@@ -26,6 +30,8 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        setSupportActionBar(toolbar)
+
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState

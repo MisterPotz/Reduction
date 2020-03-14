@@ -5,9 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.reduction.R
-import kotlinx.android.synthetic.main.card_opened.view.*
-
-interface ListView
+import kotlinx.android.synthetic.main.closed_card_item.view.*
 
 class CategoriesAdapter() : RecyclerView.Adapter<CategoriesAdapter.CategoryHolder>() {
     var list: List<String>? = null
@@ -28,7 +26,7 @@ class CategoriesAdapter() : RecyclerView.Adapter<CategoriesAdapter.CategoryHolde
 
     override fun onBindViewHolder(holder: CategoryHolder, position: Int) {
         holder.itemView.apply {
-            title.text = list!![position]
+            itemName.text = list!![position]
         }
     }
 
