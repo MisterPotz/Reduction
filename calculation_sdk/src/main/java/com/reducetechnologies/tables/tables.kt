@@ -21,3 +21,7 @@ val MAEDS: Map<Float, Array<Float>> = mapOf(0.75f to arrayOf(15.1f, 15.1f, 17.4f
 
 val SGTT: Map<Float, Array<Int>> = mapOf(24.8f to arrayOf(590, 590), 28.5f to arrayOf(700, 700),
     49f to arrayOf(780, 780), 59f to arrayOf(800, 780) )
+
+val RA40: Array<Float> = arrayOf(1.00f, 1.05f, 1.1f)//дописать его полностью в SQL потом
+
+val mStand: Array<Float> = arrayOf(0.05f, 0.06f, 0.08f, 0.1f)//дописать его полностью в SQL потом
