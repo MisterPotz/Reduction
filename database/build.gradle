@@ -28,9 +28,13 @@ dependencies {
     implementation libraries.kotlinCoroutines
     testImplementation libraries.kotlinCoroutines
 
+    implementation libraries.gson
+    testImplementation libraries.gson
+
     implementation libraries.timberLogger
     testImplementation libraries.timberLogger
 
+    testImplementation libraries.junit
 }
 
 sourceCompatibility = "7"

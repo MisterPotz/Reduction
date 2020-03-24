@@ -10,11 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper
  */
 class UserDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
-    private val SQL_CREATE_ENTRIES  = "CREATE TABLE ${TABLE_NAME} (" +
-            "${_ID} INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE," +
-            "${COLUMN_NAME_TITLE} TEXT NOT NULL," +
-            "${COLUMN_NAME_ABOUT} TEXT, " +
-            "${COLUMN_NAME_ADDITIONAL} BLOB)"
+    private val SQL_CREATE_ENTRIES  = CommonItemContract.createTableWithContract(TABLE_NAME)
 
     private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${TABLE_NAME}"
 
@@ -23,9 +19,7 @@ class UserDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATAB
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        // TODO must create database
         db?.execSQL(SQL_CREATE_ENTRIES)
-        // Nothing to do
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -37,10 +31,5 @@ class UserDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATAB
         const val DATABASE_VERSION = 1
 
         const val TABLE_NAME = "FavoritesItems"
-
-        const val COLUMN_NAME_TITLE = "TITLE"
-        const val COLUMN_NAME_ABOUT = "ABOUT"
-        const val COLUMN_NAME_ADDITIONAL = "ADDITIONAL"
-        const val _ID = "_ID"
     }
 }

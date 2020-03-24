@@ -39,7 +39,6 @@ class HomeActivity : AppCompatActivity() {
         } // Else, need to wait for onRestoreInstanceState
 
         val helper = ConstantDatabaseHelper(this)
-        helper.readableDatabase
 
     }
 

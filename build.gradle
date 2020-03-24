@@ -77,7 +77,9 @@ ext.libraries = [
         "kotlinCoroutines"  : "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3",
 
         // Testing framework
-        "junit"             : "org.junit.jupiter:junit-jupiter:5.6.0"
+        "junit"             : "org.junit.jupiter:junit-jupiter:5.6.0",
 
+        // Необходимо для парсинга диких табличек, которые хранятся в джисонах
+        "gson"              : 'com.google.code.gson:gson:2.8.6'
 ]
 
