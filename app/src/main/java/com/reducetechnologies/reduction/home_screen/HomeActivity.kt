@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.setupWithNavController
+import com.reduction_technologies.database.ConstantDatabaseHelper
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.apptoolbar.*
 
@@ -36,6 +37,10 @@ class HomeActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState
+
+        val helper = ConstantDatabaseHelper(this)
+        helper.readableDatabase
+
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
