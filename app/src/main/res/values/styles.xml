@@ -1,45 +1,49 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorOnSecondary</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="colorPrimaryVariant">@color/colorSecondaryText</item>
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryLight</item>
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSecondaryVariant">@color/colorSecondaryLight</item>
-        <item name="colorOnSecondary">@color/colorOnPrimary</item>
         <item name="colorError">#F74A3C</item>
-        <item name="colorOnError">#FFFFFF</item>
-        <item name="colorSurface">@color/colorPrimaryLight</item>
-        <item name="colorOnSurface">#212121</item>
-        <item name="android:colorBackground">@color/background</item>
-        <item name="colorOnBackground">#212121</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar" parent="AppTheme">
-        <item name="windowActionBar">false</item>
+        <item name="colorOnPrimarySurface">@color/colorOnPrimary</item>
+        <item name="colorOnBackground">@color/colorOnSecondary</item>
+        <item name="editTextBackground">@color/editTextBackground</item>
+        <item name="colorOnSurface">@color/colorSecondaryText</item>
+        <item name="android:textColorPrimary">@color/colorSecondaryText</item>
+        <item name="colorOnSecondary">@color/colorOnPrimary</item>
+<!--        Необходимо для кастомного тулбара-->
         <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+        <item name="popupMenuStyle">@style/Widget.MaterialComponents.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
     </style>
 
-    <!-- Default app theme. Change it only via changing the parent -->
-    <style name="AppThemeDefault" parent="AppTheme">
+    <style name="ActionBar" parent="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="titleTextAppearance">@style/TextAppearance.MaterialComponents.Headline1</item>
+    </style>
+
+    <style name="FloatingActionButtonText" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
     </style>
 
     <!--Default BottomNavigationView style -->
-    <style name="BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
-<!--        <item name="android:background">@color/colorPrimary</item>-->
-<!--        <item name="itemIconTint">@color/bottom_menu_item_color</item>-->
-<!--        <item name="itemTextColor">@color/bottom_menu_item_color</item>-->
+    <style name="BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
     </style>
 
     <style name="ButtonDefault" parent="Widget.MaterialComponents.Button">
-
     </style>
 
-    <style name="TextViewDefault" parent="TextAppearance.MaterialComponents.Body1">
-<!--        <item name="android:colorAccent">@color/colorPrimaryText</item>-->
+    <style name="ButtonOutlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+<!--        <item name="android:textColor">@color/colorOnSecondary</item>-->
+    </style>
+
+    <style name="TextViewDefault" parent="TextAppearance.MaterialComponents.Subtitle2">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">8dp</item>
@@ -47,5 +51,42 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:textAlignment">center</item>
         <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorOnSecondary</item>
+        <item name="android:textColorPrimary">@color/colorSecondaryText</item>
     </style>
+
+    <style name="Headline4" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
+
+    <style name="Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
+
+    <style name="Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
+    
+    <style name="Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
+
+    <style name="Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
+
+    <style name="Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+
+    </style>
+
+    <style name="Caption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
+
+    <style name="SpacedList" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+
 </resources>

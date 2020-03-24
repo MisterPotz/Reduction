@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/card_outer_margin"
+    android:layout_marginTop="@dimen/card_outer_margin"
+    android:layout_marginRight="@dimen/card_outer_margin"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="50dp"
+    app:cardElevation="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/material_horizontal_margin"
+        android:paddingEnd="@dimen/material_horizontal_margin"
+        android:layout_gravity="center"
+        >
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/itemName"
+            style="@style/Subtitle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Этап первый"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/expand"
+            android:src="@drawable/ic_expand_more_black_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/descr_expand"
+            android:tint="@color/colorPrimaryText"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/collapse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_collapse_black_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            android:contentDescription="@string/descr_collapse"
+            android:tint="@color/colorPrimaryText"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/containerCalculationStageItem"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/itemName"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

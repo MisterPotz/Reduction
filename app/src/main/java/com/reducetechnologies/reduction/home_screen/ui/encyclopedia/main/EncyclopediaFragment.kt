@@ -1,26 +1,27 @@
 package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
-import com.reducetechnologies.reduction.home_screen.ui.favorites.WithOwnNavController
-import kotlinx.android.synthetic.main.fragment_encyclopedia_main.*
 import timber.log.Timber
 
 class EncyclopediaFragment : Fragment() {
     private lateinit var encyclopediaViewModel: EncyclopediaViewModel
     private lateinit var categoriesAdapter: CategoriesAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,8 +58,26 @@ class EncyclopediaFragment : Fragment() {
             adapter = categoriesAdapter
             layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
         }
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.encyclopedia_menu,menu)
+        // menu.add(NONE, R.id.select_favorites, NONE, "Выбрать элементы")
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                findNavController()
+                    .navigate(R.id.action_navigation_encyclopedia_to_settingsFragment)
+                true
+            }
+            else -> false
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
     }
 
     override fun onPause() {
