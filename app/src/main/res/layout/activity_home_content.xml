@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".home_screen.HomeActivity"
     tools:showIn="@layout/activity_home"
-    tools:layout="@layout/fragment_encyclopedia_host"
+    tools:layout="@layout/fragment_calculation"
     android:padding="1dp"
     android:id="@+id/main_container">
 
