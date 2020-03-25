@@ -11,12 +11,13 @@ interface DomainDefinable<in T : Comparable<T>> {
  */
 abstract class DomainDefinableFloat :
     DomainDefinable<Float>
+
 // TODO create domain tests
 /**
  * Shouldn't be used as common in our datatables. Instead,
  * @see TwoSidedDomain
  */
-class OneSidedDomain(val conditionSign: String, val num: Float) : DomainDefinableFloat() {
+data class OneSidedDomain(val conditionSign: String, val num: Float) : DomainDefinableFloat() {
     override fun isInDomain(num: Float): Boolean {
         if (conditionSign == "<") {
             num < this.num
@@ -30,14 +31,22 @@ class OneSidedDomain(val conditionSign: String, val num: Float) : DomainDefinabl
             else -> throw IllegalStateException("condition sign ${conditionSign} is not supported")
         }
     }
+
+    override fun toString(): String {
+        return "$conditionSign $num"
+    }
 }
 
 /**
  * Common domain class for data tables and calculations.
  */
-class TwoSidedDomain(val leftSide: OneSidedDomain, val rightSide: OneSidedDomain) :
+data class TwoSidedDomain(val leftSide: OneSidedDomain, val rightSide: OneSidedDomain) :
     DomainDefinableFloat() {
     override fun isInDomain(num: Float): Boolean {
         return leftSide.isInDomain(num) && rightSide.isInDomain(num)
+    }
+
+    override fun toString(): String {
+        return "left: $leftSide right: $rightSide"
     }
 }
