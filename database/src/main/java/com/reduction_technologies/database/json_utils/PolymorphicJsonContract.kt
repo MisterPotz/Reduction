@@ -11,20 +11,21 @@ abstract class PolymorphicParent {
      */
     var type: String = "null"
 
-    abstract class Contract<T>{
+    abstract class Contract<T> {
         /**
          * In contracts Type enum must present - it is used
          * as key in typeRegistry
          */
         enum class Type(val string: String)
 
-        val fieldName : String = "type"
+        val fieldName: String = "type"
         abstract val typeRegistry: Map<String, Class<out T>>
+        abstract val abstractClass: Class<T>
     }
 }
 
-abstract class PolymorphicDeserializer<T>(
-    val contract : PolymorphicParent.Contract<T>,
+class PolymorphicDeserializer<T>(
+    val contract: PolymorphicParent.Contract<T>,
     val gson: Gson
 ) :
     JsonDeserializer<T> {
@@ -42,8 +43,8 @@ abstract class PolymorphicDeserializer<T>(
     }
 }
 
-abstract class PolymorphicSerializer<T : PolymorphicParent>(
-    val contract : PolymorphicParent.Contract<T>,
+class PolymorphicSerializer<T : PolymorphicParent>(
+    val contract: PolymorphicParent.Contract<T>,
     val gson: Gson
 ) : JsonSerializer<T> {
 
@@ -54,5 +55,25 @@ abstract class PolymorphicSerializer<T : PolymorphicParent>(
     ): JsonElement {
         val type = contract.typeRegistry[src!!.type]
         return gson.toJsonTree(src, type)
+    }
+}
+
+abstract class PolymorphicGsonManager<T : PolymorphicParent>(
+    val contract: PolymorphicParent.Contract<T>
+) {
+    private val des: PolymorphicDeserializer<T> = PolymorphicDeserializer(contract, plainGson)
+    private val ser: PolymorphicSerializer<T> = PolymorphicSerializer(contract, plainGson)
+
+    val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(contract.abstractClass, ser)
+        .registerTypeAdapter(contract.abstractClass, des)
+        .create()
+
+    companion object {
+        /**
+         * For reusability of gson
+         * Question - is companion different for different T's?
+         */
+        protected val plainGson = GsonBuilder().create()
     }
 }

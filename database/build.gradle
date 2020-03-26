@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 
 android {
@@ -35,6 +36,14 @@ dependencies {
     testImplementation libraries.timberLogger
 
     testImplementation libraries.junit
+
+    implementation libraries.dagger
+    testImplementation libraries.dagger
+
+    annotationProcessor libraries.daggerProcessor
+
+    kapt libraries.kotlinDaggerAnnot
+    kapt libraries.kotlinDaggerCompiler
 }
 
 sourceCompatibility = "7"

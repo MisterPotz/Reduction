@@ -6,6 +6,9 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: "androidx.navigation.safeargs"
 
+apply plugin: 'kotlin-kapt'
+
+
 
 android {
     compileSdkVersion compileApi
@@ -60,4 +63,12 @@ dependencies {
     testImplementation libraries.kotlinCoroutines
 
     implementation project(':database')
+
+    implementation libraries.dagger
+    testImplementation libraries.dagger
+
+    annotationProcessor libraries.daggerProcessor
+
+    kapt libraries.kotlinDaggerAnnot
+    kapt libraries.kotlinDaggerCompiler
 }

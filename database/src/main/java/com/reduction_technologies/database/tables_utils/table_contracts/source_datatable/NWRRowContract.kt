@@ -1,9 +1,7 @@
 package com.reduction_technologies.database.tables_utils.table_contracts.source_datatable
 
-import com.google.gson.*
-import com.reduction_technologies.database.json_utils.PolymorphicDeserializer
+import com.reduction_technologies.database.json_utils.PolymorphicGsonManager
 import com.reduction_technologies.database.json_utils.PolymorphicParent
-import com.reduction_technologies.database.json_utils.PolymorphicSerializer
 
 abstract class ChevroneDependent : PolymorphicParent() {
     init {
@@ -16,6 +14,7 @@ abstract class ChevroneDependent : PolymorphicParent() {
 
     companion object
         : PolymorphicParent.Contract<ChevroneDependent>() {
+        override val abstractClass: Class<ChevroneDependent> = ChevroneDependent::class.java
         enum class Type(val string: String) {
             DEPENDENT("dep"),
             INDEPENDENT("!dep"),
@@ -64,15 +63,17 @@ data class NWRDependent(val def: Int, val ifChev: Int) : ChevroneDependent() {
 data class NWRRow(val list: List<ChevroneDependent>)
 
 
-internal class NWRRowDeserializer(gson: Gson) : PolymorphicDeserializer<ChevroneDependent>(
-    contract = ChevroneDependent,
-    gson = gson
+//internal class NWRRowDeserializer(gson: Gson) : PolymorphicDeserializer<ChevroneDependent>(
+//    contract = ChevroneDependent,
+//    gson = gson
+//)
+//
+//internal class NWRRowSerializer(gson: Gson) :
+//    PolymorphicSerializer<ChevroneDependent>(
+//        contract = ChevroneDependent,
+//        gson = gson
+//    )
+internal class NWRRowGsonManager : PolymorphicGsonManager<ChevroneDependent>(
+    contract = ChevroneDependent
 )
-
-internal class NWRRowSerializer(gson: Gson) :
-    PolymorphicSerializer<ChevroneDependent>(
-        contract = ChevroneDependent,
-        gson = gson
-    )
-
 

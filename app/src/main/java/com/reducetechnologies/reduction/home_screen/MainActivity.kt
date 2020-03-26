@@ -1,11 +1,8 @@
 package com.reducetechnologies.reduction.home_screen
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import timber.log.Timber
 import androidx.lifecycle.LiveData
@@ -15,7 +12,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.setupWithNavController
 import com.reduction_technologies.database.ConstantDatabaseHelper
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.apptoolbar.*
 
 object SingletoneContextCounter {
@@ -25,7 +21,7 @@ object SingletoneContextCounter {
 /**
  * Нужно что-то, чтобы хранило фрагменты и обеспечивало с ними безопасную работу.
  */
-class HomeActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     val debugTree = Timber.DebugTree()
     private var currentNavController: LiveData<NavController>? = null
 

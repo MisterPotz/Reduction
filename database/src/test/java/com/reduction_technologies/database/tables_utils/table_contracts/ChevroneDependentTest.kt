@@ -10,15 +10,8 @@ internal class NWRRowTest {
     fun polymorphicSerializationTest() {
         val row = NWRRow(listOf(NWRSimple(1), NWRDependent(3, 4)))
         //val type = object : TypeToken<NWRRow>(){}.type
-        val prim = GsonBuilder().create()
-        val deserializer = NWRRowDeserializer(prim)
-
-        val serializer = NWRRowSerializer(prim)
-
-        val gson = GsonBuilder()
-            .registerTypeAdapter(ChevroneDependent::class.java, serializer)
-            .registerTypeAdapter(ChevroneDependent::class.java, deserializer)
-            .create()
+        val manager = NWRRowGsonManager()
+        val gson = manager.gson
 
         val json = gson.toJson(row)
         val recreatedRow = gson.fromJson<NWRRow>(json, NWRRow::class.java)
