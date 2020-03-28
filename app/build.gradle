@@ -53,8 +53,6 @@ android {
 
 
 dependencies {
-
-
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation libraries.kotlinStd
     implementation libraries.appCompat
@@ -92,6 +90,10 @@ dependencies {
     testImplementation libraries.dagger
 
     annotationProcessor libraries.daggerProcessor
+
+    implementation libraries.gson
+    testImplementation libraries.gson
+    androidTestImplementation libraries.gson
 
     kapt libraries.kotlinDaggerAnnot
     kapt libraries.kotlinDaggerCompiler

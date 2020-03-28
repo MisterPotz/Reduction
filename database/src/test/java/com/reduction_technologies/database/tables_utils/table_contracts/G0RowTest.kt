@@ -1,7 +1,6 @@
 package com.reduction_technologies.database.tables_utils.table_contracts
 
 import com.google.gson.GsonBuilder
-import com.reduction_technologies.database.json_utils.RuntimeTypeAdapterFactory
 import com.reduction_technologies.database.tables_utils.OneSidedDomain
 import com.reduction_technologies.database.tables_utils.TwoSidedDomain
 import org.junit.jupiter.api.Assertions.*

@@ -1,4 +1,4 @@
-package com.reduction_technologies.database
+package com.reduction_technologies.database.helpers
 
 import android.content.Context
 import javax.inject.Inject
@@ -17,4 +17,5 @@ class Repository @Inject constructor(val context: Context,
                                      /**
                                       * Injectible for the sake of testing and reusability
                                       */
-                                     val userDatabaseHelper: UserDatabaseHelper)
+                                     val userDatabaseHelper: UserDatabaseHelper
+)

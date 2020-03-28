@@ -1,9 +1,11 @@
-package com.reduction_technologies.database
+package com.reduction_technologies.database.helpers
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.reduction_technologies.database.databases_utils.DatabaseConstantsContract
+import com.reduction_technologies.database.databases_utils.DatabaseType
 import java.io.File
 import java.io.FileOutputStream
 
@@ -75,8 +77,10 @@ class ConstantDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, d
         // Nothing to do
     }
 
-    companion object : DatabaseConstantsContract{
-        override val database: DatabaseType = DatabaseType.Constant
+    companion object :
+        DatabaseConstantsContract {
+        override val database: DatabaseType =
+            DatabaseType.Constant
         // ------
         const val ASSETS_PATH = "databases"
         const val PREFERENCES_VERSION = "const_database_versions"

@@ -1,4 +1,4 @@
-package com.reduction_technologies.database
+package com.reduction_technologies.database.databases_utils
 
 /**
  *  Is used for storing different instances to database / table registry
@@ -75,7 +75,8 @@ interface ColumnContract {
     fun castString() : String = item
 }
 
-enum class Columns(override val item: String) : ColumnContract {
+enum class Columns(override val item: String) :
+    ColumnContract {
     ID("_ID"),
     TITLE("TITLE"),
     ABOUT("ABOUT"),
@@ -88,7 +89,8 @@ interface TagContract {
     fun castString() : String = item
 }
 
-enum class Tags(override val item: String) : TagContract {
+enum class Tags(override val item: String) :
+    TagContract {
     TABLE("table"),
     VARIABLE("variable"),
     TERMIN("termin"),

@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.setupWithNavController
-import com.reduction_technologies.database.ConstantDatabaseHelper
+import com.reduction_technologies.database.helpers.ConstantDatabaseHelper
 import kotlinx.android.synthetic.main.apptoolbar.*
 
 object SingletoneContextCounter {

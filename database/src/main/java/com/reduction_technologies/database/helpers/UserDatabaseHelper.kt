@@ -1,8 +1,12 @@
-package com.reduction_technologies.database
+package com.reduction_technologies.database.helpers
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.reduction_technologies.database.databases_utils.CommonItem
+import com.reduction_technologies.database.databases_utils.DatabaseConstantsContract
+import com.reduction_technologies.database.databases_utils.DatabaseType
+import com.reduction_technologies.database.databases_utils.UserTables
 
 /**
  * DataBase helper for data set with user-defined data. Only user frequent changing data can be stored here.
@@ -12,7 +16,8 @@ class UserDatabaseHelper(val context: Context) :
     SQLiteOpenHelper(context, database.title, null, database.version) {
     // TODO Надо как-то элегантнее сделать либо соответствие датабейза таблице либо организацию
     // работы с запросом таблиц посредством хелпера
-    private val SQL_CREATE_ENTRIES = CommonItem.createTableWithContract(database.tables[UserTables.Favorites]!!.name)
+    private val SQL_CREATE_ENTRIES =
+        CommonItem.createTableWithContract(database.tables[UserTables.Favorites]!!.name)
 
     private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${database.tables[UserTables.Favorites]}"
 
@@ -28,7 +33,9 @@ class UserDatabaseHelper(val context: Context) :
         // Nothing to do
     }
 
-    companion object : DatabaseConstantsContract {
-        override val database: DatabaseType = DatabaseType.User
+    companion object :
+        DatabaseConstantsContract {
+        override val database: DatabaseType =
+            DatabaseType.User
     }
 }
