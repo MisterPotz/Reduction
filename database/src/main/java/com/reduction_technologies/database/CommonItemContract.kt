@@ -2,7 +2,7 @@ package com.reduction_technologies.database
 
 import android.content.ContentValues
 
-class CommonItemContract {
+class CommonItem{
 
     lateinit var title: String
     lateinit var tag: String
@@ -25,8 +25,10 @@ class CommonItemContract {
         const val COLUMN_NAME_ADDITIONAL = "ADDITIONAL"
         const val _ID = "_ID"
 
-        fun instance(contentValues: ContentValues): CommonItemContract {
-            return CommonItemContract().apply {
+        // TODO make different helpers, that will adapt commonitem to the necessary
+        //  condition (e.g. wrap CommonItem so a table element can be obtained)
+        fun instance(contentValues: ContentValues): CommonItem {
+            return CommonItem().apply {
                 title = contentValues.getAsString(COLUMN_NAME_TITLE)
                 tag = contentValues.getAsString(COLUMN_NAME_TAG)
                 about = contentValues.getAsString(COLUMN_NAME_ABOUT)

@@ -36,9 +36,11 @@ dependencies {
     testImplementation libraries.timberLogger
 
     testImplementation libraries.junit
+    androidTestImplementation libraries.junit
 
     implementation libraries.dagger
     testImplementation libraries.dagger
+    androidTestImplementation libraries.dagger
 
     annotationProcessor libraries.daggerProcessor
 

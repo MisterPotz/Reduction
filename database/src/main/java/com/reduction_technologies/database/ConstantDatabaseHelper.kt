@@ -13,29 +13,29 @@ import java.io.FileOutputStream
  * The main purpose of this helper class is to put an asset database into the
  * Android given place for storing databases.
  */
-class ConstantDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-
+class ConstantDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, database.title, null, database.version) {
+// TODO make an additional interface between output of this class and sqlite. this must return a list of commonitems
     private val preferences: SharedPreferences = context.getSharedPreferences(
         "${context.packageName}.$PREFERENCES_VERSION",
         Context.MODE_PRIVATE
     )
 
     private fun installedDatabaseIsOutdated(): Boolean {
-        return preferences.getInt(DATABASE_NAME, 0) < DATABASE_VERSION
+        return preferences.getInt(database.title, 0) < database.version
     }
 
     private fun writeDatabaseVersionInPreferences() {
         preferences.edit().apply {
-            putInt(DATABASE_NAME, DATABASE_VERSION)
+            putInt(database.title, database.version)
             apply()
         }
     }
 
     private fun installDatabaseFromAssets() {
-        val inputStream = context.assets.open("$ASSETS_PATH/$DATABASE_NAME.db")
+        val inputStream = context.assets.open("$ASSETS_PATH/${database.title}.db")
 
         try {
-            val outputFile = File(context.getDatabasePath(DATABASE_NAME).path)
+            val outputFile = File(context.getDatabasePath(database.title).path)
             val outputStream = FileOutputStream(outputFile)
 
             inputStream.copyTo(outputStream)
@@ -44,21 +44,22 @@ class ConstantDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, D
             outputStream.flush()
             outputStream.close()
         } catch (exception: Throwable) {
-            throw RuntimeException("The $DATABASE_NAME database couldn't be installed.", exception)
+            throw RuntimeException("The ${database.title} database couldn't be installed.", exception)
         }
     }
 
     @Synchronized
     private fun installOrUpdateIfNecessary() {
         if (installedDatabaseIsOutdated()) {
-            context.deleteDatabase(DATABASE_NAME)
+            context.deleteDatabase(database.title)
             installDatabaseFromAssets()
             writeDatabaseVersionInPreferences()
         }
     }
 
     override fun getWritableDatabase(): SQLiteDatabase {
-        throw RuntimeException("The $DATABASE_NAME database is not writable.")
+
+        throw RuntimeException("The ${database.title} database is not writable.")
     }
 
     override fun getReadableDatabase(): SQLiteDatabase {
@@ -74,9 +75,9 @@ class ConstantDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, D
         // Nothing to do
     }
 
-    companion object {
-        const val DATABASE_NAME = "mainDatabase"
-        const val DATABASE_VERSION = 1
+    companion object : DatabaseConstantsContract{
+        override val database: DatabaseType = DatabaseType.Constant
+        // ------
         const val ASSETS_PATH = "databases"
         const val PREFERENCES_VERSION = "const_database_versions"
     }
