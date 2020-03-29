@@ -63,6 +63,9 @@ data class TableContract(
     val columns: List<ColumnContract>,
     val tags: List<Tags>
 )
+fun List<ColumnContract>.toTypedArray() : Array<String>{
+    return map { it.castString() }.toTypedArray()
+}
 
 interface DatabaseTable
 

@@ -57,6 +57,9 @@ class RepositoryTest {
 
         val table = DatabaseType.Constant.tables[ConstTables.EncyclopediaItems]!!
 
+        // TODO Сделать оболочки для хелперов (можно в самом репозитории, чтобы сделать работу с
+        // курсором не непосредственной. Например, чтобы курсор отдавал оболочечный курсор.
+        // Но тогда можно мокать репозиторию.
         val columns = table.columns.map {it.castString()}.toTypedArray()
 
         val cursor = database.query(

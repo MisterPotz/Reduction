@@ -8,6 +8,14 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion compileApi
     buildToolsVersion rBuildToolsVersion
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         minSdkVersion minApi
         targetSdkVersion targetApi
@@ -65,6 +73,8 @@ dependencies {
     testImplementation libraries.dagger
     androidTestImplementation libraries.dagger
 
+    testImplementation libraries.mockk
+
     annotationProcessor libraries.daggerProcessor
 
     kapt libraries.kotlinDaggerAnnot
@@ -78,6 +88,3 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:' + rootProject.espressoVersion
     androidTestUtil 'androidx.test:orchestrator:' + rootProject.orchestrator
 }
-
-sourceCompatibility = "7"
-targetCompatibility = "7"
