@@ -1,0 +1,52 @@
+{
+    "rows": [
+        {
+            "kFE": {
+                "hard": 1,
+                "improv": 1
+            },
+            "kHE": 1,
+            "load": 0
+        },
+        {
+            "kFE": {
+                "hard": 0.2,
+                "improv": 0.3
+            },
+            "kHE": 0.5,
+            "load": 1
+        },
+        {
+            "kFE": {
+                "hard": 0.1,
+                "improv": 0.14
+            },
+            "kHE": 0.25,
+            "load": 2
+        },
+        {
+            "kFE": {
+                "hard": 0.04,
+                "improv": 0.06
+            },
+            "kHE": 0.18,
+            "load": 3
+        },
+        {
+            "kFE": {
+                "hard": 0.016,
+                "improv": 0.038
+            },
+            "kHE": 0.125,
+            "load": 4
+        },
+        {
+            "kFE": {
+                "hard": 0.004,
+                "improv": 0.013
+            },
+            "kHE": 0.063,
+            "load": 5
+        }
+    ]
+}

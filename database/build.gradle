@@ -1,11 +1,7 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
-apply plugin: "androidx.navigation.safeargs"
-
 apply plugin: 'kotlin-kapt'
 
 
@@ -16,14 +12,11 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
     defaultConfig {
-        applicationId "com.reducetechnologies.reduction"
         minSdkVersion minApi
         targetSdkVersion targetApi
         versionCode 1
@@ -69,26 +62,34 @@ android {
 }
 
 
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation libraries.kotlinStd
-    implementation libraries.appCompat
-    implementation libraries.navigationFragment
-    implementation libraries.materialDesign
 
-    implementation libraries.androidXCore
-    implementation libraries.constraintLayout
-    implementation libraries.navigationUI
-    implementation libraries.lifecycle
+    implementation libraries.kotlinCoroutines
+    testImplementation libraries.kotlinCoroutines
 
-    implementation libraries.legacy
+    implementation libraries.gson
+    testImplementation libraries.gson
 
-    testImplementation libraries.junit
-    androidTestImplementation libraries.junit
-
-    implementation project(":calculation_sdk")
     implementation libraries.timberLogger
     testImplementation libraries.timberLogger
+
+    implementation libraries.junit
+    testImplementation libraries.junit
+    testRuntimeOnly libraries.junitRuntime
+    androidTestImplementation libraries.junit
+
+    implementation libraries.dagger
+    testImplementation libraries.dagger
+    androidTestImplementation libraries.dagger
+
+    testImplementation libraries.mockk
+
+    annotationProcessor libraries.daggerProcessor
+
+    kapt libraries.kotlinDaggerAnnot
+    kapt libraries.kotlinDaggerCompiler
 
     androidTestImplementation 'androidx.test:core:' + rootProject.coreVersion
     androidTestImplementation 'androidx.test:core-ktx:' + rootProject.coreVersion
@@ -97,21 +98,4 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:' + rootProject.runnerVersion
     androidTestImplementation 'androidx.test.espresso:espresso-core:' + rootProject.espressoVersion
     androidTestUtil 'androidx.test:orchestrator:' + rootProject.orchestrator
-
-    implementation libraries.kotlinCoroutines
-    testImplementation libraries.kotlinCoroutines
-
-    implementation project(':database')
-
-    implementation libraries.dagger
-    testImplementation libraries.dagger
-
-    annotationProcessor libraries.daggerProcessor
-
-    implementation libraries.gson
-    testImplementation libraries.gson
-    androidTestImplementation libraries.gson
-
-    kapt libraries.kotlinDaggerAnnot
-    kapt libraries.kotlinDaggerCompiler
 }
