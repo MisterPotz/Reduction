@@ -1,5 +1,7 @@
 package com.reduction_technologies.database.tables_utils.table_contracts.source_datatable
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.reduction_technologies.database.json_utils.*
 
 // ---------------------------------
@@ -52,7 +54,14 @@ data class SignDependent(val def: Int, val ifInn: Int) : GearTypeDependent() {
     }
 }
 
-data class SignRow(val list: List<GearTypeDependent>)
+data class SignRow(val list: List<GearTypeDependent>) {
+    companion object : GsonRegister {
+        override fun prepareGson(): Gson {
+            return GsonBuilder().register(SignRowGsonManager()).create()
+        }
+
+    }
+}
 
 class SignRowGsonManager() : PolymorphicGsonManager<GearTypeDependent>(
     contract = GearTypeDependent

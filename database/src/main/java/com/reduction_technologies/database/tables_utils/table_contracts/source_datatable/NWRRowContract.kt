@@ -1,5 +1,8 @@
 package com.reduction_technologies.database.tables_utils.table_contracts.source_datatable
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.reduction_technologies.database.json_utils.GsonRegister
 import com.reduction_technologies.database.json_utils.PolymorphicGsonManager
 import com.reduction_technologies.database.json_utils.PolymorphicParent
 
@@ -15,6 +18,7 @@ abstract class ChevroneDependent : PolymorphicParent() {
     companion object
         : PolymorphicParent.Contract<ChevroneDependent>() {
         override val abstractClass: Class<ChevroneDependent> = ChevroneDependent::class.java
+
         enum class Type(val string: String) {
             DEPENDENT("dep"),
             INDEPENDENT("!dep"),
@@ -60,7 +64,14 @@ data class NWRDependent(val def: Int, val ifChev: Int) : ChevroneDependent() {
     }
 }
 
-data class NWRRow(val list: List<ChevroneDependent>)
+//TODO test this
+data class NWRRow(val list: List<ChevroneDependent>) {
+    companion object : GsonRegister {
+        override fun prepareGson(): Gson {
+            return GsonBuilder().register(NWRRowGsonManager()).create()
+        }
+    }
+}
 
 
 //internal class NWRRowDeserializer(gson: Gson) : PolymorphicDeserializer<ChevroneDependent>(

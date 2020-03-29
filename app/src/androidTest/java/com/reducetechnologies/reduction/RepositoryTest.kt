@@ -7,12 +7,22 @@ import com.reducetechnologies.reduction.android.util.App
 import com.reduction_technologies.database.*
 import com.reduction_technologies.database.databases_utils.*
 import com.reduction_technologies.database.databases_utils.Query
+import com.reduction_technologies.database.tables_utils.GOSTableContract
 import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
+import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
+import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.runner.RunWith
 
+/**
+ * Тестовые классы, помеченные этой аннотацией, запускаются либо на эмуляторе, либо на устройстве.
+ * Они не обязательно запускают само приложение - но они получают доступ к ресурсам приложения,
+ * в том числе и к установленной базе данных. Поэтому через такие тесты тестируется реальная база,
+ * и больше уверенность в том, что в реальном приложении ошибок будет меньше.
+ */
 @RunWith(AndroidJUnit4::class)
 class RepositoryTest {
     lateinit var databaseComponent: DatabaseComponent
@@ -59,9 +69,6 @@ class RepositoryTest {
 
         val table = DatabaseType.Constant.tables[ConstTables.EncyclopediaItems]!!
 
-        // TODO Сделать оболочки для хелперов (можно в самом репозитории, чтобы сделать работу с
-        // курсором не непосредственной. Например, чтобы курсор отдавал оболочечный курсор.
-        // Но тогда можно мокать репозиторию.
         val columns = table.columns.map { it.castString() }.toTypedArray()
 
         val cursor = database.query(
@@ -106,5 +113,84 @@ class RepositoryTest {
         val fatigue = gson.fromJson(string, FatigueTable::class.java)
 
         assertTrue(fatigue != null)
+    }
+
+    @Test
+    fun obtain_g0_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+
+        val table = constMainTable()
+
+        val cursor = repository.constCursorBuilder<CommonItem>(
+            table.name, table.columns.toTypedArray()
+        ).buildQuery {
+            When(
+                Query.Clause(
+                    Columns.TAG.castString(), Query.Operations.EQ, Tags.TABLE.castString()
+                )
+            )
+            and(
+                Query.Clause(
+                    Columns.TITLE.castString(), Query.Operations.EQ, GOSTableContract.G_0
+                )
+            )
+        }.setReader(CursorCommonItemReader).create()
+
+        // Подобная табличка должна быть только одна во всей таблице
+        val item = cursor.getSingle()
+
+        val string = item.additional!!
+        val gson = GsonBuilder()
+            .create()
+
+        val g0 = gson.fromJson(string, G0Table::class.java)
+
+        val expectedDomain = 3.55f
+        val expectedFirst = 17f
+        val expectedNull = null
+        // Проверка предполагаемых значений
+        g0.rows[0].domain.apply {
+            assertTrue(expectedDomain == rightSide.num)
+        }
+        assertTrue(expectedFirst == g0.rows[0].list[0])
+
+        assertTrue(expectedNull == g0.rows[5].list[0])
+    }
+
+    @Test
+    fun obtain_source_table_from_cursor_via_builder() {
+        // Сначала получаем репозиторию - класс, хранящий ссылки на базы данных
+        val repository = databaseComponent.repository()
+        // Определяем таблицу, с которой будем работать (просто ее тип)
+        val table = constMainTable()
+
+        val cursor = repository
+            // Билдим штуку для поиска по базе данных, указываем название таблицы
+            // (не путать с гостовской ячейкой, содержащей таблицу), указываем названия колонок, которые надо отобразить
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            // теперь строим сам запрос поиска по строчкам
+            .buildQuery {
+                // первое условие начинается всегда с When
+                When(
+                    // В нее передается объект условия
+                    Query.Clause(
+                        // Название колонки, значение из которой будет браться для сравнения с данным
+                        Columns.TITLE.castString(),
+                        //  Операция сравнения. в данном случае равно
+                        Query.Operations.EQ,
+                        // Переданное значение для поиска (данное)
+                        GOSTableContract.SOURCE_DATA
+                    )
+                )
+                    // Даем чувака который знает как читать ячейку указанной таблички
+            }.setReader(CursorCommonItemReader)
+            // Создаем чувака
+            .create()
+
+        val item = cursor.getSingle() // Получаем из чувака запись, которую нашли в табличке
+        val gson = SourceDataTable.prepareGson() // готовим парсилку для создания класса таблички
+        val sourceTable = gson.fromJson(item.additional, SourceDataTable::class.java) // парсим json из таблицы и получаем сам гост-табличку
+        // Проверяем что табличка не нулевая. Если не выкинуло ошибку и табличка не нуль - тест можно считать пройденным
+        assertNotNull(sourceTable)
     }
 }

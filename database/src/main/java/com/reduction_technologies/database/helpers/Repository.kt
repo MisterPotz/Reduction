@@ -3,6 +3,7 @@ package com.reduction_technologies.database.helpers
 import android.content.Context
 import android.database.Cursor
 import com.reduction_technologies.database.databases_utils.*
+import org.junit.jupiter.api.Assertions.assertTrue
 import javax.inject.Inject
 
 /**
@@ -25,13 +26,23 @@ class Repository @Inject constructor(
      * Returns [T] data, read from cursor.
      * Can be used for other purposes also
      */
-    class RCursorAdapter<T> internal constructor(
+    class RCursorWrapper<T> internal constructor(
         val cursor: Cursor,
         val reader: ItemReader<T>
     ) {
         fun getItem(position: Int): T {
             cursor.moveToPosition(position)
             return reader.readItem(cursor)
+        }
+
+        /**
+         * In case you also need to check that such entry is single (after searching conditions)
+         * you may want to use this function
+         */
+        fun getSingle(): T {
+            assertTrue(cursor.count == 1)
+            cursor.moveToPosition(0)
+            return getItem(0)
         }
     }
 

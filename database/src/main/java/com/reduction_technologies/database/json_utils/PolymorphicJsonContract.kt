@@ -58,16 +58,40 @@ class PolymorphicSerializer<T : PolymorphicParent>(
     }
 }
 
+/**
+ * Declares a class that has polymorpphic members.
+ * [prepareGson] return fully prepared gson for parsing target class
+ * [register] add serializers and deserializers for a polymorphic member via its polymorphicmanager
+ */
+interface GsonRegister {
+    fun <T : PolymorphicParent> GsonBuilder.register(manager: PolymorphicGsonManager<T>) : GsonBuilder{
+        manager.gsonRegister(this)
+        return this
+    }
+
+    fun prepareGson() : Gson
+}
+
 abstract class PolymorphicGsonManager<T : PolymorphicParent>(
     val contract: PolymorphicParent.Contract<T>
 ) {
     private val des: PolymorphicDeserializer<T> = PolymorphicDeserializer(contract, plainGson)
     private val ser: PolymorphicSerializer<T> = PolymorphicSerializer(contract, plainGson)
 
-    val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(contract.abstractClass, ser)
-        .registerTypeAdapter(contract.abstractClass, des)
-        .create()
+    // Returns set up gson if requested
+    val gson: Gson by lazy {
+        GsonBuilder().let {
+            gsonRegister(it)
+                .create()
+        }
+    }
+
+    fun gsonRegister(builder: GsonBuilder): GsonBuilder {
+        return builder.apply {
+            registerTypeAdapter(contract.abstractClass, ser)
+            registerTypeAdapter(contract.abstractClass, des)
+        }
+    }
 
     companion object {
         /**

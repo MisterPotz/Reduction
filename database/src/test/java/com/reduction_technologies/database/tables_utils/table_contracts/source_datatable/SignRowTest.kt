@@ -4,14 +4,13 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 internal class SignRowTest {
-    val manager =SignRowGsonManager()
     @Test
     fun deSerializationEquality() {
         val row = SignRow(
             listOf(SignSimple(3), SignSimple(-12), SignDependent(12, 123))
         )
 
-        val gson = manager.gson
+        val gson = SignRow.prepareGson()
         val json = gson.toJson(row)
         val row2 = gson.fromJson(json, SignRow::class.java)
         assertEquals(row, row2)
@@ -22,7 +21,7 @@ internal class SignRowTest {
         val row = SignRow(
             listOf(SignSimple(3), SignSimple(-12), SignDependent(12, 123))
         )
-        val gson = manager.gson
+        val gson = SignRow.prepareGson()
         val json = gson.toJson(row)
         val row2 = gson.fromJson(json, SignRow::class.java)
 

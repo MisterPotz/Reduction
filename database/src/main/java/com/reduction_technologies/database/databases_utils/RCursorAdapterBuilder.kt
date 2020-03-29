@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.reduction_technologies.database.helpers.Repository
 
 /**
- *  Constructs a cursors with given query and returns it as wrapped into RCursorAdapter
- *  Requires an ItemReader to be set in order to give RCursorAdapter possibility to
+ *  Constructs a cursors with given query and returns it as wrapped into RCursorWrapper
+ *  Requires an ItemReader to be set in order to give RCursorWrapper possibility to
  *  read items.
  *  Must be used wit entity, having a link to databaseHelper.
  *  Example usage:
@@ -42,10 +42,10 @@ class RCursorAdapterBuilder<T> internal constructor(
         return this
     }
 
-    fun create(): Repository.RCursorAdapter<T> {
+    fun create(): Repository.RCursorWrapper<T> {
         val cursor = databaseHelper
             .readableDatabase.query(query!!.getQuery())
-        return Repository.RCursorAdapter(
+        return Repository.RCursorWrapper(
             cursor,
             reader!!
         )

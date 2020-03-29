@@ -1,0 +1,100 @@
+{
+    "rows" : [
+        {
+            "domain" : {
+                "leftSide" : {
+                    "conditionSign": ">=",
+                    "num" : 0
+                },
+                "rightSide" : {
+                    "conditionSign": "<",
+                    "num" : 3.55
+                }
+            },
+            "skew" : false,
+            "list" : [
+                17, 28, 38, 47, 56, 73
+            ]
+        },
+        {
+            "domain" : {
+                "leftSide" : {
+                    "conditionSign": ">=",
+                    "num" : 0
+                },
+                "rightSide" : {
+                    "conditionSign": "<",
+                    "num" : 3.55
+                }
+            },
+            "skew" : true,
+            "list" : [
+                19.2, 30.2, 41.3, 52.6, 64, 75.6
+            ]
+        },
+        {
+            "domain" : {
+                "leftSide" : {
+                    "conditionSign": ">=",
+                    "num" : 3.55
+                },
+                "rightSide" : {
+                    "conditionSign": "<",
+                    "num" : 10
+                }
+            },
+            "skew" : false,
+            "list" : [
+                22, 31, 42, 53, 61, 82
+            ]
+        },
+        {
+            "domain" : {
+                "leftSide" : {
+                    "conditionSign": ">=",
+                    "num" : 3.55
+                },
+                "rightSide" : {
+                    "conditionSign": "<",
+                    "num" : 10
+                }
+            },
+            "skew" : true,
+            "list" : [
+                20, 31.7, 43.7, 56, 68.4, 81
+            ]
+        },
+        {
+            "domain" : {
+                "leftSide" : {
+                    "conditionSign": ">=",
+                    "num" : 10
+                },
+                "rightSide" : {
+                    "conditionSign": "<",
+                    "num" : 100
+                }
+            },
+            "skew" : false,
+            "list" : [
+                null, 37, 48, 64, 73, 100
+            ]
+        },
+        {
+            "domain" : {
+                "leftSide" : {
+                    "conditionSign": ">=",
+                    "num" : 10
+                },
+                "rightSide" : {
+                    "conditionSign": "<",
+                    "num" : 100
+                }
+            },
+            "skew" : true,
+            "list" : [
+                null, 34.2, 47.5, 61.2, 75.3, 89.7
+            ]
+        }
+    ]
+}

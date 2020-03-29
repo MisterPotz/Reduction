@@ -75,6 +75,7 @@ dependencies {
     implementation libraries.timberLogger
     testImplementation libraries.timberLogger
 
+    implementation libraries.junit
     testImplementation libraries.junit
     testRuntimeOnly libraries.junitRuntime
     androidTestImplementation libraries.junit
