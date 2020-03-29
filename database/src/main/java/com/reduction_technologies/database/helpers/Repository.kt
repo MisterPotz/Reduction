@@ -22,7 +22,6 @@ class Repository @Inject constructor(
     /**
      * THe field is injectable so instances of constant database can be mocked
      */
-    // TODO спрятать зависимость от constant в интерфейс, хотя мб и не надо здесь
     val constantDatabaseHelper: ConstantDatabaseHelper,
     /**
      * Injectible for the sake of testing and reusability
@@ -47,6 +46,7 @@ class Repository @Inject constructor(
         fun readItem(cursor: Cursor): T
     }
 
+    // TODO обложить тестами выдачу курсора через билдер И последующий запрос в реальную базу
     fun <T> constCursorBuilder(
         tableName: String =
             DatabaseType.Constant.tables[ConstTables.EncyclopediaItems]!!.name,
@@ -197,7 +197,6 @@ class Query {
             val clauseList = getClauseList()
             val connectorsIterator = getConnectors().iterator()
             val stringBuilder = StringBuilder()
-            stringBuilder.append("WHEN")
             clauseList.forEach {
                 stringBuilder.apply {
                     space()

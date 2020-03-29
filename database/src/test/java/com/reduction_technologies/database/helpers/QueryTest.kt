@@ -25,7 +25,7 @@ internal class QueryTest {
 
         val expectedQuery = QueryParameters(
             "table", arrayOf("col1", "col2"),
-            "WHEN NAME = ? AND TAG = ? OR ADDITIONAL > ?", arrayOf("five", "table", "4")
+            " NAME = ? AND TAG = ? OR ADDITIONAL > ?", arrayOf("five", "table", "4")
         )
 
         println(expectedQuery)

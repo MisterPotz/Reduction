@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import com.reducetechnologies.reduction.android.util.App
 import com.reduction_technologies.database.*
 import com.reduction_technologies.database.databases_utils.*
+import com.reduction_technologies.database.helpers.Query
 import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
 import org.junit.Before
 import org.junit.Test
@@ -40,7 +41,8 @@ class RepositoryTest {
         )
         assertTrue(cursor.count == 1)
 
-        val item = CursorCommonItemReader.readCursor(cursor, 0)
+        cursor.moveToPosition(0)
+        val item = CursorCommonItemReader.readItem(cursor)
 
         val expected =
             CommonItem(null, "testing item", Tags.TEST.castString(), "used for test", null)
@@ -52,7 +54,7 @@ class RepositoryTest {
      * Get commonitem from cursor and cast it to a table instance
      */
     @Test
-    fun obtain_table_from_cursor() {
+    fun obtain_table_from_cursor_straight() {
         val database = databaseComponent.repository().constantDatabaseHelper.readableDatabase
 
         val table = DatabaseType.Constant.tables[ConstTables.EncyclopediaItems]!!
@@ -60,14 +62,42 @@ class RepositoryTest {
         // TODO Сделать оболочки для хелперов (можно в самом репозитории, чтобы сделать работу с
         // курсором не непосредственной. Например, чтобы курсор отдавал оболочечный курсор.
         // Но тогда можно мокать репозиторию.
-        val columns = table.columns.map {it.castString()}.toTypedArray()
+        val columns = table.columns.map { it.castString() }.toTypedArray()
 
         val cursor = database.query(
-                table.name, columns,
-        "${Columns.TAG} = ?", arrayOf(Tags.TABLE.castString()), null, null, null
+            table.name, columns,
+            "${Columns.TAG} = ?", arrayOf(Tags.TABLE.castString()), null, null, null
         )
 
-        val item = CursorCommonItemReader.readCursor(cursor, 0)
+        cursor.moveToPosition(0)
+        val item = CursorCommonItemReader.readItem(cursor)
+
+        val string = item.additional!!
+        val gson = GsonBuilder()
+            .create()
+
+        val fatigue = gson.fromJson(string, FatigueTable::class.java)
+
+        assertTrue(fatigue != null)
+    }
+
+    @Test
+    fun obtain_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+
+        val table = DatabaseType.Constant.tables[ConstTables.EncyclopediaItems]!!
+
+        val cursor = repository.constCursorBuilder<CommonItem>(
+            table.name, table.columns.toTypedArray()
+        ).buildQuery {
+            When(
+                Query.Clause(
+                    Columns.TAG.castString(), Query.Operations.EQ, Tags.TABLE.castString()
+                )
+            )
+        }.setReader(CursorCommonItemReader).create()
+
+        val item = cursor.getItem(0)
 
         val string = item.additional!!
         val gson = GsonBuilder()

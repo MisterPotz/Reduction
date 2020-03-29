@@ -6,18 +6,13 @@ import com.reduction_technologies.database.databases_utils.CommonItem.Companion.
 import com.reduction_technologies.database.databases_utils.CommonItem.Companion.TAG
 import com.reduction_technologies.database.databases_utils.CommonItem.Companion.TITLE
 import com.reduction_technologies.database.databases_utils.CommonItem.Companion._ID
+import com.reduction_technologies.database.helpers.Repository
 
 /**
  * Knows how to read a cursor at given position to produce a commonitemobject.
  */
-object CursorCommonItemReader {
-
-    /**
-     * Creates commonitem from cursor at given position
-     */
-    fun readCursor(cursor: Cursor, position: Int): CommonItem {
-        cursor.moveToPosition(position)
-
+object CursorCommonItemReader : Repository.ItemReader<CommonItem> {
+    override fun readItem(cursor: Cursor): CommonItem {
         val id = cursor.getIntK(_ID)
         val title = cursor.getStringK(TITLE)
         val about = cursor.getStringK(ABOUT)
@@ -42,15 +37,4 @@ object CursorCommonItemReader {
     private fun Cursor.getStringK(item: String): String? {
         return getString(getColumnIndex(item))
     }
-
-    private fun Cursor.getBlobK(item: String): ByteArray? {
-        return getBlob(getColumnIndex(item))?.let {
-            // Checking if bytearray is malformed and last value is 0
-            if (it.last() == 0.toByte()) {
-                it.set(it.lastIndex, 20.toByte())
-            }
-            it
-        }
-    }
-
 }
