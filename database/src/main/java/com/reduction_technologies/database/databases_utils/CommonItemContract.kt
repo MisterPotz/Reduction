@@ -2,6 +2,9 @@ package com.reduction_technologies.database.databases_utils
 
 import android.content.ContentValues
 
+/**
+ * Most common item that is contained in a row of tables: EncyclopediaItems and Favorites
+ */
 class CommonItem(
     var id: Int? = null,
     var title: String,

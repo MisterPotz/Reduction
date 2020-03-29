@@ -2,6 +2,9 @@ package com.reduction_technologies.database.helpers
 
 import android.database.sqlite.SQLiteOpenHelper
 import com.reduction_technologies.database.databases_utils.CommonItem
+import com.reduction_technologies.database.databases_utils.Query
+import com.reduction_technologies.database.databases_utils.QueryParameters
+import com.reduction_technologies.database.databases_utils.RCursorAdapterBuilder
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,7 +16,12 @@ internal class QueryTest {
     @Test
     fun queryBuilderTest() {
         val sqlHelper = mockk<SQLiteOpenHelper>()
-        val builder = RCursorAdapterBuilder<CommonItem>(sqlHelper, "table", arrayOf("col1", "col2"))
+        val builder =
+            RCursorAdapterBuilder<CommonItem>(
+                sqlHelper,
+                "table",
+                arrayOf("col1", "col2")
+            )
 
         builder.buildQuery {
             When(Query.Clause("NAME", Query.Operations.EQ, "five"))
@@ -36,7 +44,12 @@ internal class QueryTest {
     @Test
     fun fails_when_necessary() {
         val sqlHelper = mockk<SQLiteOpenHelper>()
-        val builder = RCursorAdapterBuilder<CommonItem>(sqlHelper, "table", arrayOf("col1", "col2"))
+        val builder =
+            RCursorAdapterBuilder<CommonItem>(
+                sqlHelper,
+                "table",
+                arrayOf("col1", "col2")
+            )
 
         val assertable: () -> RCursorAdapterBuilder<CommonItem> = {
             builder.buildQuery {

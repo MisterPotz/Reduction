@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder
 import com.reducetechnologies.reduction.android.util.App
 import com.reduction_technologies.database.*
 import com.reduction_technologies.database.databases_utils.*
-import com.reduction_technologies.database.helpers.Query
+import com.reduction_technologies.database.databases_utils.Query
 import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
 import org.junit.Before
 import org.junit.Test

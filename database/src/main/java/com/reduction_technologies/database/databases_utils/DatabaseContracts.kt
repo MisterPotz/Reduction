@@ -10,7 +10,12 @@ interface DatabaseConstantsContract {
     val database: DatabaseType
 }
 
-// Databases that exist in the application and tables within these databases
+/**
+ * Databases that exist in the application and tables within these databases.
+ * This enum connects between each other: databases, tables within databases, columns and tags
+ * within each table. So it is some kind of registry. It is accepted that this registry and other
+ * described in this file must be considered as the main database description
+ */
 enum class DatabaseType(
     val title: String,
     val version: Int,
@@ -58,6 +63,11 @@ enum class DatabaseType(
     )
 }
 
+/**
+ * Describes a table.
+ * Table consists of [name], [columns]. It is accepted that table entities have a fixed amount of
+ * [tags]
+ */
 data class TableContract(
     val name: String,
     val columns: List<ColumnContract>,
@@ -67,12 +77,19 @@ fun List<ColumnContract>.toTypedArray() : Array<String>{
     return map { it.castString() }.toTypedArray()
 }
 
+/**
+ * Describes tables that currently exist within one database
+ */
 interface DatabaseTable
 
 enum class ConstTables : DatabaseTable { EncyclopediaItems }
 
 enum class UserTables : DatabaseTable { Favorites }
 
+
+/**
+ * Describes Column with name [item]
+ */
 interface ColumnContract {
     val item: String
     fun castString() : String = item
@@ -87,6 +104,9 @@ enum class Columns(override val item: String) :
     TAG("TAG")
 }
 
+/**
+ * Describes a tag with name [item]
+ */
 interface TagContract {
     val item: String
     fun castString() : String = item

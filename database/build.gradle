@@ -28,8 +28,15 @@ android {
         // that the app's state is completely cleared between tests.
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
+
     testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        unitTests.all {
+            useJUnitPlatform()
+            testLogging {
+                events "passed", "skipped", "failed"
+            }
+        }
     }
 
     buildTypes {
@@ -54,6 +61,8 @@ android {
     }
 }
 
+
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -67,6 +76,7 @@ dependencies {
     testImplementation libraries.timberLogger
 
     testImplementation libraries.junit
+    testRuntimeOnly libraries.junitRuntime
     androidTestImplementation libraries.junit
 
     implementation libraries.dagger

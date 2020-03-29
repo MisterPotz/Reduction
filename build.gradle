@@ -81,6 +81,7 @@ ext.libraries = [
 
         // Testing framework
         "junit"               : "org.junit.jupiter:junit-jupiter:5.6.0",
+        "junitRuntime"        : 'org.junit.jupiter:junit-jupiter-engine:5.6.0',
 
         // Необходимо для парсинга диких табличек, которые хранятся в джисонах
         "gson"                : 'com.google.code.gson:gson:2.8.6',
