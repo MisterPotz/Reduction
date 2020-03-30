@@ -8,7 +8,6 @@ apply plugin: "androidx.navigation.safeargs"
 
 apply plugin: 'kotlin-kapt'
 
-
 android {
     compileSdkVersion compileApi
     buildToolsVersion rBuildToolsVersion
@@ -44,6 +43,7 @@ android {
                 events "passed", "skipped", "failed"
             }
         }
+        unitTests.includeAndroidResources = true
     }
 
     buildTypes {
@@ -83,8 +83,17 @@ dependencies {
 
     implementation libraries.legacy
 
+    /**
+     * Using JUnit Jupiter 5 in Android and unit tests
+     */
     testImplementation libraries.junit
     androidTestImplementation libraries.junit
+
+    /**
+     * Roboelectric supports on;y JUnit4 so junit4 vintage support must be added to run those tests
+     */
+    testImplementation libraries.junit4
+    testRuntimeOnly libraries.junit4Runtime
 
     implementation project(":calculation_sdk")
     implementation libraries.timberLogger
@@ -97,6 +106,13 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:' + rootProject.runnerVersion
     androidTestImplementation 'androidx.test.espresso:espresso-core:' + rootProject.espressoVersion
     androidTestUtil 'androidx.test:orchestrator:' + rootProject.orchestrator
+
+    testImplementation libraries.robolectric
+    testImplementation 'androidx.test:core:' + rootProject.coreVersion
+    testImplementation 'androidx.test:core-ktx:' + rootProject.coreVersion
+    testImplementation 'androidx.test:runner:' + rootProject.runnerVersion
+    testImplementation 'androidx.test.ext:junit:' + rootProject.extJUnitVersion
+    testImplementation 'androidx.test.ext:junit-ktx:' + rootProject.extJUnitVersion
 
     implementation libraries.kotlinCoroutines
     testImplementation libraries.kotlinCoroutines

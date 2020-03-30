@@ -83,6 +83,11 @@ ext.libraries = [
         "junit"               : "org.junit.jupiter:junit-jupiter:5.6.0",
         "junitRuntime"        : 'org.junit.jupiter:junit-jupiter-engine:5.6.0',
 
+        "junit4"              : "junit:junit:4.12",
+        "junit4Runtime"       : "org.junit.vintage:junit-vintage-engine:5.6.0",
+
+        "jupiterParams" :    "org.junit.jupiter:junit-jupiter-params:5.6.0",
+
         // Необходимо для парсинга диких табличек, которые хранятся в джисонах
         "gson"                : 'com.google.code.gson:gson:2.8.6',
 
@@ -92,7 +97,9 @@ ext.libraries = [
         "kotlinDaggerCompiler": "com.google.dagger:dagger-compiler:${ext.daggerVersion}",
 
         // For mocking classes in tests
-        "mockk"               : "io.mockk:mockk:1.9"
+        "mockk"               : "io.mockk:mockk:1.9",
 
+        // For running unit tests in android sandbox
+        "robolectric"         : "org.robolectric:robolectric:${robolectricVersion}"
 ]
 
