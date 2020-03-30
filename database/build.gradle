@@ -4,7 +4,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
-
 android {
     compileSdkVersion compileApi
     buildToolsVersion rBuildToolsVersion
@@ -75,11 +74,6 @@ dependencies {
     implementation libraries.timberLogger
     testImplementation libraries.timberLogger
 
-    implementation libraries.junit
-    testImplementation libraries.junit
-    testRuntimeOnly libraries.junitRuntime
-    androidTestImplementation libraries.junit
-
     implementation libraries.dagger
     testImplementation libraries.dagger
     androidTestImplementation libraries.dagger
@@ -90,6 +84,20 @@ dependencies {
 
     kapt libraries.kotlinDaggerAnnot
     kapt libraries.kotlinDaggerCompiler
+
+    /**
+     * Using JUnit Jupiter 5 in Android and unit tests
+     */
+
+    implementation libraries.junit
+    testImplementation libraries.junit
+    androidTestImplementation libraries.junit
+
+    /**
+     * Roboelectric supports on;y JUnit4 so junit4 vintage support must be added to run those tests
+     */
+    testImplementation libraries.junit4
+    testRuntimeOnly libraries.junit4Runtime
 
     androidTestImplementation 'androidx.test:core:' + rootProject.coreVersion
     androidTestImplementation 'androidx.test:core-ktx:' + rootProject.coreVersion

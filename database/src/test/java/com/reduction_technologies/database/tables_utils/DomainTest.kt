@@ -44,6 +44,7 @@ class DomainTest {
     @Test
     fun rightEqDomain() {
         val oneSideDomain = OneSidedDomain(">=", 5f)
+
         listOf<Pair<Float, Boolean>>(
             Pair(4f, false),
             Pair(5f, true),
