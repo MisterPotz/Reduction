@@ -63,6 +63,9 @@ android {
 
 
 dependencies {
+    implementation project(":calculation_sdk")
+    testImplementation project(":calculation_sdk")
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation libraries.kotlinCoroutines
