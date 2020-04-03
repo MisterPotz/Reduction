@@ -12,7 +12,7 @@ import javax.inject.Inject
  * Some fields are in
  */
 class Repository @Inject constructor(
-    val context: Context,
+    internal val context: Context,
     /**
      * THe field is injectable so instances of constant database can be mocked
      */
