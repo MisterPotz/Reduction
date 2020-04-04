@@ -2,7 +2,10 @@ package com.reduction_technologies.database.tables_utils.table_contracts.source_
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.reduction_technologies.database.json_utils.*
+import com.reduction_technologies.database.json_utils.GsonRegister
+import com.reduction_technologies.database.json_utils.PolymorphicGsonManager
+import com.reduction_technologies.database.json_utils.PolymorphicParent
+
 
 // ---------------------------------
 abstract class GearTypeDependent : PolymorphicParent() {

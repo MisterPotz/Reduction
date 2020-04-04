@@ -1,21 +1,18 @@
-@file:Suppress("IncorrectScope")
+package com.reduction_technologies.database.helpers
 
-package com.reducetechnologies.reduction
-
-
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.google.gson.GsonBuilder
-import com.reduction_technologies.database.*
 import com.reduction_technologies.database.databases_utils.*
-import com.reduction_technologies.database.databases_utils.Query
-import com.reduction_technologies.database.tables_utils.GOSTableContract
-import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
-import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
+
+import com.reduction_technologies.database.tables_utils.*
+import com.reduction_technologies.database.tables_utils.table_contracts.*
+import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.*
+
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.robolectric.RobolectricTestRunner
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
-import com.reducetechnologies.reduction.android.util.App
+import com.reduction_technologies.database.di.*
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -25,13 +22,13 @@ import org.robolectric.annotation.Config
  * Только JUnit4.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(application = App::class)
+@Config(manifest= Config.NONE)
 class RepositoryUnitTest {
     lateinit var databaseComponent: DatabaseComponent
 
     @Before
     fun setUp() {
-        val context = getApplicationContext<App>()
+        val context = ApplicationProvider.getApplicationContext<Context>()
         // Using dependencies to create component
         databaseComponent = DaggerDatabaseComponent.builder()
             .databaseModule(DatabaseModule(context))

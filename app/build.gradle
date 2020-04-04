@@ -118,6 +118,7 @@ dependencies {
     testImplementation libraries.kotlinCoroutines
 
     implementation project(':database')
+    testImplementation project(":database")
 
     implementation libraries.dagger
     testImplementation libraries.dagger

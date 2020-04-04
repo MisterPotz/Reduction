@@ -1,4 +1,4 @@
-package com.reduction_technologies.database
+package com.reduction_technologies.database.di
 
 import android.content.Context
 import com.reduction_technologies.database.helpers.ConstantDatabaseHelper
@@ -7,29 +7,29 @@ import com.reduction_technologies.database.helpers.UserDatabaseHelper
 import dagger.Component
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class DatabaseModule(val context: Context) {
     // TODO инкапсулировать эти хелперы в сущности, которые вместо базы данных отдают список
     @Provides
-    @Singleton
+    @ApplicationScope
     fun constantDatabaseHelper(context: Context): ConstantDatabaseHelper {
         return ConstantDatabaseHelper(context)
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun userDatabaseHelper(context: Context) =
         UserDatabaseHelper(context)
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun context() = context
 }
 
-@Singleton
+
 @Component(modules = [DatabaseModule::class])
+@ApplicationScope
 interface DatabaseComponent {
     // injecting necessary classes into repository
     fun repository(): Repository

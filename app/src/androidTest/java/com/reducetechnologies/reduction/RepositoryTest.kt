@@ -4,9 +4,11 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.gson.GsonBuilder
 import com.reducetechnologies.reduction.android.util.App
-import com.reduction_technologies.database.*
 import com.reduction_technologies.database.databases_utils.*
 import com.reduction_technologies.database.databases_utils.Query
+import com.reduction_technologies.database.di.DaggerDatabaseComponent
+import com.reduction_technologies.database.di.DatabaseComponent
+import com.reduction_technologies.database.di.DatabaseModule
 import com.reduction_technologies.database.tables_utils.GOSTableContract
 import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
 import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
