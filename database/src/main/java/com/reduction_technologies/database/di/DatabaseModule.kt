@@ -27,8 +27,9 @@ class DatabaseModule(val context: Context) {
     fun context() = context
 }
 
-@ApplicationScope
+
 @Component(modules = [DatabaseModule::class])
+@ApplicationScope
 interface DatabaseComponent {
     // injecting necessary classes into repository
     fun repository(): Repository
