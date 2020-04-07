@@ -5,8 +5,8 @@ import com.google.gson.GsonBuilder
 import com.reduction_technologies.database.json_utils.GsonRegister
 
 /**
- * [improv] улучшение
- * [harden] закалка
+ * [improv] улучшение - <= 35 HRC
+ * [harden] закалка - > 35 HRC
  */
 data class K_FE(val improv: Float, val hard: Float)
 

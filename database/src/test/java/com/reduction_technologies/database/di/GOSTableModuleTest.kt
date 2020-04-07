@@ -70,6 +70,84 @@ internal class GOSTableModuleTest {
      * Tests dagger-style table dependencies injection
      */
     @org.junit.Test
+    fun get_ed() {
+        val tableComponent = DaggerGOSTableComponent.builder()
+            .databaseComponent(databaseComponent)
+            .gOSTableModule(GOSTableModule()).build()
+        val table = tableComponent.getEDTable()
+
+        Assertions.assertNotNull(table)
+    }
+
+    /**
+     * Tests dagger-style table dependencies injection
+     */
+    @org.junit.Test
+    fun get_HRC() {
+        val tableComponent = DaggerGOSTableComponent.builder()
+            .databaseComponent(databaseComponent)
+            .gOSTableModule(GOSTableModule()).build()
+        val table = tableComponent.getHRCTable()
+
+        Assertions.assertNotNull(table)
+    }
+
+    /**
+     * Tests dagger-style table dependencies injection
+     */
+    @org.junit.Test
+    fun get_RA40() {
+        val tableComponent = DaggerGOSTableComponent.builder()
+            .databaseComponent(databaseComponent)
+            .gOSTableModule(GOSTableModule()).build()
+        val table = tableComponent.getRA40()
+
+        Assertions.assertNotNull(table)
+    }
+
+    /**
+     * Tests dagger-style table dependencies injection
+     */
+    @org.junit.Test
+    fun get_SGTT() {
+        val tableComponent = DaggerGOSTableComponent.builder()
+            .databaseComponent(databaseComponent)
+            .gOSTableModule(GOSTableModule()).build()
+        val table = tableComponent.getSGTTTable()
+
+        Assertions.assertNotNull(table)
+    }
+
+    /**
+     * Tests dagger-style table dependencies injection
+     */
+    @org.junit.Test
+    fun get_Modules() {
+        val tableComponent = DaggerGOSTableComponent.builder()
+            .databaseComponent(databaseComponent)
+            .gOSTableModule(GOSTableModule()).build()
+        val table = tableComponent.getStandartModules()
+
+        Assertions.assertNotNull(table)
+    }
+
+    /**
+     * Tests dagger-style table dependencies injection
+     */
+    @org.junit.Test
+    fun get_tip_tipre() {
+        val tableComponent = DaggerGOSTableComponent.builder()
+            .databaseComponent(databaseComponent)
+            .gOSTableModule(GOSTableModule()).build()
+        val table = tableComponent.getTIP_TipreTable()
+
+        Assertions.assertNotNull(table)
+    }
+
+    /**
+     * Tests dagger-style table dependencies injection
+     */
+    @org.junit.Test
     fun combined() {
         val tableComponent = DaggerGOSTableComponent.builder()
             .databaseComponent(databaseComponent)

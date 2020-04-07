@@ -3,6 +3,7 @@ package com.reduction_technologies.database.helpers
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.gson.GsonBuilder
+import com.reducetechnologies.tables_utils.table_contracts.*
 import com.reduction_technologies.database.databases_utils.*
 
 import com.reduction_technologies.database.tables_utils.*
@@ -196,4 +197,45 @@ class RepositoryUnitTest {
         // Проверяем что табличка не нулевая. Если не выкинуло ошибку и табличка не нуль - тест можно считать пройденным
         assertNotNull(sourceTable)
     }
+
+    @org.junit.Test
+    fun obtain_khe_kfe_table_from_cursor_via_builder() {
+        val repository = databaseComponent.repository()
+        val table = constMainTable()
+        val cursor = repository
+            .constCursorBuilder<CommonItem>(table.name, table.columns.toTypedArray())
+            .buildQuery {
+                When(
+                    Query.Clause(
+                        Columns.TITLE.castString(),
+                        Query.Operations.EQ,
+                        // Здесь ты пытаешься получить табличку с KHE и KFE - это верно!
+                        GOSTableContract.FATIGUE_CALCULATION_23
+                    )
+                )
+            }.setReader(CursorCommonItemReader)
+            .create()
+
+        val item = cursor.getSingle()
+       /**
+       Но вот здесь ты получаешься из additional накастить SOURCETABLE - это другая табличка
+        Ты должен здесь использовать класс таблички, релевантной KHE и KFE
+
+        val gson = SourceDataTable.prepareGson()
+        val sourceTable = gson.fromJson(
+            item.additional,
+            FatigueTable::class.java
+        )
+
+        На этот класс [FatigueTable] (штука в квадратных скобках кликабельна) уже был юнит тест,
+        можно найти по этому классу в модуле database.
+
+        */
+       // посмотри на этот класс
+        val gson = FatigueTable.prepareGson()
+        val fatigue = gson.fromJson(item.additional!!, FatigueTable::class.java)
+        //assertNotNull(sourceTable)
+        assertTrue(fatigue.rows[0].kHE == 1f)
+    }
+
 }
