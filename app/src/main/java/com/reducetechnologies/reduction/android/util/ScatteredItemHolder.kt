@@ -36,22 +36,23 @@ class ScatteredItemHolder(
     // Содержит данные, хранящиеся в этом холдере
     private lateinit var scatteredItemData: List<CommonItem>
 
-    fun onBind(position: HolderItemsOrientation, items: List<CommonItem>) {
+    fun onBind(items: List<CommonItem>) {
         scatteredItemData = items
-        orientation = position
 
         bigItemData = orientationHandleDelegate.obtainBigItem(items)
 
         smallItemsData = orientationHandleDelegate.obtainSmallItems(items)
 
-        val bigItemFrame = orientationHandleDelegate.obtainBigCell(position, itemView)
-        val smallItemsFrame = orientationHandleDelegate.obtainSmallCells(position, itemView, items)
+        bigFrame = orientationHandleDelegate.obtainBigCell(orientation, itemView)
+        smallFrames = orientationHandleDelegate.obtainSmallCells(orientation, itemView, items)
 
-        bigItem = obtainMaxItem(bigItemFrame, bigItemData)
-        smallItems = obtainSmallItems(smallItemsFrame, smallItemsData)
+        // TODO получается слишком громоздко для операции бинда. Надо заранее в каком-то хеше определить
+        // сколько мест сверху и снизу на какой холдер нужно.
+        bigItem = obtainMaxItem(bigFrame, bigItemData)
+        smallItems = obtainSmallItems(smallFrames, smallItemsData)
 
-        bigItemFrame.attach(bigItem)
-        smallItemsFrame.zip(smallItems).forEach {
+        bigFrame.attach(bigItem)
+        smallFrames.zip(smallItems).forEach {
             it.first.attach(it.second)
         }
 

@@ -5,12 +5,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.reduction.R
+import com.reduction_technologies.database.databases_utils.CommonItem
+import com.reduction_technologies.database.helpers.Repository
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
+/**
+ * @param CoroutineScope определяется активностью / приложением, где используется адаптер.
+ * контекст нужен для работы с базой данных
+ */
 // TODO чувак который получает нужные записи по тегам
-class ScatteredAdapter(private val inflater: LayoutInflater) : RecyclerView.Adapter<ScatteredItemHolder>() {
+class ScatteredAdapter(
+    CoroutineScope : CoroutineScope,
+    private val inflater: LayoutInflater
+) : RecyclerView.Adapter<ScatteredItemHolder>() {
+    // при создании нужно получить вообще количество итемов
+    val some = Dispatchers.Main
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScatteredItemHolder {
         val view = createViewBasedOnType(getOrientation(viewType), parent)
-        return ScatteredItemHolder(view, inflater)
+        return ScatteredItemHolder(getOrientation(viewType), view, inflater)
     }
 
     override fun getItemCount(): Int {
@@ -45,6 +58,22 @@ class ScatteredAdapter(private val inflater: LayoutInflater) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ScatteredItemHolder, position: Int) {
-        TODO("Not yet implemented")
+        // TODO получить нужные итемы из сохранки
+        //holder.onBind()
     }
+}
+
+interface ItemManagerInterface<T>{
+    // асинхронно получает курсор и возвращает количество
+    fun getItems() : CompletableDeferred<List<T>>
+}
+
+/**
+ * Работает непосредственно с репозиторией. Получает оттуда по указанному тегу нужные вещи
+ */
+class ItemManager(val tag: String, val repository: Repository) : ItemManagerInterface<CommonItem> {
+    override fun getItems(): CompletableDeferred<List<CommonItem>> {
+
+    }
+
 }
