@@ -25,6 +25,16 @@ class DatabaseModule(val context: Context) {
     @Provides
     @ApplicationScope
     fun context() = context
+
+    @Provides
+    @ApplicationScope
+    fun repository(
+        context: Context,
+        user: UserDatabaseHelper,
+        const: ConstantDatabaseHelper
+    ): Repository {
+        return Repository(context, const, user)
+    }
 }
 
 

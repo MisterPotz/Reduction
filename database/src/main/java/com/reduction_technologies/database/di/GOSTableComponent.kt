@@ -34,7 +34,7 @@ annotation class CalculationScope
  * @see GOSTableComponentInterface
  * Module provides its child components with table instances
  */
-@Module
+@Module()
 class GOSTableModule() {
     @Provides
     @CalculationScope
