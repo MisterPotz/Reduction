@@ -26,6 +26,8 @@ buildscript {
     }
 }
 
+apply plugin : "kotlin-kapt"
+
 allprojects {
     repositories {
         google()
@@ -91,10 +93,11 @@ ext.libraries = [
         // Необходимо для парсинга диких табличек, которые хранятся в джисонах
         "gson"                : 'com.google.code.gson:gson:2.8.6',
 
-        "dagger"              : "com.google.dagger:dagger-android:${ext.daggerVersion}",
-        "daggerProcessor"     : "com.google.dagger:dagger-android-processor:${ext.daggerVersion}",
-        "kotlinDaggerAnnot"   : "com.google.dagger:dagger-android-processor:${ext.daggerVersion}",
-        "kotlinDaggerCompiler": "com.google.dagger:dagger-compiler:${ext.daggerVersion}",
+        "daggerAndroid"              : "com.google.dagger:dagger-android:${ext.daggerVersion}",
+        "daggerAndroidProcessor"     : "com.google.dagger:dagger-android-processor:${ext.daggerVersion}",
+
+        "daggerJavaProcessor" : "com.google.dagger:dagger-compiler:${ext.daggerVersion}",
+        "daggerJava"          : "com.google.dagger:dagger:${ext.daggerVersion}",
 
         // For mocking classes in tests
         "mockk"               : "io.mockk:mockk:1.9",

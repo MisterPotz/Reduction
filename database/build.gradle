@@ -89,16 +89,8 @@ dependencies {
     implementation libraries.timberLogger
     testImplementation libraries.timberLogger
 
-    implementation libraries.dagger
-    testImplementation libraries.dagger
-    androidTestImplementation libraries.dagger
 
     testImplementation libraries.mockk
-
-    annotationProcessor libraries.daggerProcessor
-
-    kapt libraries.kotlinDaggerAnnot
-    kapt libraries.kotlinDaggerCompiler
 
     /**
      * Using JUnit Jupiter 5 in Android and unit tests
@@ -130,4 +122,17 @@ dependencies {
     testImplementation 'androidx.test.ext:junit:' + rootProject.extJUnitVersion
     testImplementation 'androidx.test.ext:junit-ktx:' + rootProject.extJUnitVersion
 
+    implementation libraries.daggerJava
+    testImplementation libraries.daggerJava
+    androidTestImplementation libraries.daggerJava
+
+    implementation libraries.daggerAndroid
+    testImplementation libraries.daggerAndroid
+    androidTestImplementation libraries.daggerAndroid
+
+    kapt libraries.daggerJavaProcessor
+    kaptTest libraries.daggerJavaProcessor
+
+    kapt libraries.daggerAndroid
+    kaptTest libraries.daggerAndroidProcessor
 }
