@@ -161,4 +161,10 @@ internal class GOSTableModuleTest {
         Assertions.assertNotNull(g0)
         Assertions.assertNotNull(source)
     }
+
+    /**
+     * Пока что попробую сюда накидать заданных переменных для тестов функций, потом если что
+     * перемещу
+     */
+
 }
