@@ -25,6 +25,7 @@ class Repository @Inject constructor(
     /**
      * Returns [T] data, read from cursor.
      * Can be used for other purposes also
+     * This class is only for internal database usage
      */
     class RCursorWrapper<T> internal constructor(
         val cursor: Cursor,
@@ -44,6 +45,14 @@ class Repository @Inject constructor(
             cursor.moveToPosition(0)
             return getItem(0)
         }
+
+        fun getList(): List<T> {
+            val list: MutableList<T> = mutableListOf()
+            for (i in 0 until cursor.count) {
+                list.add(getItem(i))
+            }
+            return list
+        }
     }
 
     /**
@@ -55,14 +64,55 @@ class Repository @Inject constructor(
 
     // TODO обложить тестами выдачу курсора через билдер И последующий запрос в реальную базу
     fun <T> constCursorBuilder(
-        tableName: String = constMainTable().name,
-        columns: Array<String> = constMainTable().columns.toTypedArray()
+        tableName: String,
+        columns: Array<String>
     ): RCursorAdapterBuilder<T> {
-        return RCursorAdapterBuilder(
-            constantDatabaseHelper,
-            tableName,
-            columns
+        val tableContract = constMainTable()
+        return cursorBuilder(
+            DatabaseType.Constant,
+            tableContract.name,
+            tableContract.columns.toTypedArray()
         )
+    }
+
+
+    fun <T> userCursorBuilder(
+        tableName: String,
+        columns: Array<String>
+    ): RCursorAdapterBuilder<T> {
+        val tableContract = userMainTable()
+        return cursorBuilder(
+            DatabaseType.User,
+            tableContract.name,
+            tableContract.columns.toTypedArray()
+        )
+    }
+
+    fun <T> cursorBuilder(
+        databaseType: DatabaseType,
+        tableName: String,
+        columns: Array<String>
+    ): RCursorAdapterBuilder<T> {
+        return when (databaseType) {
+            DatabaseType.Constant ->
+                RCursorAdapterBuilder(constantDatabaseHelper, tableName, columns)
+            DatabaseType.User ->
+                RCursorAdapterBuilder(userDatabaseHelper, tableName, columns)
+        }
+    }
+
+    // Specifying database and table parameters
+    fun getAllItemsFrom(
+        databaseType: DatabaseType,
+        tableContract: TableContract
+    ): List<CommonItem> {
+        val cursor : RCursorWrapper<CommonItem> = cursorBuilder<CommonItem>(
+            databaseType,
+            tableContract.name,
+            tableContract.columns.toTypedArray()
+        )
+            .setReader(CursorCommonItemReader).create()
+        return cursor.getList()
     }
 }
 

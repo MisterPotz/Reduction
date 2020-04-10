@@ -20,6 +20,7 @@ class RCursorAdapterBuilder<T> internal constructor(
 ) {
     private var reader: Repository.ItemReader<T>? = null
     private var cursor: Cursor? = null
+
     // TODO if query is null - just request all SQL fields
     var query: Query? = null
         private set
@@ -44,7 +45,18 @@ class RCursorAdapterBuilder<T> internal constructor(
 
     fun create(): Repository.RCursorWrapper<T> {
         val cursor = databaseHelper
-            .readableDatabase.query(query!!.getQuery())
+                // If query was empty builds creates a query returning all rows
+            .readableDatabase.query(
+                query?.getQuery() ?: QueryParameters(
+                    table,
+                    columns,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                )
+            )
         return Repository.RCursorWrapper(
             cursor,
             reader!!

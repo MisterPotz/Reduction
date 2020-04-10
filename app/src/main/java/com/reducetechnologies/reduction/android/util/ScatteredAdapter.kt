@@ -62,18 +62,3 @@ class ScatteredAdapter(
         //holder.onBind()
     }
 }
-
-interface ItemManagerInterface<T>{
-    // асинхронно получает курсор и возвращает количество
-    fun getItems() : CompletableDeferred<List<T>>
-}
-
-/**
- * Работает непосредственно с репозиторией. Получает оттуда по указанному тегу нужные вещи
- */
-class ItemManager(val tag: String, val repository: Repository) : ItemManagerInterface<CommonItem> {
-    override fun getItems(): CompletableDeferred<List<CommonItem>> {
-
-    }
-
-}

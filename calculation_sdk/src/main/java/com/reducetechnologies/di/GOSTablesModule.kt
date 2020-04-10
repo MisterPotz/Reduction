@@ -32,6 +32,3 @@ interface GOSTableComponentInterface {
 
     fun getSourceTable() : SourceDataTable*/
 }
-
-@Component
-interface SomeComponent
