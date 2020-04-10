@@ -120,15 +120,22 @@ dependencies {
     implementation project(':database')
     testImplementation project(":database")
 
-    implementation libraries.dagger
-    testImplementation libraries.dagger
-
-    annotationProcessor libraries.daggerProcessor
-
     implementation libraries.gson
     testImplementation libraries.gson
     androidTestImplementation libraries.gson
 
-    kapt libraries.kotlinDaggerAnnot
-    kapt libraries.kotlinDaggerCompiler
+
+    implementation libraries.daggerJava
+    testImplementation libraries.daggerJava
+    androidTestImplementation libraries.daggerJava
+
+    implementation libraries.daggerAndroid
+    testImplementation libraries.daggerAndroid
+    androidTestImplementation libraries.daggerAndroid
+
+    kapt libraries.daggerJavaProcessor
+    kaptTest libraries.daggerJavaProcessor
+
+    kapt libraries.daggerAndroid
+    kaptTest libraries.daggerAndroidProcessor
 }

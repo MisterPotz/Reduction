@@ -16,8 +16,12 @@ compileTestKotlin {
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
-
+kapt {
+    correctErrorTypes = true
+}
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation libraries.kotlinStd
     testImplementation libraries.kotlinStd
 
@@ -34,21 +38,29 @@ dependencies {
     testImplementation libraries.junit
     testImplementation libraries.junitRuntime
 
-    implementation libraries.dagger
-    testImplementation libraries.dagger
-
-    annotationProcessor libraries.daggerProcessor
-
     implementation libraries.gson
     testImplementation libraries.gson
 
-    kapt libraries.kotlinDaggerAnnot
-    kapt libraries.kotlinDaggerCompiler
+    implementation libraries.daggerJava
+    testImplementation libraries.daggerJava
+
+    kapt libraries.daggerJavaProcessor
+    kaptTest libraries.daggerJavaProcessor
 }
 
 test {
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
+    }
+}
+// The lines below are totally necessary for adequate dagger file generation
+
+apply plugin: 'idea'
+
+idea {
+    module {
+        sourceDirs += files('build/generated/source/kapt/main', 'build/generated/source/kaptKotlin/main')
+        generatedSourceDirs += files('build/generated/source/kapt/main', 'build/generated/source/kaptKotlin/main')
     }
 }
