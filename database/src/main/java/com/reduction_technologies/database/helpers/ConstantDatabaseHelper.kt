@@ -15,7 +15,7 @@ import java.io.FileOutputStream
  * The main purpose of this helper class is to put an asset database into the
  * Android given place for storing databases.
  */
-class ConstantDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, database.title, null, database.version) {
+internal class ConstantDatabaseHelper(val context: Context) : SQLiteOpenHelper(context, database.title, null, database.version) {
 // TODO make an additional interface between output of this class and sqlite. this must return a list of commonitems
     private val preferences: SharedPreferences = context.getSharedPreferences(
         "${context.packageName}.$PREFERENCES_VERSION",

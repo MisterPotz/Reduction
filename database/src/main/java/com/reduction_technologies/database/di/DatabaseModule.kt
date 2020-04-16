@@ -10,16 +10,12 @@ import dagger.Provides
 
 @Module
 class DatabaseModule(val context: Context) {
-    // TODO инкапсулировать эти хелперы в сущности, которые вместо базы данных отдают список
-    @Provides
-    @ApplicationScope
-    fun constantDatabaseHelper(context: Context): ConstantDatabaseHelper {
+
+    private fun constantDatabaseHelper(): ConstantDatabaseHelper {
         return ConstantDatabaseHelper(context)
     }
 
-    @Provides
-    @ApplicationScope
-    fun userDatabaseHelper(context: Context) =
+    private fun userDatabaseHelper() =
         UserDatabaseHelper(context)
 
     @Provides
@@ -28,12 +24,8 @@ class DatabaseModule(val context: Context) {
 
     @Provides
     @ApplicationScope
-    fun repository(
-        context: Context,
-        user: UserDatabaseHelper,
-        const: ConstantDatabaseHelper
-    ): Repository {
-        return Repository(context, const, user)
+    fun repository(): Repository {
+        return Repository(context(), constantDatabaseHelper(), userDatabaseHelper())
     }
 }
 

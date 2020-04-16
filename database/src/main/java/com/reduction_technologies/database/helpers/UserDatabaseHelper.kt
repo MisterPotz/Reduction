@@ -12,7 +12,7 @@ import com.reduction_technologies.database.databases_utils.UserTables
  * DataBase helper for data set with user-defined data. Only user frequent changing data can be stored here.
  * @see ConstantDatabaseHelper
  */
-class UserDatabaseHelper(val context: Context) :
+internal class UserDatabaseHelper(val context: Context) :
     SQLiteOpenHelper(context, database.title, null, database.version) {
     // TODO Надо как-то элегантнее сделать либо соответствие датабейза таблице либо организацию
     // работы с запросом таблиц посредством хелпера

@@ -11,16 +11,16 @@ import javax.inject.Inject
  * to GOST tables, encyclopedia, and user favorite items.
  * Some fields are in
  */
-class Repository @Inject constructor(
+class Repository @Inject internal constructor(
     internal val context: Context,
     /**
      * THe field is injectable so instances of constant database can be mocked
      */
-    val constantDatabaseHelper: ConstantDatabaseHelper,
+    internal val constantDatabaseHelper: ConstantDatabaseHelper,
     /**
      * Injectible for the sake of testing and reusability
      */
-    val userDatabaseHelper: UserDatabaseHelper
+    internal val userDatabaseHelper: UserDatabaseHelper
 ) {
     /**
      * Returns [T] data, read from cursor.
