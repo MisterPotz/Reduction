@@ -1,6 +1,5 @@
 package com.reducetechnologies.tables_utils
 
-import com.reducetechnologies.di.GOSTableComponentInterface
 import com.reducetechnologies.tables_utils.table_contracts.*
 import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
 import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
@@ -39,22 +38,6 @@ data class TableHolder(
     val HRC : HRCTable,
     val SGTT : SGTTTable,
     val TIP_Tipre : Tip_TipreTable
-) {
-    companion object {
-        fun tableHolderFromComponen(component : GOSTableComponentInterface) : TableHolder {
-            return TableHolder(
-                fatigue = component.getFatigue(),
-                g_0 = component.getG0(),
-                source_data = component.getSourceTable(),
-                ra40 = component.getRA40(),
-                modules = component.getStandartModules(),
-                EDData = component.getEDTable(),
-                HRC = component.getHRCTable(),
-                SGTT = component.getSGTTTable(),
-                TIP_Tipre = component.getTIP_TipreTable()
-            )
-        }
-    }
-}
+)
 
 

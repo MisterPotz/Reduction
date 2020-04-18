@@ -2,6 +2,7 @@ package com.reducetechnologies.tables_utils.table_contracts
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.reducetechnologies.tables_utils.TableExtractor
 import com.reduction_technologies.database.json_utils.GsonRegister
 
 /**
@@ -11,9 +12,13 @@ import com.reduction_technologies.database.json_utils.GsonRegister
  * набор примитивных значений - list, когда ужже набор строк - rows)
  */
 data class RA40Table(val list: List<Float>){
-    companion object : GsonRegister {
+    companion object : GsonRegister, TableExtractor<RA40Table> {
         override fun prepareGson(): Gson {
             return GsonBuilder().create()
+        }
+
+        override fun extractFromStringWithGson(string: String, gson: Gson): RA40Table {
+            return gson.fromJson(string, RA40Table::class.java)
         }
     }
 }

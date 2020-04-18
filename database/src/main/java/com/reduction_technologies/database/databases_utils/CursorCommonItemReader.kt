@@ -12,7 +12,7 @@ import com.reduction_technologies.database.helpers.Repository
  * Knows how to read a cursor at given position to produce a CommonItem object.
  * @See CommonItem
  */
-object CursorCommonItemReader : Repository.ItemReader<CommonItem> {
+object CursorCommonItemReader : ItemReader<CommonItem> {
     override fun readItem(cursor: Cursor): CommonItem {
         val id = cursor.getIntK(_ID)
         val title = cursor.getStringK(TITLE)

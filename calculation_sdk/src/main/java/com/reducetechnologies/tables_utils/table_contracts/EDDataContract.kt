@@ -2,6 +2,7 @@ package com.reducetechnologies.tables_utils.table_contracts
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.reducetechnologies.tables_utils.TableExtractor
 import com.reduction_technologies.database.json_utils.GsonRegister
 
 data class EDDataRow(val key: Float,
@@ -14,9 +15,13 @@ data class EDDataRow(val key: Float,
 )
 
 data class EDDataTable(val map: List<EDDataRow>){
-    companion object : GsonRegister {
+    companion object : GsonRegister, TableExtractor<EDDataTable> {
         override fun prepareGson(): Gson {
             return GsonBuilder().create()
+        }
+
+        override fun extractFromStringWithGson(string: String, gson: Gson): EDDataTable {
+            return gson.fromJson(string, EDDataTable::class.java)
         }
     }
 }
