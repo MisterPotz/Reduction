@@ -101,7 +101,7 @@ ext.libraries = [
         "daggerJava"            : "com.google.dagger:dagger:${ext.daggerVersion}",
 
         // For mocking classes in tests
-        "mockk"                 : "io.mockk:mockk:1.9",
+        "mockk"                 : "io.mockk:mockk:1.9.3",
 
         // For running unit tests in android sandbox
         "robolectric"           : "org.robolectric:robolectric:${robolectricVersion}"

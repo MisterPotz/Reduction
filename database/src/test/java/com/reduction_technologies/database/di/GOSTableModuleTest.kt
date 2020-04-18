@@ -1,73 +1,72 @@
 package com.reduction_technologies.database.di
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
-import androidx.test.core.app.ApplicationProvider
 import com.reducetechnologies.tables_utils.TableHolder
+import com.reduction_technologies.database.helpers.ConstantDatabaseHelper
+import com.reduction_technologies.database.helpers.Repository
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.*
-import net.bytebuddy.implementation.bind.annotation.Super
-import org.junit.Before
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.fail
-import org.junit.jupiter.api.fail
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
-import kotlin.coroutines.coroutineContext
+import org.junit.jupiter.api.Assertions.*
+
+import androidx.arch.core.executor.ArchTaskExecutor
+import androidx.arch.core.executor.TaskExecutor
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.ExtensionContext
+
+class InstantExecutorExtension : BeforeEachCallback, AfterEachCallback {
+
+    override fun beforeEach(context: ExtensionContext?) {
+        ArchTaskExecutor.getInstance()
+            .setDelegate(object : TaskExecutor() {
+                override fun executeOnDiskIO(runnable: Runnable) = runnable.run()
+
+                override fun postToMainThread(runnable: Runnable) = runnable.run()
+
+                override fun isMainThread(): Boolean = true
+            })
+    }
+
+    override fun afterEach(context: ExtensionContext?) {
+        ArchTaskExecutor.getInstance().setDelegate(null)
+    }
+
+}
+
 
 /**
- * Собственно тесты можно пилить здесь.
+ * Tests for livedata via livedata mocking observers
  */
-@RunWith(RobolectricTestRunner::class)
-@Config(manifest = Config.NONE)
+@ExtendWith(InstantExecutorExtension::class)
 internal class GOSTableModuleTest {
-    lateinit var databaseComponent: DatabaseComponent
-
-    @Before
-    fun setUp() {
-        val context =
-            ApplicationProvider.getApplicationContext<Context>()
-
-        // Using dependencies to create component
-        databaseComponent = DaggerDatabaseComponent.builder()
-            .databaseModule(DatabaseModule(context))
-            .build()
+    // Mocking specific test values of tableholder
+    val tableHolder = run<TableHolder> {
+        val holder = mockk<TableHolder>()
+        every { holder.fatigue } returns mockk() {
+            every { rows } returns listOf(mockk() {
+                every { load } returns -120
+            })
+        }
+        holder
     }
 
-    @org.junit.Test
-    fun getTablesTest() {
-        val repository = databaseComponent.repository()
+    val mockedConstantDatabase = mockk<ConstantDatabaseHelper>() {
+        every { getTables() } answers {
+            tableHolder
+        }
+    }
 
-        val job = SupervisorJob()
-        val asynced = CoroutineScope(Dispatchers.Default + job).async {
+    val repository = Repository(mockk<Context>(), mockedConstantDatabase, mockk())
+
+    @Test
+    fun getTablesTest() {
+
+        val tables = runBlocking {
             repository.getTables()
         }
-
-        runBlocking {
-            withTimeout(4000) {
-                val tables = asynced.await()
-                assertTrue(tables != null)
-            }
-        }
-    }
-
-    @org.junit.Test
-    fun getEntitiesTest() {
-        val repository = databaseComponent.repository()
-
-        val job = SupervisorJob()
-        val asynced = CoroutineScope(Dispatchers.Default + job).async {
-            repository.getEncyclopediaItems()
-        }
-
-        runBlocking {
-            withTimeout(4000) {
-                val items = asynced.await()
-
-                assertTrue(items != null)
-            }
-        }
+        assertEquals(-120, tables.value!!.fatigue.rows[0].load)
     }
 }

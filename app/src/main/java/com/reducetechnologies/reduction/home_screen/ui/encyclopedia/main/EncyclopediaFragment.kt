@@ -47,12 +47,12 @@ class EncyclopediaFragment : Fragment() {
             textView.text = it
         })
         categoriesAdapter = CategoriesAdapter()
-        encyclopediaViewModel.categoriesListLD().observe(viewLifecycleOwner, Observer {
-            Timber.i("Data set updated")
-            categoriesAdapter.list = it
-            categoriesAdapter.notifyDataSetChanged()
-        })
-        categoriesAdapter.list = encyclopediaViewModel.categoriesListLD().value!!
+//        encyclopediaViewModel.categoriesListLD().observe(viewLifecycleOwner, Observer {
+//            Timber.i("Data set updated")
+//            categoriesAdapter.list = it
+//            categoriesAdapter.notifyDataSetChanged()
+//        })
+//        categoriesAdapter.list = encyclopediaViewModel.categoriesListLD().value!!
 
         view.findViewById<RecyclerView>(R.id.categories_list).apply {
             adapter = categoriesAdapter
