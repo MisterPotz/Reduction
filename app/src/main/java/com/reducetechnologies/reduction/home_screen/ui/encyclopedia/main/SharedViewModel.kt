@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.reduction_technologies.database.helpers.Repository
 import javax.inject.Inject
 
-class EncyclopediaViewModel @Inject constructor(repository: Repository): ViewModel() {
+class SharedViewModel @Inject constructor(repository: Repository): ViewModel() {
     val text: LiveData<String> = MutableLiveData<String>().apply {
         value = "Энциклопедия"
     }

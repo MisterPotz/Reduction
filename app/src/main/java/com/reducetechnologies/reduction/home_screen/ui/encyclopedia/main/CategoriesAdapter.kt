@@ -21,7 +21,7 @@ class CategoriesAdapter() : RecyclerView.Adapter<CategoriesAdapter.CategoryHolde
     }
 
     override fun getItemCount(): Int {
-        return list!!.size
+        return list?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: CategoryHolder, position: Int) {
