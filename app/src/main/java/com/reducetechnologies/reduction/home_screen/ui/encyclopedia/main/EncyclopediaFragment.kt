@@ -16,7 +16,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class EncyclopediaFragment : Fragment() {
-    private lateinit var categoriesAdapter: CategoriesAdapter
+//    private lateinit var categoriesAdapter: CategoriesAdapter
     @Inject lateinit var viewModel : SharedViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,18 +46,18 @@ class EncyclopediaFragment : Fragment() {
             textView.text = it
         })
 
-        categoriesAdapter = CategoriesAdapter()
-//        encyclopediaViewModel.categoriesListLD().observe(viewLifecycleOwner, Observer {
-//            Timber.i("Data set updated")
-//            categoriesAdapter.list = it
-//            categoriesAdapter.notifyDataSetChanged()
-//        })
-//        categoriesAdapter.list = encyclopediaViewModel.categoriesListLD().value!!
-
-        view.findViewById<RecyclerView>(R.id.categories_list).apply {
-            adapter = categoriesAdapter
-            layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
-        }
+//        categoriesAdapter = CategoriesAdapter()
+////        encyclopediaViewModel.categoriesListLD().observe(viewLifecycleOwner, Observer {
+////            Timber.i("Data set updated")
+////            categoriesAdapter.list = it
+////            categoriesAdapter.notifyDataSetChanged()
+////        })
+////        categoriesAdapter.list = encyclopediaViewModel.categoriesListLD().value!!
+//
+//        view.findViewById<RecyclerView>(R.id.categories_list).apply {
+//            adapter = categoriesAdapter
+//            layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

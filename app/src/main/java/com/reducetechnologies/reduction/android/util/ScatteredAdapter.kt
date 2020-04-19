@@ -1,72 +1,86 @@
 package com.reducetechnologies.reduction.android.util
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import com.reducetechnologies.reduction.R
-import com.reduction_technologies.database.databases_utils.CommonItem
-import com.reduction_technologies.database.helpers.Repository
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
+
+interface ScatteredHolderCreator<T> {
+    // определяет тип в соответствии с позицкей
+    fun getOrientation(position: Int): HolderItemsOrientation
+
+    // для перевода из holderitemsorientation в гугловский viewtype
+    fun toViewType(orientation: HolderItemsOrientation): Int
+
+    // для обратного перевода
+    fun toOrientation(viewType: Int): HolderItemsOrientation
+
+    // creates view and performs necessary actions on each view before returning
+    fun createView(viewType: Int, parent: ViewGroup, inflater: LayoutInflater): Pair<View, ScatteredHolderBindDelegate.Specific?>
+
+    // creates an iterator that traverses the list and returns sub-lists
+    fun getViewsForOneHolder(list: List<T>) : Iterator<List<T>>
+}
 
 /**
  * @param CoroutineScope определяется активностью / приложением, где используется адаптер.
  * контекст нужен для работы с базой данных
  */
-// TODO чувак который получает нужные записи по тегам
-class ScatteredAdapter(
-    CoroutineScope : CoroutineScope,
-    private val liveList : LiveData<List<CommonItem>>
-) : RecyclerView.Adapter<ScatteredItemHolder>() {
-    // при создании нужно получить вообще количество итемов
-    val some = Dispatchers.Main
+class ScatteredAdapter<T>(
+    lifecycleOwner: LifecycleOwner,
+    // values
+    private val liveList: LiveData<List<T>>,
+    // delegate that knows how to create views based on orientation
+    val creator: ScatteredHolderCreator<T>,
+    // builder that builds delegates for holders, knows how to rebind holder views to new items
+    val holderDelegateBuilder: ScatteredHolderBindDelegate.Builder<T>
+) : RecyclerView.Adapter<ScatteredItemHolder<T>>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScatteredItemHolder {
-        val inflater = LayoutInflater.from(parent.context)
+    private lateinit var inflater: LayoutInflater
+    private lateinit var context: Context
 
-        val view = createViewBasedOnType(getOrientation(viewType), parent, inflater)
-        return ScatteredItemHolder(getOrientation(viewType), view, inflater)
+    private var itemPacksMap : MutableMap<Int, List<T>> = mutableMapOf()
+    init {
+        // TODO notifySetChanged()
+        liveList.observe(lifecycleOwner, Observer {
+            cleanMap()
+            val iterator = creator.getViewsForOneHolder(it)
+            iterator.withIndex().forEach {
+                itemPacksMap[it.index] = it.value
+            }
+        })
+    }
+
+    private fun cleanMap() {
+        itemPacksMap = mutableMapOf()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScatteredItemHolder<T> {
+        val view = creator.createView(viewType, parent, inflater)
+        holderDelegateBuilder.setSpecific(view.second)
+        return ScatteredItemHolder<T>(creator.toOrientation(viewType), view.first, holderDelegateBuilder)
     }
 
     override fun getItemCount(): Int {
-        return liveList.value?.size ?: 0
+        // должно быть поделено на количество вьюшек на один холдер, то есть нужен другой лив датный список
+        return itemPacksMap.size
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position % 2 == 0) {
-            HolderItemsOrientation.SINGLE_BOTTOM.ordinal
-        } else {
-            HolderItemsOrientation.SINGLE_TOP.ordinal
-        }
+        return creator.getOrientation(position).let { creator.toViewType(it) }
     }
 
-    fun getOrientation(ordinal: Int): HolderItemsOrientation {
-        return HolderItemsOrientation.values().find { it.ordinal == ordinal }!!
-    }
-
-    fun createViewBasedOnType(orientation: HolderItemsOrientation, parent: ViewGroup, inflater: LayoutInflater): View {
-        return when (orientation) {
-            HolderItemsOrientation.SINGLE_BOTTOM -> inflater.inflate(
-                R.layout.holder_two_top_one_bottom,
-                parent,
-                false
-            )
-            HolderItemsOrientation.SINGLE_TOP -> inflater.inflate(
-                R.layout.holder_one_top_two_bottom,
-                parent,
-                false
-            )
-        }
-    }
-
-    override fun onBindViewHolder(holder: ScatteredItemHolder, position: Int) {
-        // TODO получить нужные итемы из сохранки
-//        holder.onBind(liveList.value.slice(position..position+))
+    override fun onBindViewHolder(holder: ScatteredItemHolder<T>, position: Int) {
+        holder.onBind(itemPacksMap[position]!!)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        context = recyclerView.context
+        inflater = LayoutInflater.from(context)
         super.onAttachedToRecyclerView(recyclerView)
     }
 }

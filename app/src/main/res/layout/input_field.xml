@@ -7,10 +7,12 @@
     <com.google.android.material.textfield.TextInputLayout
         app:endIconMode="clear_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Some info input"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Some info input"/>
+
 </LinearLayout>
