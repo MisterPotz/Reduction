@@ -11,13 +11,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
+import com.reducetechnologies.reduction.android.util.common_item.CategoriesAdapterCommon
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
 import timber.log.Timber
 import javax.inject.Inject
 
 class EncyclopediaFragment : Fragment() {
-//    private lateinit var categoriesAdapter: CategoriesAdapter
-    @Inject lateinit var viewModel : SharedViewModel
+    //    private lateinit var categoriesAdapter: CategoriesAdapter
+    @Inject
+    lateinit var viewModel: SharedViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -46,22 +48,17 @@ class EncyclopediaFragment : Fragment() {
             textView.text = it
         })
 
-//        categoriesAdapter = CategoriesAdapter()
-////        encyclopediaViewModel.categoriesListLD().observe(viewLifecycleOwner, Observer {
-////            Timber.i("Data set updated")
-////            categoriesAdapter.list = it
-////            categoriesAdapter.notifyDataSetChanged()
-////        })
-////        categoriesAdapter.list = encyclopediaViewModel.categoriesListLD().value!!
-//
-//        view.findViewById<RecyclerView>(R.id.categories_list).apply {
-//            adapter = categoriesAdapter
-//            layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
-//        }
+        val categoriesAdapterCommon =
+            CategoriesAdapterCommon(viewModel.getAllItems(), lifecycleOwner = viewLifecycleOwner)
+
+        view.findViewById<RecyclerView>(R.id.categories_list).apply {
+            adapter = categoriesAdapterCommon
+            layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.encyclopedia_menu,menu)
+        inflater.inflate(R.menu.encyclopedia_menu, menu)
         // menu.add(NONE, R.id.select_favorites, NONE, "Выбрать элементы")
     }
 

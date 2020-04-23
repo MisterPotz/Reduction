@@ -103,11 +103,11 @@ fun BottomNavigationView.setupWithNavController(
                     // Commit a transaction that cleans the back stack and adds the first fragment
                     // to it, creating the fixed started destination.
                     fragmentManager.beginTransaction()
-                        .setCustomAnimations(
+/*                        .setCustomAnimations(
                             R.anim.fragment_open_enter,
                             R.anim.fragment_close_exit,
                             R.anim.fragment_open_enter,
-                            R.anim.fragment_close_exit)
+                            R.anim.fragment_close_exit)*/
                         .attach(selectedFragment)
                         .setPrimaryNavigationFragment(selectedFragment)
                         .apply {

@@ -5,6 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
+import androidx.cardview.widget.CardView
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.HolderItemsOrientation
 import com.reducetechnologies.reduction.android.util.ScatteredHolderBindDelegate
@@ -57,34 +60,33 @@ object ScatteredHolderCreator_CommonItem : ScatteredHolderCreator<CommonItem> {
         }
     }
 
+    private fun prepareView(
+        @IdRes ids: List<Int>,
+        types: List<ItemSizeEnum>,
+        view: View,
+        inflater: LayoutInflater
+    ): Specific_CommonItem {
+        val items = (ids.indices).map {
+            val frameParent = view.findViewById<FrameLayout>(ids[it])
+            inflater.inflate(R.layout.closed_card_item, frameParent, true)
+            val card = frameParent.findViewById<CardView>(R.id.itemCard)
+            val view = card.findViewById<TextView>(R.id.itemName)
+
+            EncapsulatedFrameItem(view, card, types[it])
+        }
+        return Specific_CommonItem(items)
+    }
+
     private fun prepareViewSingleBottom(view: View, inflater: LayoutInflater): Specific_CommonItem {
-        val max = view.findViewById<FrameLayout>(R.id.bottomSingleItem)
-        val minOne = view.findViewById<FrameLayout>(R.id.topFirstItem)
-        val minTwo = view.findViewById<FrameLayout>(R.id.topSecondItem)
-
-        val viewMax = inflater.inflate(R.layout.closed_card_item, max, true)
-        val viewMinOne = inflater.inflate(R.layout.closed_card_item, minOne, true)
-        val viewMinTwo = inflater.inflate(R.layout.closed_card_item, minTwo, true)
-
-        val textMax = viewMax.findViewById<TextView>(R.id.itemName)
-        val textMinOne = viewMinOne.findViewById<TextView>(R.id.itemName)
-        val textMinTwo = viewMinTwo.findViewById<TextView>(R.id.itemName)
-        return Specific_CommonItem(textMax, textMinOne, textMinTwo)
+        val ids = listOf(R.id.topFirstItem, R.id.topSecondItem, R.id.bottomSingleItem)
+        val sizes = listOf(ItemSizeEnum.SMALL, ItemSizeEnum.SMALL, ItemSizeEnum.BIG)
+        return prepareView(ids, sizes, view, inflater)
     }
 
     private fun prepareViewSingleTop(view: View, inflater: LayoutInflater): Specific_CommonItem {
-        val max = view.findViewById<FrameLayout>(R.id.topSingleItem)
-        val minOne = view.findViewById<FrameLayout>(R.id.bottomFirstItem)
-        val minTwo = view.findViewById<FrameLayout>(R.id.bottomSecondItem)
-
-        val viewMax = inflater.inflate(R.layout.closed_card_item, max, true)
-        val viewMinOne = inflater.inflate(R.layout.closed_card_item, minOne, true)
-        val viewMinTwo = inflater.inflate(R.layout.closed_card_item, minTwo, true)
-
-        val textMax = viewMax.findViewById<TextView>(R.id.itemName)
-        val textMinOne = viewMinOne.findViewById<TextView>(R.id.itemName)
-        val textMinTwo = viewMinTwo.findViewById<TextView>(R.id.itemName)
-        return Specific_CommonItem(textMax, textMinOne, textMinTwo)
+        val ids = listOf(R.id.topSingleItem, R.id.bottomFirstItem, R.id.bottomSecondItem)
+        val sizes = listOf(ItemSizeEnum.BIG, ItemSizeEnum.SMALL, ItemSizeEnum.SMALL)
+        return prepareView(ids, sizes, view, inflater)
     }
 
     override fun getViewsForOneHolder(list: List<CommonItem>): Iterator<List<CommonItem>> {

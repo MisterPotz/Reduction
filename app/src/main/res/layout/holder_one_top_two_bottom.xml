@@ -3,14 +3,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:gravity="center">
-
+    android:gravity="center"
+    >
     <FrameLayout
         android:id="@+id/topSingleItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-        <include layout="@layout/closed_card_item"/>
-    </FrameLayout>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </FrameLayout>c
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -21,16 +20,13 @@
             android:id="@+id/bottomFirstItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <include layout="@layout/closed_card_item"/>
-
         </FrameLayout>
 
 
         <FrameLayout
             android:id="@+id/bottomSecondItem"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-            <include layout="@layout/closed_card_item"/>
+            android:layout_height="wrap_content">
         </FrameLayout>
     </LinearLayout>
 </LinearLayout>

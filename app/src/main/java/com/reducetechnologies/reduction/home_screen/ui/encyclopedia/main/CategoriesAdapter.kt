@@ -64,9 +64,11 @@ open class CategoriesAdapter<T>(
                     if (dataBuckets[bucket] == null) {
                         dataBuckets[bucket] = MutableLiveData(mutableListOf())
                     }
+                    // TODO здесь просто доступ идет, но не обновление
                     dataBuckets[bucket]!!.value!!.add(item)
                 }
             }
+            notifyDataSetChanged()
         })
     }
 
@@ -108,7 +110,7 @@ open class CategoriesAdapter<T>(
     }
 
     override fun getItemCount(): Int {
-        return dataBuckets.size
+        return dataBuckets.filter { it != null }.size
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -117,7 +119,7 @@ open class CategoriesAdapter<T>(
     }
 
     override fun onBindViewHolder(holder: CategoryHolder<T>, position: Int) {
-        holder.onBind(modelHolders[position]!!)
+        holder.onBind(getOrCreateModelHolder(position))
     }
 
     class CategoryHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
