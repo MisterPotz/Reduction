@@ -4,7 +4,6 @@ import com.reducetechnologies.di.GOSTableComponentInterface
 import com.reducetechnologies.tables_utils.table_contracts.*
 import com.reduction_technologies.database.databases_utils.*
 import com.reduction_technologies.database.helpers.Repository
-import com.reduction_technologies.database.json_utils.GsonRegister
 import com.reduction_technologies.database.tables_utils.GOSTableContract.EDData
 import com.reduction_technologies.database.tables_utils.GOSTableContract.FATIGUE_CALCULATION_23
 import com.reduction_technologies.database.tables_utils.GOSTableContract.G_0
@@ -14,9 +13,9 @@ import com.reduction_technologies.database.tables_utils.GOSTableContract.RA40
 import com.reduction_technologies.database.tables_utils.GOSTableContract.SGTT
 import com.reduction_technologies.database.tables_utils.GOSTableContract.SOURCE_DATA
 import com.reduction_technologies.database.tables_utils.GOSTableContract.TIP_Tipre
-import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
+import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
 import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 import dagger.Component
 import dagger.Module
 import dagger.Provides

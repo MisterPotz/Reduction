@@ -2,7 +2,7 @@ package com.reducetechnologies.calculations
 
 import kotlin.math.*
 
-object ZUCFMethods {
+class ZUCFMethodsClass() {
     data class Arguments(
         val SIGN: Int,
         val inputData: InputData,
@@ -36,7 +36,7 @@ object ZUCFMethods {
             if (zucfScope.WFV!! > zuc2hScope.WV!!)
                 zucfScope.WFV = zuc2hScope.WV
             zucfScope.KFV = 1f + zucfScope.WFV!!*zuc1hScope.BW1!!/zuc2hScope.FT!!
-            if (zuc1hScope.KFB!! > 1f) {
+            if (zuc1hScope.KFB > 1f) {
                 //Уход в parametersCalc
                 parametersCalc(args, zucfScope)
                 return
@@ -49,7 +49,7 @@ object ZUCFMethods {
                 if (option.HRC[0] <= 35)
                     SHEM = 4
                 else (option.HRC[0] > 35)
-                    SHEM = 3
+                SHEM = 3
                 if (CONSOL == 1)
                     SHEM = 2
                 zuc1hScope.KFB = 1f + 1.1f*PSIDR/SHEM
@@ -62,7 +62,7 @@ object ZUCFMethods {
                 if (option.HRC[0] <= 45)
                     SHEM = 4
                 else (option.HRC[0] > 45)
-                    SHEM = 3
+                SHEM = 3
                 if (CONSOL == 1)
                     SHEM = 2
                 zuc1hScope.KFB = 1f + 1.8f*PSIDR/SHEM
@@ -85,8 +85,9 @@ object ZUCFMethods {
                 wheelNumber = 0
             )
             //Колесо
-            //Там очень странная логика относительно Z0, пока что буду использовать просто уже
-            //рассчитанное в zucep значение
+            if (zucepScope.Z0 <= 0){
+                zucepScope.Z0 = 40
+            }//Чтобы выбрать долбяк если он не выбран
             if (SIGN < 0)
                 oneWheelCalc(
                     args = args,
@@ -115,9 +116,9 @@ object ZUCFMethods {
                              X: Float,
                              BW: Int,
                              wheelNumber: Int//0 или 1 в зависимости от шестерни ил колеса
-                             ) {
+    ) {
         args.apply {
-            val WFT: Float = zuc2hScope.FT!!*zuc2hScope.KHALF!!*zuc1hScope.KFB!!*zucfScope.KFV!!/BW
+            val WFT: Float = zuc2hScope.FT!!*zuc2hScope.KHALF!!*zuc1hScope.KFB*zucfScope.KFV!!/BW
             val ZV: Float = abs(Z / (cos(zuc1hScope.BET)).pow(3))
             val YF: Float
             if (Z < abs(Z)) {//максимально тупая проверка на отрицательность
@@ -133,9 +134,22 @@ object ZUCFMethods {
             if (YBET < 0.7f)
                 YBET = 0.7f
             zucfScope.SGF[wheelNumber] = YEP*YBET*YF*WFT/args.dopnScope.M
-            zucfScope.SGFM[wheelNumber] = zucfScope.SGF[wheelNumber]*edScope.TTED!!
+            if (edScope.TTED != null){
+                zucfScope.SGFM[wheelNumber] = zucfScope.SGF[wheelNumber]*edScope.TTED!!
+            }
+            //Если не подбираем ЭД, то заместо TTED просто берем 2 как обычное значение
+            else {
+                zucfScope.SGFM[wheelNumber] = zucfScope.SGF[wheelNumber]*2f
+            }
         }
     }
 
 }
 
+data class ZUCFScope(
+    var SGF: Array<Float> = Array(2){-1f},
+    var SGFM: Array<Float> = Array(2){-1f},
+    var DELF: Float? = null,
+    var WFV: Float? = null,
+    var KFV: Float? = null
+)

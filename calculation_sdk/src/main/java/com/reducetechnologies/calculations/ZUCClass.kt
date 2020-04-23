@@ -1,13 +1,20 @@
 package com.reducetechnologies.calculations
 
+import javax.inject.Inject
 import kotlin.math.pow
 
-object ZUCMethods {
+class ZUCMethodsClass @Inject constructor(
+    private val dopnMethods: DOPN_MethodsClass,
+    private val zuc1hMethods: ZUC1HMethodsClass,
+    private val zucepMethods: ZUCEPMethodsClass,
+    private val zucfMethdos: ZUCFMethodsClass,
+    private val zuc2hMethods: ZUC2HMethodsClass
+) {
     data class Arguments(
         val SIGN: Int,
         val IST: Int,
         val N2: Float,
-        val T2: Float,
+        val T2: Float,//сюда передаём TT из инпута, если это быстроходная ступень, и рассчитанный T1 момент на промежуточном валу, если это тихоходная
         val AWTipre4: Float? = null,//Это для соосных, сюда должно передаваться значение AW предыдущей ступени
         val uStup: Float,//чтобы передать задание этой величины в след функцию
         val inputData: InputData,
@@ -20,7 +27,7 @@ object ZUCMethods {
         val edScope: EDScope
     )
 
-    private val dopnMethods: DOPN_Methods =
+    /*private val dopnMethods: DOPN_Methods =
         DOPN_Methods
     private val zuc1hMethods: ZUC1HMethods =
         ZUC1HMethods
@@ -29,39 +36,39 @@ object ZUCMethods {
     private val zuc2hMethods: ZUC2HMethods =
         ZUC2HMethods
     private val zucfMethods: ZUCFMethods =
-        ZUCFMethods
+        ZUCFMethods*/
 
     private var SCHET: Int = 0
 
     fun enterZUC(args: Arguments) {
         args.apply {
-            //zuc1hScope.Z2 = 0 зачем?
-            //SCHET = 0 обнуление поставить в uCalc
-            //какая-то логика задания Z0, X0, DA0, но я думаю она должна быть реализована ещё раньше
-            DOPN_Methods.dopn(
-                DOPN_Methods.Arguments(
+            //zuc1hScope.Z2 = 0 зачем? Да просто так, нам это не нужно
+            //SCHET = 0 обнуление есть в uCalc
+            //логика задания Z0, X0, DA0 по фиксированным значениям, но у нас этого не нужно
+            dopnMethods.dopn(
+                DOPN_MethodsClass.Arguments(
                     N2 = N2,//Это можно выкинуть и взять из input
                     u = uStup,
                     inputData = inputData,
                     option = option
                 ), dopnScope
             )
-            ZUC1HMethods.enterZUC1H(
-                ZUC1HMethods.Arguments(
+            zuc1hMethods.enterZUC1H(
+                ZUC1HMethodsClass.Arguments(
                     SIGN = SIGN,
                     u = uStup,
-                    T2 = T2,//Это можно выкинуть и взять из input
-                    AW = AWTipre4!!,
+                    T2 = T2,
+                    AW = AWTipre4 ?: 0f,
                     dopnScope = dopnScope,
                     option = option,
                     inputData = inputData,
                     IST = IST
                 ), zuc1hScope
             )
-            ZUCEPMethods.enterZUCEP(
-                ZUCEPMethods.Arguments(
+            zucepMethods.enterZUCEP(
+                ZUCEPMethodsClass.Arguments(
                     SIGN = SIGN,
-                    N2 = N2,//Это можно выкинуть и взять из input
+                    N2 = N2,
                     dopnScope = dopnScope,
                     zuc1HScope = zuc1hScope,
                     inputData = inputData
@@ -69,12 +76,12 @@ object ZUCMethods {
             )
             //Логика по задания KHB and KFB and ST, но она должна быть у меня по другому реализована,
             //а вообще можно (на 99 процентов она мне не понадобится) и без неё
-            ZUC2HMethods.enterZUC2H(
-                ZUC2HMethods.Arguments(
+            zuc2hMethods.enterZUC2H(
+                ZUC2HMethodsClass.Arguments(
                     SIGN = SIGN,
                     CONSOL = inputData.CONSOL[IST],
                     N2 = N2,//Это можно выкинуть и взять из input - нельзя, тк 2 это не всегда что в инпуте, в двухступенчатых оно для каждой ступни разное
-                    T2 = if (zuc1hScope.T2 != null) zuc1hScope.T2!! else T2,//СЮДА СКОРЕЕ ВСЕГО НУЖНО КИДАТЬ T2 ИЗ zuc1hscope!!
+                    T2 = T2,//if (zuc1hScope.T2 != null) zuc1hScope.T2!! else T2,
                     edScope = edScope,
                     option = option,
                     zuc1hScope = zuc1hScope,
@@ -83,8 +90,8 @@ object ZUCMethods {
                     inputData = inputData
                 ), zuc2hScope
             )
-            ZUCFMethods.enterZUCF(
-                ZUCFMethods.Arguments(
+            zucfMethdos.enterZUCF(
+                ZUCFMethodsClass.Arguments(
                     SIGN = SIGN,
                     CONSOL = inputData.CONSOL[IST],
                     inputData = inputData,
@@ -150,7 +157,7 @@ object ZUCMethods {
             }
             if (zuc1hScope.DSGH > 0 && SCHET > 1)
                 zuc1hScope.AKA = zuc1hScope.AKA!!*(zuc2hScope.SGH!!/dopnScope.SGHD!!).pow(0.7f)
-            dopnScope.M = zuc1hScope.MR!!//Я НЕ УВЕРЕН, ЧТО ЗДЕСЬ НУЖНА ЭТА СТРОЧКА
+            dopnScope.M = zuc1hScope.MR!!
             //Уход в начало
             enterZUC(args)
             return

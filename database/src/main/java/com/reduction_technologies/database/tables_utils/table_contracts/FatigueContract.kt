@@ -2,6 +2,8 @@ package com.reduction_technologies.database.tables_utils.table_contracts
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.reducetechnologies.tables_utils.table_contracts.FatigueRow
+import com.reducetechnologies.tables_utils.table_contracts.K_FE
 import com.reduction_technologies.database.json_utils.GsonRegister
 
 /**

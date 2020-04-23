@@ -2,16 +2,16 @@ package com.reducetechnologies.calculations
 
 import com.reducetechnologies.calculation_util.SelectionTree
 import com.reducetechnologies.calculation_util.TreeBuilder
-import com.reducetechnologies.tables.RA40
-import com.reducetechnologies.tables.mStand
+import com.reducetechnologies.tables_utils.table_contracts.RA40Table
+import com.reducetechnologies.tables_utils.table_contracts.StandartModulesTable
 import kotlin.math.*
 
-object ZUC1HMethods {
+class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable) {
     data class Arguments(
         val SIGN: Int,
         var u: Float,
         var T2: Float,//похоже тоже только для соосных
-        val PSI1: Float = 1f,//это заглушка, ищи где-то это значение
+        val PSI1: Float = 1.1f,//это заглушка, ищи где-то это значение
         //val DSGH: Int = 0,задал их в scope
         //val DSGF: Int = 0,
         val AW: Float = 0f,//этот AW используется исключительно для TIPRE = 4, в него должен
@@ -19,14 +19,15 @@ object ZUC1HMethods {
         val dopnScope: DOPNScope,
         val option: ReducerOptionTemplate,
         val inputData: InputData,
-        val IST: Int
+        val IST: Int//Здесь это ступень, тихоходная это 1, быстроходная это 0, пока примем, что
+    //только при 1ой ступени мы будем считать её за быстроходную (0)
     )
     private var SCHET: Int = 0
     private var SCHET1: Int = 0
     private var SCHET2: Int = 0
 
     private fun AWChoose(args: Arguments, zuc1HScope: ZUC1HScope) {
-        zuc1HScope.AW = RA40.first { it > zuc1HScope.AW }//Ура мать твою, я ляМБДА программист!!1!
+        zuc1HScope.AW = RA40.list.first { it > zuc1HScope.AW }//Ура мать твою, я ляМБДА программист!!1!
         //Идём в BWChoose
         BWChoose(args, zuc1HScope)
     }
@@ -35,7 +36,7 @@ object ZUC1HMethods {
         zuc1HScope.apply {
             if (DSGF == 0f)
                 MR = 1.039f*BW!!/(args.option.PSIM*args.inputData.NWR)
-            args.dopnScope.M = mStand.first { it > MR!! }
+            args.dopnScope.M = MStandart.list.first { it > MR!! }
             //Возвращаемся в BWChoose
             return
         }
@@ -77,7 +78,7 @@ object ZUC1HMethods {
                 ZCalculate(args, zuc1HScope)
                 return
             }
-            if (BET!! > args.inputData.BETMA) {
+            if (BET > args.inputData.BETMA) {
                 BW = 4f*args.dopnScope.M/ sin(args.inputData.BETMA)
                 BW1 = (BW!!*args.PSI1 + 1f).toInt()//1f нужно для правильного округления в больш сторону
                 BW2 = (BW!! + 1f).toInt()
@@ -210,17 +211,20 @@ object ZUC1HMethods {
 
     private fun cosBET(args: Arguments, zuc1HScope: ZUC1HScope) {
         zuc1HScope.apply {
-            var Y3: Float = ZSUM!!*args.dopnScope.M* cos(ALFT!!) /(2*AW!!* cos(
+            var Y3: Float = ZSUM*args.dopnScope.M* cos(ALFT!!) /(2*AW* cos(
                 ALFTW!!
             ))
             while (Y3 >= 1) {
                 Z2 = Z2!! - 1
                 ZSUM = Z2!! + args.SIGN*Z1!!
-                Y3 = ZSUM!!*args.dopnScope.M* cos(ALFT!!) /(2*AW!!* cos(
+                Y3 = ZSUM*args.dopnScope.M* cos(ALFT!!) /(2*AW* cos(
                     ALFTW!!
                 ))
             }
-            BET = atan(sqrt(1f - Y3.pow(2)) / Y3)//Здесь возможно нужно поставить минимум на BET
+            BET = atan(sqrt(1f - Y3.pow(2)) / Y3)
+            if (BET < args.inputData.BETMI){
+                BET = args.inputData.BETMI
+            }//Этого нет в фортране, но это условие здесь определённо нужно, чтобы не получать углы меньше минимальных
             ALFT = atan(tan(args.inputData.ALF) / cos(BET))
             if (XSUM == 0f)
                 ALFTW = ALFT
@@ -265,7 +269,7 @@ object ZUC1HMethods {
                 Z1tipre4(args, zuc1HScope)
             }
             Z2 = ZSUM - args.SIGN*Z1!!
-            if (!((args.inputData.TIPRE == 4 && args.IST == 0) || !AWFS)) {
+            if (!((args.inputData.TIPRE == 4 && args.IST == 0) || AWFS)) {
                 var AWR: Float = ZSUM*args.dopnScope.M/(2* cos(BET))
                 if (AWR <= AW) {
                     //Идём в 105
@@ -284,17 +288,17 @@ object ZUC1HMethods {
                     AWChoose(args, zuc1HScope)
                     return
                 }
-                //Здесь непонятный момент, зачем пересчитывать AW, если мы его не перезадаём? Пока
-                //оставил, как думаю, что правильно
-                anglePrecise(args, zuc1HScope)
-                return
             }
+            //Здесь непонятный момент, зачем пересчитывать AW, если мы его не перезадаём? Пока
+            //оставил, как думаю, что правильно
+            anglePrecise(args, zuc1HScope)
+            return
         }
     }
 
     private fun anglePrecise(args: Arguments, zuc1HScope: ZUC1HScope) {
         zuc1HScope.apply {
-            if (!(BET > 0f || args.inputData.BETMI == 0f)) {
+            if (!(BETFS || args.inputData.BETMI == 0f)) {
                 //уточнение угла наклона
                 var Y1 = ZSUM*args.dopnScope.M/(2*AW)
                 while (Y1 >= 1) {
@@ -303,6 +307,9 @@ object ZUC1HMethods {
                     Y1 = ZSUM*args.dopnScope.M/(2*AW)
                 }
                 BET = atan(sqrt((1 - Y1.pow(2)) / Y1))
+                if (BET < args.inputData.BETMI){
+                    BET = args.inputData.BETMI
+                }//Этого нет в фортране, но это условие здесь определённо нужно, чтобы не получать углы меньше минимальных
             }
             ALFT = atan(tan(args.inputData.ALF) / cos(BET))
             INVAT = tan(ALFT!!) - ALFT!!
@@ -318,12 +325,32 @@ object ZUC1HMethods {
                     3f).toInt()
             if (X1 != 0f || X2 != 0f) {
                 XSUM = X2 + args.SIGN*X1
-                //Идём в invALF
+                //Идём в invW
                 invW(args, zuc1HScope)
                 return
             }
             else {
-                SelectionTree.rootSelection {
+                //Подбор смещений в зависимости от условий
+                if (args.SIGN < 0 && (Z2!! < 80 || Z1!! < 18)){
+                    X1 = 0.3f
+                }
+                if (Z1!! < ZMI!! && Z1!! >= Z1R!!){
+                    X1 = 0.3f
+                }
+                if (Z1!! < ZMI!! && Z1!! < Z1R!!){
+                    X1 = 0.5f
+                }
+                if (Z2!! < 28f){
+                    X2 = -X1 * args.SIGN
+                }
+                if (Z2!! < ZMI!! && Z2!! >= Z1R!!){
+                    X2 = 0.3f
+                }
+                if (Z2!! < ZMI!! && Z2!! < Z1R!!){
+                    X2 = 0.5f
+                }
+                XSUM = X2 + args.SIGN * X1
+                /*SelectionTree.rootSelection {
                     select("Подбор смещений в зависимотси от условий",
                         TreeBuilder.build
                             .c { args.SIGN < 0 && (Z2!! < 80 || Z1!! < 18) }
@@ -340,7 +367,7 @@ object ZUC1HMethods {
                             .a { X2 = 0.5f }
                     )
                     XSUM = X2 + args.SIGN * X1
-                }
+                }*/
                 if (XSUM == 0f && BETFS) {
                     //Уход в cosALF
                     cosALF(args, zuc1HScope)
@@ -367,7 +394,7 @@ object ZUC1HMethods {
         SCHET = 1
         SCHET1 = 0
         SCHET2 = 0
-        //пока выпущу логику для NW > 1 и TIPRE = 4, потому что не особо понимаю
+        //пока выпущу логику для NW > 1 и TIPRE = 4, потому что её нет в коде
         zuc1HScope.apply {
             if (DSGH == 0f) {
                 if (args.inputData.TIPRE == 4 && args.inputData.NW > 1)
@@ -376,7 +403,7 @@ object ZUC1HMethods {
                     AKA = 430f
                 else
                     AKA = 495f
-                KHB = 1.2f//это в фортране, в схеме по другому, нужно поискать
+                KHB = 1f//попробую сейчас как в схеме, в фортране 1.2
                 KHV = 1f
             }
             if (args.inputData.TIPRE == 4 && args.IST == 0) {
@@ -408,3 +435,38 @@ object ZUC1HMethods {
     }
 }
 
+data class ZUC1HScope(
+    var DSGH: Float = 0f,
+    var DSGF: Float = 0f,
+    var Z1: Int? = null,
+    var Z2: Int? = null,
+    var ZSUM: Int = 0,
+    var Z1R: Int? = null,
+    var Z2R: Int? = null,//только для TIPRE = 4
+    var ZMI: Int? = null,
+    var X1: Float = 0f,
+    var X2: Float = 0f,
+    var X1FS: Boolean = false,//Для того, чтобы понять, уже входили в этот цикл и подбирали или нет
+    var X2FS: Boolean = false,//Для того, чтобы понять, уже входили в этот цикл и подбирали или нет
+    var XSUM: Float = 0f,
+    var AW: Float = 0f,
+    var AWFS: Boolean = false,//Для того, чтобы понять, уже входили в этот цикл и подбирали или нет
+    //var M: Float? = null,
+    var BW: Float? = null,
+    var BW1: Int? = null,
+    var BW2: Int? = null,
+    var BET: Float = 0f,
+    var BETFS: Boolean = false,//Для того, чтобы понять, уже входили в этот цикл и подбирали или нет
+    var ALFT: Float? = null,
+    var ALFTW: Float? = null,
+    var INVAT: Float? = null,
+    var INVW: Float? = null,
+    var KHV: Float? = null,
+    var MR: Float? = null,
+    var AKA: Float? = null,
+    var KHB: Float? = null,
+    var KFB: Float = 1f,
+    var PSIBA: Float? = null,
+    var T2: Float? = null,
+    var UCalculated: Float = 0f
+)

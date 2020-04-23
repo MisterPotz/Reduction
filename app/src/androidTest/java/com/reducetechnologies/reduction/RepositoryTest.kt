@@ -10,9 +10,9 @@ import com.reduction_technologies.database.di.DaggerDatabaseComponent
 import com.reduction_technologies.database.di.DatabaseComponent
 import com.reduction_technologies.database.di.DatabaseModule
 import com.reduction_technologies.database.tables_utils.GOSTableContract
-import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
+import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
 import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertNotNull
