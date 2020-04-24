@@ -13,12 +13,14 @@ import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.android.util.common_item.CategoriesAdapterCommon
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
+import com.reduction_technologies.database.di.ApplicationScope
 import timber.log.Timber
 import javax.inject.Inject
 
 class EncyclopediaFragment : Fragment() {
     //    private lateinit var categoriesAdapter: CategoriesAdapter
     @Inject
+    @ApplicationScope
     lateinit var viewModel: SharedViewModel
 
     private lateinit var recyclerView: RecyclerView
@@ -86,25 +88,28 @@ class EncyclopediaFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        Timber.i("saving in onPause")
+        categoriesAdapterCommon?.onSaveState()
+
         Timber.i("in onPause: current fragment amount: ${SingletoneContextCounter.fragments}")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.i("in onResume: current fragment amount: ${SingletoneContextCounter.fragments}")
-
     }
 
     override fun onStart() {
         super.onStart()
         categoriesAdapterCommon =
-            CategoriesAdapterCommon(viewModel.getAllSortedItems(), lifecycleOwner = viewLifecycleOwner)
+            CategoriesAdapterCommon(viewModel.getAllSortedItems(), lifecycleOwner = viewLifecycleOwner, positionSaver = viewModel.getSavedLayoutPositions())
+        Timber.i("recyclerView = $recyclerView")
         recyclerView.apply {
             adapter = categoriesAdapterCommon
             layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
         }
         Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
 
+    override fun onResume() {
+        super.onResume()
+        Timber.i("in onResume: current fragment amount: ${SingletoneContextCounter.fragments}")
+        categoriesAdapterCommon!!.restoreState()
     }
 
     override fun onStop() {

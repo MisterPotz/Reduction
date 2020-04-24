@@ -7,6 +7,7 @@ import com.reduction_technologies.database.helpers.UserDatabaseHelper
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 class DatabaseModule(val context: Context) {
@@ -19,11 +20,11 @@ class DatabaseModule(val context: Context) {
         UserDatabaseHelper(context)
 
     @Provides
-    @ApplicationScope
+    @Singleton
     fun context() = context
 
     @Provides
-    @ApplicationScope
+    @Singleton
     fun repository(): Repository {
         return Repository(context(), constantDatabaseHelper(), userDatabaseHelper())
     }
@@ -31,7 +32,7 @@ class DatabaseModule(val context: Context) {
 
 
 @Component(modules = [DatabaseModule::class])
-@ApplicationScope
+@Singleton
 interface DatabaseComponent {
     // injecting necessary classes into repository
     fun repository(): Repository

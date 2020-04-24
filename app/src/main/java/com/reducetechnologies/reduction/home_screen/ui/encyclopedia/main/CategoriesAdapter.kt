@@ -12,10 +12,9 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.reduction.R
-import com.reducetechnologies.reduction.android.util.ScatteredAdapter
-import com.reducetechnologies.reduction.android.util.ScatteredHolderBindDelegate
-import com.reducetechnologies.reduction.android.util.ScatteredHolderCreator
+import com.reducetechnologies.reduction.android.util.*
 import com.reduction_technologies.database.utils.Positionable
+import timber.log.Timber
 
 abstract class CategoriesInfoDelegate<T> {
     abstract val tags: List<String>
@@ -33,8 +32,9 @@ open class CategoriesAdapter<Tag : Positionable, T>(
     val lifecycleOwner: LifecycleOwner,
     val delegate: CategoriesInfoDelegate<T>,
     val tagHolderCreator: ScatteredHolderCreator<T>,
-    val itemHolderCreatorBuilder: ScatteredHolderBindDelegate.Builder<T>
-) : RecyclerView.Adapter<CategoriesAdapter.CategoryHolder<T>>() {
+    val itemHolderCreatorBuilder: ScatteredHolderBindDelegate.Builder<T>,
+    val categoryAdapterPositionSaver: CategoryAdapterPositionSaver<Tag>
+) : RecyclerView.Adapter<CategoriesAdapter.CategoryHolder<T>>(), RecyclerPositionSaveable {
     data class ModelHolder<T>(
         val text: String,
         val adapter: ScatteredAdapter<T>,
@@ -42,13 +42,29 @@ open class CategoriesAdapter<Tag : Positionable, T>(
     )
 
     val modelHolders: MutableMap<Int, ModelHolder<T>> = mutableMapOf()
+
     // holds references to liveDatas that are passed to lower adapters
     // the task of updating sources of those liveData lies on this adapter
-    val subLiveDatas : MutableMap<Tag, MutableLiveData<List<T>>> = mutableMapOf()
+    val subLiveDatas: MutableMap<Tag, MutableLiveData<List<T>>> = mutableMapOf()
 
     private lateinit var context: Context
+    private var recyclerView: RecyclerView? = null
 
     var inflater: LayoutInflater? = null
+
+    init {
+        liveData.observe(lifecycleOwner, Observer {
+            it.forEach {
+                if (it.key in subLiveDatas) {
+                    // updating source - launching chain of updates
+                    subLiveDatas[it.key]!!.value = it.value
+                } else {
+                    subLiveDatas[it.key] = MutableLiveData(it.value)
+                }
+            }
+            notifyDataSetChanged()
+        })
+    }
 
     private fun setInflaterIfNot(parent: ViewGroup) {
         if (inflater == null) {
@@ -59,7 +75,7 @@ open class CategoriesAdapter<Tag : Positionable, T>(
     @Suppress("UNCHECKED_CAST")
     private fun getOrCreateModelHolder(position: Int): ModelHolder<T> {
         if (!modelHolders.containsKey(position)) {
-            val category = liveData.value!!.keys.find { it.getPosition() == position }
+            val category = liveData.value!!.keys.find { it.getPosition() == position }!!
             val manager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             modelHolders[position] = ModelHolder(
                 delegate.tags[position],
@@ -67,7 +83,8 @@ open class CategoriesAdapter<Tag : Positionable, T>(
                     lifecycleOwner,
                     subLiveDatas[category]!!,
                     tagHolderCreator,
-                    itemHolderCreatorBuilder
+                    itemHolderCreatorBuilder,
+                    categoryAdapterPositionSaver.getSaverForTag(category)
                 ),
                 manager
             )
@@ -88,24 +105,37 @@ open class CategoriesAdapter<Tag : Positionable, T>(
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         context = recyclerView.context
-
-        liveData.observe(lifecycleOwner, Observer {
-            it.forEach {
-                if (it.key in subLiveDatas) {
-                    // updating source - launching chain of updates
-                    subLiveDatas[it.key]!!.value = it.value
-                } else {
-                    subLiveDatas[it.key] = MutableLiveData(it.value)
-                }
-            }
-            notifyDataSetChanged()
-        })
+        this.recyclerView = recyclerView
 
         super.onAttachedToRecyclerView(recyclerView)
     }
 
     override fun onBindViewHolder(holder: CategoryHolder<T>, position: Int) {
+        val modelHolder = getOrCreateModelHolder(position)
         holder.onBind(getOrCreateModelHolder(position))
+        val category = liveData.value!!.keys.find { it.getPosition() == position }!!
+
+        categoryAdapterPositionSaver.restore(category, modelHolder.manager)
+    }
+
+    override fun onSaveState() {
+        recyclerView?.layoutManager?.let {
+            categoryAdapterPositionSaver.saveState(it)
+        }
+        for (i in modelHolders) {
+            i.value.adapter.onSaveState()
+        }
+    }
+
+    override fun restoreState() {
+        recyclerView?.layoutManager?.let {
+            categoryAdapterPositionSaver.restoreState(it)
+        }
+        Timber.i("modelHolders : ${modelHolders.size}")
+ /*       for (i in modelHolders) {
+            val category = liveData.value!!.keys.find { it.getPosition() == i.key }!!
+            categoryAdapterPositionSaver.restore(category, i.value.manager)
+        }*/
     }
 
     class CategoryHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {

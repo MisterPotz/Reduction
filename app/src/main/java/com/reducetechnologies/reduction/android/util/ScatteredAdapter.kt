@@ -38,12 +38,14 @@ class ScatteredAdapter<T>(
     // delegate that knows how to create views based on orientation
     val creator: ScatteredHolderCreator<T>,
     // builder that builds delegates for holders, knows how to rebind holder views to new items
-    val holderDelegateBuilder: ScatteredHolderBindDelegate.Builder<T>
+    val holderDelegateBuilder: ScatteredHolderBindDelegate.Builder<T>,
+    val recyclerPositionSaver: RecyclerPositionSaver
 
-) : RecyclerView.Adapter<ScatteredItemHolder<T>>() {
+) : RecyclerView.Adapter<ScatteredItemHolder<T>>(), RecyclerPositionSaveable {
 
     private lateinit var inflater: LayoutInflater
     private lateinit var context: Context
+    private var recyclerView : RecyclerView? = null
 
     private var itemPacksMap : MutableMap<Int, List<T>> = mutableMapOf()
 
@@ -74,7 +76,8 @@ class ScatteredAdapter<T>(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         context = recyclerView.context
         inflater = LayoutInflater.from(context)
-
+        this.recyclerView = recyclerView
+        Timber.i("recyclerView in onAttachedToRecyclerView = $recyclerView")
         liveList.observe(lifecycleOwner, Observer {
             cleanMap()
             val iterator = creator.splitListToPacks(it)
@@ -84,5 +87,17 @@ class ScatteredAdapter<T>(
             notifyDataSetChanged()
         })
         super.onAttachedToRecyclerView(recyclerView)
+    }
+
+    override fun onSaveState() {
+        recyclerView?.layoutManager?.let {
+            recyclerPositionSaver.saveState(it)
+        }
+    }
+
+    override fun restoreState() {
+        recyclerView?.layoutManager?.let {
+            recyclerPositionSaver.restoreState(it)
+        }
     }
 }

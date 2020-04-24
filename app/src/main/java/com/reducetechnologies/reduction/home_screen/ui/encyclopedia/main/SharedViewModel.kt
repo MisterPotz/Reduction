@@ -1,17 +1,21 @@
 package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
 import androidx.lifecycle.*
+import com.reducetechnologies.reduction.android.util.CategoryAdapterPositionSaver
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.helpers.CategoryTag
 import com.reduction_technologies.database.helpers.Repository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class SharedViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+@Singleton
+class SharedViewModel  @Inject constructor(private val repository: Repository) :
+    ViewModel() {
+
     val text: LiveData<String> = MutableLiveData<String>().apply {
         value = "Энциклопедия"
     }
@@ -23,6 +27,9 @@ class SharedViewModel @Inject constructor(private val repository: Repository) : 
         ) {
             MutableLiveData(splitByTags(it))
         }
+
+    private val categoriesAdapterSaver: CategoryAdapterPositionSaver<CategoryTag> =
+        CategoryAdapterPositionSaver()
 
     fun getAllItems(): LiveData<List<CommonItem>> {
         viewModelScope.launch {
@@ -52,6 +59,10 @@ class SharedViewModel @Inject constructor(private val repository: Repository) : 
     fun getAllSortedItems(): LiveData<Map<CategoryTag, List<CommonItem>>> {
         getAllItems()
         return sortedItemsLiveData
+    }
+
+    fun getSavedLayoutPositions(): CategoryAdapterPositionSaver<CategoryTag> {
+        return categoriesAdapterSaver
     }
 
     // TODO здесь должна быть структура / логика, которая бы била коммон итемы из репозитории
