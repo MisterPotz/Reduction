@@ -8,6 +8,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import timber.log.Timber
 
 interface ScatteredHolderCreator<T> {
     // определяет тип в соответствии с позицкей
@@ -23,7 +24,7 @@ interface ScatteredHolderCreator<T> {
     fun createView(viewType: Int, parent: ViewGroup, inflater: LayoutInflater): Pair<View, ScatteredHolderBindDelegate.Specific?>
 
     // creates an iterator that traverses the list and returns sub-lists
-    fun getViewsForOneHolder(list: List<T>) : Iterator<List<T>>
+    fun splitListToPacks(list: List<T>) : Iterator<List<T>>
 }
 
 /**
@@ -31,29 +32,20 @@ interface ScatteredHolderCreator<T> {
  * контекст нужен для работы с базой данных
  */
 class ScatteredAdapter<T>(
-    lifecycleOwner: LifecycleOwner,
+    val lifecycleOwner: LifecycleOwner,
     // values
     private val liveList: LiveData<List<T>>,
     // delegate that knows how to create views based on orientation
     val creator: ScatteredHolderCreator<T>,
     // builder that builds delegates for holders, knows how to rebind holder views to new items
     val holderDelegateBuilder: ScatteredHolderBindDelegate.Builder<T>
+
 ) : RecyclerView.Adapter<ScatteredItemHolder<T>>() {
 
     private lateinit var inflater: LayoutInflater
     private lateinit var context: Context
 
     private var itemPacksMap : MutableMap<Int, List<T>> = mutableMapOf()
-    init {
-        // TODO notifySetChanged()
-        liveList.observe(lifecycleOwner, Observer {
-            cleanMap()
-            val iterator = creator.getViewsForOneHolder(it)
-            iterator.withIndex().forEach {
-                itemPacksMap[it.index] = it.value
-            }
-        })
-    }
 
     private fun cleanMap() {
         itemPacksMap = mutableMapOf()
@@ -67,6 +59,7 @@ class ScatteredAdapter<T>(
 
     override fun getItemCount(): Int {
         // должно быть поделено на количество вьюшек на один холдер, то есть нужен другой лив датный список
+        Timber.i("itemPacksMap size ${itemPacksMap.size}")
         return itemPacksMap.size
     }
 
@@ -81,6 +74,15 @@ class ScatteredAdapter<T>(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         context = recyclerView.context
         inflater = LayoutInflater.from(context)
+
+        liveList.observe(lifecycleOwner, Observer {
+            cleanMap()
+            val iterator = creator.splitListToPacks(it)
+            iterator.withIndex().forEach {
+                itemPacksMap[it.index] = it.value
+            }
+            notifyDataSetChanged()
+        })
         super.onAttachedToRecyclerView(recyclerView)
     }
 }

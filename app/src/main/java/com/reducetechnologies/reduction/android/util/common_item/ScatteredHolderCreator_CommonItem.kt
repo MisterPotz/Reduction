@@ -89,7 +89,7 @@ object ScatteredHolderCreator_CommonItem : ScatteredHolderCreator<CommonItem> {
         return prepareView(ids, sizes, view, inflater)
     }
 
-    override fun getViewsForOneHolder(list: List<CommonItem>): Iterator<List<CommonItem>> {
+    override fun splitListToPacks(list: List<CommonItem>): Iterator<List<CommonItem>> {
         return object : Iterator<List<CommonItem>> {
             var current = 0
             override fun hasNext(): Boolean {

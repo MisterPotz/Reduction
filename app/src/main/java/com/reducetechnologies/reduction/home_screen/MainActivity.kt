@@ -45,6 +45,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope(){
         setupBottomNavigationBar()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val debug = Timber.DebugTree()
+        Timber.plant(debug)
+        Timber.i("onSaveInstanceState called in activity")
+        Timber.uproot(debug)
+    }
+
+
     /**
      * Called on first creation and when restoring state.
      */

@@ -15,7 +15,7 @@ import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.ScatteredAdapter
 import com.reducetechnologies.reduction.android.util.ScatteredHolderBindDelegate
 import com.reducetechnologies.reduction.android.util.ScatteredHolderCreator
-import java.lang.IllegalStateException
+import com.reduction_technologies.database.utils.Positionable
 
 abstract class CategoriesInfoDelegate<T> {
     abstract val tags: List<String>
@@ -26,10 +26,10 @@ abstract class CategoriesInfoDelegate<T> {
 }
 
 /**
- * Получает список неких итемов, и сортирует их с помощью делегата по нужному признаку
+ * Получает лайв датные списки итемов, разбитые в мапе по ключу R
  */
-open class CategoriesAdapter<T>(
-    val liveData: LiveData<List<T>>,
+open class CategoriesAdapter<Tag : Positionable, T>(
+    val liveData: LiveData<Map<Tag, List<T>>>,
     val lifecycleOwner: LifecycleOwner,
     val delegate: CategoriesInfoDelegate<T>,
     val tagHolderCreator: ScatteredHolderCreator<T>,
@@ -41,42 +41,14 @@ open class CategoriesAdapter<T>(
         val manager: LinearLayoutManager
     )
 
-    val dataBuckets: MutableList<MutableLiveData<MutableList<T>>?> =
-        MutableList(delegate.categoriesAmount) { null }
-
     val modelHolders: MutableMap<Int, ModelHolder<T>> = mutableMapOf()
+    // holds references to liveDatas that are passed to lower adapters
+    // the task of updating sources of those liveData lies on this adapter
+    val subLiveDatas : MutableMap<Tag, MutableLiveData<List<T>>> = mutableMapOf()
 
     private lateinit var context: Context
 
     var inflater: LayoutInflater? = null
-
-    // теперь нужно лайвдатно побить по категориям
-    init {
-        liveData.observe(lifecycleOwner, Observer {
-            // its a bit dirty, temporary workournd
-            clearBuckets()
-            // TODO notifySetChanged()
-
-            // this block is at one time a filter and diversifier
-            it.forEach { item ->
-                val bucket = delegate.sorting(item)
-                if (bucket < delegate.categoriesAmount && bucket >= 0) {
-                    if (dataBuckets[bucket] == null) {
-                        dataBuckets[bucket] = MutableLiveData(mutableListOf())
-                    }
-                    // TODO здесь просто доступ идет, но не обновление
-                    dataBuckets[bucket]!!.value!!.add(item)
-                }
-            }
-            notifyDataSetChanged()
-        })
-    }
-
-    private fun clearBuckets() {
-        for (i in dataBuckets.indices) {
-            dataBuckets[i] = null
-        }
-    }
 
     private fun setInflaterIfNot(parent: ViewGroup) {
         if (inflater == null) {
@@ -87,12 +59,13 @@ open class CategoriesAdapter<T>(
     @Suppress("UNCHECKED_CAST")
     private fun getOrCreateModelHolder(position: Int): ModelHolder<T> {
         if (!modelHolders.containsKey(position)) {
+            val category = liveData.value!!.keys.find { it.getPosition() == position }
             val manager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             modelHolders[position] = ModelHolder(
                 delegate.tags[position],
                 ScatteredAdapter(
                     lifecycleOwner,
-                    dataBuckets[position] as MutableLiveData<List<T>>,
+                    subLiveDatas[category]!!,
                     tagHolderCreator,
                     itemHolderCreatorBuilder
                 ),
@@ -110,11 +83,24 @@ open class CategoriesAdapter<T>(
     }
 
     override fun getItemCount(): Int {
-        return dataBuckets.filter { it != null }.size
+        return liveData.value?.size ?: 0
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         context = recyclerView.context
+
+        liveData.observe(lifecycleOwner, Observer {
+            it.forEach {
+                if (it.key in subLiveDatas) {
+                    // updating source - launching chain of updates
+                    subLiveDatas[it.key]!!.value = it.value
+                } else {
+                    subLiveDatas[it.key] = MutableLiveData(it.value)
+                }
+            }
+            notifyDataSetChanged()
+        })
+
         super.onAttachedToRecyclerView(recyclerView)
     }
 

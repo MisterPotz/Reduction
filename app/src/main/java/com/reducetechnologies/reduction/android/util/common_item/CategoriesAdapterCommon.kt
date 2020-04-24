@@ -4,10 +4,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.CategoriesAdapter
 import com.reduction_technologies.database.databases_utils.CommonItem
+import com.reduction_technologies.database.helpers.CategoryTag
 
 class CategoriesAdapterCommon(
-    liveData: LiveData<List<CommonItem>>,
-lifecycleOwner: LifecycleOwner) : CategoriesAdapter<CommonItem>(
+    liveData: LiveData<Map<CategoryTag, List<CommonItem>>>,
+lifecycleOwner: LifecycleOwner) : CategoriesAdapter<CategoryTag, CommonItem>(
     liveData = liveData,
     lifecycleOwner = lifecycleOwner,
     delegate = CategoriesInfoDelegateCI,

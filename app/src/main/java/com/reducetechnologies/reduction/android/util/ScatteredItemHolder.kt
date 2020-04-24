@@ -19,6 +19,10 @@ enum class HolderItemsOrientation(val onTop: Int, val onBottom: Int) {
 abstract class ScatteredHolderBindDelegate<T>(view: View) {
     abstract fun inflateHolderView(item: List<T>)
 
+    /**
+     * Specific contains implementation-specific data when view is builded.
+     * E.g. - contains references to necessary views, so client don't have to look for view each time
+     */
     abstract class Specific
 
     abstract class Builder<T> {

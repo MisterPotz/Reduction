@@ -20,6 +20,10 @@ class EncyclopediaFragment : Fragment() {
     //    private lateinit var categoriesAdapter: CategoriesAdapter
     @Inject
     lateinit var viewModel: SharedViewModel
+
+    private lateinit var recyclerView: RecyclerView
+    private var categoriesAdapterCommon : CategoriesAdapterCommon? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -48,13 +52,7 @@ class EncyclopediaFragment : Fragment() {
             textView.text = it
         })
 
-        val categoriesAdapterCommon =
-            CategoriesAdapterCommon(viewModel.getAllItems(), lifecycleOwner = viewLifecycleOwner)
-
-        view.findViewById<RecyclerView>(R.id.categories_list).apply {
-            adapter = categoriesAdapterCommon
-            layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
-        }
+        recyclerView = view.findViewById(R.id.categories_list)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -71,6 +69,15 @@ class EncyclopediaFragment : Fragment() {
             }
             else -> false
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        val debug = Timber.DebugTree()
+        Timber.plant(debug)
+        Timber.i("onSaveInstanceState called in fragment")
+        Timber.uproot(debug)
     }
 
     override fun onAttach(context: Context) {
@@ -90,6 +97,12 @@ class EncyclopediaFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        categoriesAdapterCommon =
+            CategoriesAdapterCommon(viewModel.getAllSortedItems(), lifecycleOwner = viewLifecycleOwner)
+        recyclerView.apply {
+            adapter = categoriesAdapterCommon
+            layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
+        }
         Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
 
     }
