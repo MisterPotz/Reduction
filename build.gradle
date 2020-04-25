@@ -55,52 +55,54 @@ ext {
 
 ext.libraries = [
         // Android platform
-        "appCompat"           : 'androidx.appcompat:appcompat:1.0.2',
-        "androidXCore"        : 'androidx.core:core-ktx:1.0.2',
-        "constraintLayout"    : 'androidx.constraintlayout:constraintlayout:1.1.3',
-        "navigationFragment"  : ['androidx.navigation:navigation-fragment:2.0.0',
-                                 'androidx.navigation:navigation-fragment-ktx:2.0.0'],
-        "navigationUI"        : ['androidx.navigation:navigation-ui:2.0.0',
-                                 'androidx.navigation:navigation-ui-ktx:2.0.0'],
+        "appCompat"             : 'androidx.appcompat:appcompat:1.0.2',
+        "androidXCore"          : 'androidx.core:core-ktx:1.0.2',
+        "constraintLayout"      : 'androidx.constraintlayout:constraintlayout:1.1.3',
+        "navigationFragment"    : ['androidx.navigation:navigation-fragment:2.0.0',
+                                   'androidx.navigation:navigation-fragment-ktx:2.0.0'],
+        "navigationUI"          : ['androidx.navigation:navigation-ui:2.0.0',
+                                   'androidx.navigation:navigation-ui-ktx:2.0.0'],
 
-        "lifecycle"           : ['androidx.lifecycle:lifecycle-extensions:2.2.0',
-                                 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'],
+        "lifecycle"             : ['androidx.lifecycle:lifecycle-extensions:2.2.0',
+                                   'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'],
 
-        "legacy"              : 'androidx.legacy:legacy-support-v4:1.0.0',
+        "liveDataExt"           : "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-alpha01",
+
+        "legacy"                : 'androidx.legacy:legacy-support-v4:1.0.0',
 
 
         // Удобный инструмент для логгирования событий в приложении
-        "timberLogger"        : "com.jakewharton.timber:timber:4.7.1",
-        "kotlinStd"           : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
-        "kotlinLogger"        : "io.github.microutils:kotlin-logging:1.7.8",
+        "timberLogger"          : "com.jakewharton.timber:timber:4.7.1",
+        "kotlinStd"             : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
+        "kotlinLogger"          : "io.github.microutils:kotlin-logging:1.7.8",
 
-        "materialDesign"      : "com.google.android.material:material:${ext.material_version}",
+        "materialDesign"        : "com.google.android.material:material:${ext.material_version}",
 
-        "forKotlinLogger"     : "org.slf4j:slf4j-simple:1.7.29",
+        "forKotlinLogger"       : "org.slf4j:slf4j-simple:1.7.29",
         // Поддержка корутиничей
-        "kotlinCoroutines"    : "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3",
+        "kotlinCoroutines"      : "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3",
 
         // Testing framework
-        "junit"               : "org.junit.jupiter:junit-jupiter:5.6.0",
-        "junitRuntime"        : 'org.junit.jupiter:junit-jupiter-engine:5.6.0',
+        "junit"                 : "org.junit.jupiter:junit-jupiter:5.6.0",
+        "junitRuntime"          : 'org.junit.jupiter:junit-jupiter-engine:5.6.0',
 
-        "junit4"              : "junit:junit:4.12",
-        "junit4Runtime"       : "org.junit.vintage:junit-vintage-engine:5.6.0",
+        "junit4"                : "junit:junit:4.12",
+        "junit4Runtime"         : "org.junit.vintage:junit-vintage-engine:5.6.0",
 
-        "jupiterParams" :    "org.junit.jupiter:junit-jupiter-params:5.6.0",
+        "jupiterParams"         : "org.junit.jupiter:junit-jupiter-params:5.6.0",
 
         // Необходимо для парсинга диких табличек, которые хранятся в джисонах
-        "gson"                : 'com.google.code.gson:gson:2.8.6',
+        "gson"                  : 'com.google.code.gson:gson:2.8.6',
 
-        "daggerAndroid"              : "com.google.dagger:dagger-android:${ext.daggerVersion}",
-        "daggerAndroidProcessor"     : "com.google.dagger:dagger-android-processor:${ext.daggerVersion}",
+        "daggerAndroid"         : "com.google.dagger:dagger-android:${ext.daggerVersion}",
+        "daggerAndroidProcessor": "com.google.dagger:dagger-android-processor:${ext.daggerVersion}",
 
-        "daggerJavaProcessor" : "com.google.dagger:dagger-compiler:${ext.daggerVersion}",
-        "daggerJava"          : "com.google.dagger:dagger:${ext.daggerVersion}",
+        "daggerJavaProcessor"   : "com.google.dagger:dagger-compiler:${ext.daggerVersion}",
+        "daggerJava"            : "com.google.dagger:dagger:${ext.daggerVersion}",
 
         // For mocking classes in tests
-        "mockk"               : "io.mockk:mockk:1.9",
+        "mockk"                 : "io.mockk:mockk:1.9.3",
 
         // For running unit tests in android sandbox
-        "robolectric"         : "org.robolectric:robolectric:${robolectricVersion}"
+        "robolectric"           : "org.robolectric:robolectric:${robolectricVersion}"
 ]

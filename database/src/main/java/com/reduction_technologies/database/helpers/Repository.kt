@@ -1,68 +1,64 @@
 package com.reduction_technologies.database.helpers
 
 import android.content.Context
-import android.database.Cursor
-import com.reduction_technologies.database.databases_utils.*
-import org.junit.jupiter.api.Assertions.assertTrue
+import androidx.lifecycle.LiveData
+import com.reducetechnologies.tables_utils.TableHolder
+import com.reduction_technologies.database.databases_utils.CommonItem
+import com.reduction_technologies.database.di.ApplicationScope
+import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 /**
  * The purpose of this class is to provide the rest code of application with useful data related
  * to GOST tables, encyclopedia, and user favorite items.
- * Some fields are in
+ *
+ * Repository has two objectives:
+ * 1) OBtaining data from various sources.
+ * 2) Caching once obtained data in LiveData format - so once the data us updated,
+ * repository can propagate those changes downstream in livedata, if it was once returned.
  */
-class Repository @Inject constructor(
+@ApplicationScope
+class Repository @Inject internal constructor(
     internal val context: Context,
     /**
      * THe field is injectable so instances of constant database can be mocked
      */
-    val constantDatabaseHelper: ConstantDatabaseHelper,
+    internal val constantDatabaseHelper: ConstantDatabaseHelper,
     /**
      * Injectible for the sake of testing and reusability
      */
-    val userDatabaseHelper: UserDatabaseHelper
+    internal val userDatabaseHelper: UserDatabaseHelper
 ) {
-    /**
-     * Returns [T] data, read from cursor.
-     * Can be used for other purposes also
-     */
-    class RCursorWrapper<T> internal constructor(
-        val cursor: Cursor,
-        val reader: ItemReader<T>
-    ) {
-        fun getItem(position: Int): T {
-            cursor.moveToPosition(position)
-            return reader.readItem(cursor)
+    internal enum class LiveDataType { TABLES, ALL_ENCYCLOPEDIA }
+
+    private val storageDelegate = LiveDataClassStorage<LiveDataType>()
+
+    // get all tables from the database asynchonously, suspend - for structured concurrency
+    suspend fun getTables(): LiveData<TableHolder> {
+        val liveData =
+            storageDelegate.registerOrReturn<TableHolder>(LiveDataType.TABLES)
+
+        // enforcing structured concurrency
+        val task = CoroutineScope(coroutineContext + Dispatchers.IO).launch {
+            val tables = constantDatabaseHelper.getTables()
+            liveData.postValue(tables)
         }
 
-        /**
-         * In case you also need to check that such entry is single (after searching conditions)
-         * you may want to use this function
-         */
-        fun getSingle(): T {
-            assertTrue(cursor.count == 1)
-            cursor.moveToPosition(0)
-            return getItem(0)
+        return liveData
+    }
+
+    // get all encyclopedia items from the database asynchonously, suspend - for structured concurrency
+    suspend fun getEncyclopediaItems(): LiveData<List<CommonItem>> {
+        val liveData =
+            storageDelegate.registerOrReturn<List<CommonItem>>(LiveDataType.ALL_ENCYCLOPEDIA)
+
+        // enforcing structured concurrency
+        CoroutineScope(coroutineContext + Dispatchers.IO).launch {
+            val allItems = constantDatabaseHelper.getAllItems()
+            liveData.postValue(allItems)
         }
-    }
-
-    /**
-     * Represents an ability to obtain some kind of item from the current cursor position
-     */
-    interface ItemReader<T> {
-        fun readItem(cursor: Cursor): T
-    }
-
-    // TODO обложить тестами выдачу курсора через билдер И последующий запрос в реальную базу
-    fun <T> constCursorBuilder(
-        tableName: String = constMainTable().name,
-        columns: Array<String> = constMainTable().columns.toTypedArray()
-    ): RCursorAdapterBuilder<T> {
-        return RCursorAdapterBuilder(
-            constantDatabaseHelper,
-            tableName,
-            columns
-        )
+        return liveData
     }
 }
 

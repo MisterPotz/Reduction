@@ -138,4 +138,6 @@ dependencies {
 
     kapt libraries.daggerAndroid
     kaptTest libraries.daggerAndroidProcessor
+
+    testImplementation libraries.mockk
 }

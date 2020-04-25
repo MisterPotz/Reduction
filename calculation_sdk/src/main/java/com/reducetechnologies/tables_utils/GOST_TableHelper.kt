@@ -1,4 +1,9 @@
-package com.reduction_technologies.database.tables_utils
+package com.reducetechnologies.tables_utils
+
+import com.reducetechnologies.tables_utils.table_contracts.*
+import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
+import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
+import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
 
 /**
  * Helps with GOST tables. Contains names of needed gost tables, presents an interface to
@@ -17,5 +22,22 @@ object GOSTableContract {
     const val SGTT = "SGTT"
     const val TIP_Tipre = "tipre_tip"
 }
+
+/**
+ * Structure, used to hold all necessary tables
+ */
+data class TableHolder(
+    val fatigue :FatigueTable,
+    /*val w_lim = "2.5",*/
+    val g_0 : G0Table,
+    val source_data : SourceDataTable,
+/*  val K_C = "2.6",*/
+    val ra40 : RA40Table,
+    val modules : StandartModulesTable,
+    val EDData : EDDataTable,
+    val HRC : HRCTable,
+    val SGTT : SGTTTable,
+    val TIP_Tipre : Tip_TipreTable
+)
 
 

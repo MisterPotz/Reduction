@@ -7,24 +7,27 @@ import com.reduction_technologies.database.helpers.UserDatabaseHelper
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 class DatabaseModule(val context: Context) {
-    // TODO инкапсулировать эти хелперы в сущности, которые вместо базы данных отдают список
-    @Provides
-    @ApplicationScope
-    fun constantDatabaseHelper(context: Context): ConstantDatabaseHelper {
+
+    private fun constantDatabaseHelper(): ConstantDatabaseHelper {
         return ConstantDatabaseHelper(context)
     }
 
-    @Provides
-    @ApplicationScope
-    fun userDatabaseHelper(context: Context) =
+    private fun userDatabaseHelper() =
         UserDatabaseHelper(context)
 
     @Provides
     @ApplicationScope
     fun context() = context
+
+    @Provides
+    @ApplicationScope
+    fun repository(): Repository {
+        return Repository(context(), constantDatabaseHelper(), userDatabaseHelper())
+    }
 }
 
 
