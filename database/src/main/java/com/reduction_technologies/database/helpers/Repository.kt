@@ -2,6 +2,7 @@ package com.reduction_technologies.database.helpers
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.reducetechnologies.tables_utils.TableHolder
 import com.reduction_technologies.database.databases_utils.CommonItem
 import kotlinx.coroutines.*
@@ -28,12 +29,14 @@ class Repository @Inject internal constructor(
      */
     internal val userDatabaseHelper: UserDatabaseHelper
 ) {
+    internal enum class LiveDataType { TABLES, ALL_ENCYCLOPEDIA }
 
-    private val storageDelegate = LiveDataClassStorage()
+    private val storageDelegate = LiveDataClassStorage<LiveDataType>()
 
     // get all tables from the database asynchonously, suspend - for structured concurrency
     suspend fun getTables(): LiveData<TableHolder> {
-        val liveData = storageDelegate.registerType(TableHolder::class)
+        val liveData =
+            storageDelegate.registerOrReturn<TableHolder>(LiveDataType.TABLES)
 
         // enforcing structured concurrency
         val task = CoroutineScope(coroutineContext + Dispatchers.IO).launch {
@@ -45,11 +48,16 @@ class Repository @Inject internal constructor(
     }
 
     // get all encyclopedia items from the database asynchonously, suspend - for structured concurrency
-    suspend fun getEncyclopediaItems(): List<CommonItem> {
+    suspend fun getEncyclopediaItems(): LiveData<List<CommonItem>> {
+        val liveData =
+            storageDelegate.registerOrReturn<List<CommonItem>>(LiveDataType.ALL_ENCYCLOPEDIA)
+
         // enforcing structured concurrency
-        return withContext(coroutineContext + Dispatchers.IO) {
-            constantDatabaseHelper.getAllItems()
+        CoroutineScope(coroutineContext + Dispatchers.IO).launch {
+            val allItems = constantDatabaseHelper.getAllItems()
+            liveData.postValue(allItems)
         }
+        return liveData
     }
 }
 

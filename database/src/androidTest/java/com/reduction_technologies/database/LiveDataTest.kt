@@ -3,7 +3,6 @@ package com.reduction_technologies.database
 import androidx.lifecycle.MutableLiveData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnitRunner
 import com.reduction_technologies.database.di.DaggerDatabaseComponent
 import com.reduction_technologies.database.di.DatabaseComponent
 import com.reduction_technologies.database.di.DatabaseModule
@@ -40,7 +39,7 @@ internal class LiveDataTest {
         }
 
         runBlocking {
-            withTimeout(100000000) {
+            withTimeout(3000) {
                 val deferred = CompletableDeferred<Boolean>()
                 val livedata = asynced.await()
                 withContext(Dispatchers.Main) {
@@ -67,7 +66,7 @@ internal class LiveDataTest {
         }
 
         runBlocking {
-            withTimeout(100000000) {
+            withTimeout(3000) {
                 println(" I'm working in thread ${Thread.currentThread().name}")
                 val deferred = CompletableDeferred<Boolean>()
                 withContext(Dispatchers.Main) {
@@ -83,22 +82,4 @@ internal class LiveDataTest {
             }
         }
     }
-
-//    @org.junit.Test
-//    fun getEntitiesTest() {
-//        val repository = databaseComponent.repository()
-//
-//        val job = SupervisorJob()
-//        val asynced = CoroutineScope(Dispatchers.Default + job).async {
-//            repository.getEncyclopediaItems()
-//        }
-//
-//        runBlocking {
-//            withTimeout(4000) {
-//                val items = asynced.await()
-//
-//                assertTrue(items != null)
-//            }
-//        }
-//    }
 }

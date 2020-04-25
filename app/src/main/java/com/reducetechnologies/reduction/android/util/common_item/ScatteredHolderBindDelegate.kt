@@ -31,10 +31,8 @@ class HolderBindDelegateBuilder_CommonItem : ScatteredHolderBindDelegate.Builder
     }
 }
 
-
 /**
- * For inner usage
- * [orderedTextList] - contains text
+ * [orderedTextList] - содержит итемы на один холдер, с которыми нужно работать при биндинге
  */
 private class Delegate(
     view: View,
@@ -53,7 +51,6 @@ private class Delegate(
         }
         // beautify work
         equalSizes()
-        // TODO also here size of biggest item must be equalized to sum of smallest
         // hide unused views
         hideUnused(item.size)
     }

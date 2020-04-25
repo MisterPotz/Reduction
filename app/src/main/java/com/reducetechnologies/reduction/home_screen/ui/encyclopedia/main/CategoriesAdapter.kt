@@ -25,7 +25,7 @@ abstract class CategoriesInfoDelegate<T> {
 }
 
 /**
- * Получает лайв датные списки итемов, разбитые в мапе по ключу R
+ * Получает лайв датные списки итемов, разбитые в мапе по ключу Tag
  */
 open class CategoriesAdapter<Tag : Positionable, T>(
     val liveData: LiveData<Map<Tag, List<T>>>,

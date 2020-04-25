@@ -21,15 +21,18 @@ interface ScatteredHolderCreator<T> {
     fun toOrientation(viewType: Int): HolderItemsOrientation
 
     // creates view and performs necessary actions on each view before returning
-    fun createView(viewType: Int, parent: ViewGroup, inflater: LayoutInflater): Pair<View, ScatteredHolderBindDelegate.Specific?>
+    fun createView(
+        viewType: Int,
+        parent: ViewGroup,
+        inflater: LayoutInflater
+    ): Pair<View, ScatteredHolderBindDelegate.Specific?>
 
     // creates an iterator that traverses the list and returns sub-lists
-    fun splitListToPacks(list: List<T>) : Iterator<List<T>>
+    fun splitListToPacks(list: List<T>): Iterator<List<T>>
 }
 
 /**
- * @param CoroutineScope определяется активностью / приложением, где используется адаптер.
- * контекст нужен для работы с базой данных
+ * Adapter for displaying lists with caustom holders for different positions (e.g. material style card lists)
  */
 class ScatteredAdapter<T>(
     val lifecycleOwner: LifecycleOwner,
@@ -45,9 +48,9 @@ class ScatteredAdapter<T>(
 
     private lateinit var inflater: LayoutInflater
     private lateinit var context: Context
-    private var recyclerView : RecyclerView? = null
+    private var recyclerView: RecyclerView? = null
 
-    private var itemPacksMap : MutableMap<Int, List<T>> = mutableMapOf()
+    private var itemPacksMap: MutableMap<Int, List<T>> = mutableMapOf()
 
     private fun cleanMap() {
         itemPacksMap = mutableMapOf()
@@ -56,12 +59,14 @@ class ScatteredAdapter<T>(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScatteredItemHolder<T> {
         val view = creator.createView(viewType, parent, inflater)
         holderDelegateBuilder.setSpecific(view.second)
-        return ScatteredItemHolder<T>(creator.toOrientation(viewType), view.first, holderDelegateBuilder)
+        return ScatteredItemHolder<T>(
+            creator.toOrientation(viewType),
+            view.first,
+            holderDelegateBuilder
+        )
     }
 
     override fun getItemCount(): Int {
-        // должно быть поделено на количество вьюшек на один холдер, то есть нужен другой лив датный список
-        Timber.i("itemPacksMap size ${itemPacksMap.size}")
         return itemPacksMap.size
     }
 
@@ -77,7 +82,6 @@ class ScatteredAdapter<T>(
         context = recyclerView.context
         inflater = LayoutInflater.from(context)
         this.recyclerView = recyclerView
-        Timber.i("recyclerView in onAttachedToRecyclerView = $recyclerView")
         liveList.observe(lifecycleOwner, Observer {
             cleanMap()
             val iterator = creator.splitListToPacks(it)

@@ -18,7 +18,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class EncyclopediaFragment : Fragment() {
-    //    private lateinit var categoriesAdapter: CategoriesAdapter
     @Inject
     @ApplicationScope
     lateinit var viewModel: SharedViewModel
@@ -59,7 +58,6 @@ class EncyclopediaFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.encyclopedia_menu, menu)
-        // menu.add(NONE, R.id.select_favorites, NONE, "Выбрать элементы")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
