@@ -14,6 +14,7 @@ import com.reducetechnologies.reduction.android.util.setupWithNavController
 import kotlinx.android.synthetic.main.apptoolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 object SingletoneContextCounter {
     var fragments: Int = 0

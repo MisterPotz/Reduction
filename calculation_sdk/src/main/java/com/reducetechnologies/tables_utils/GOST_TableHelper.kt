@@ -1,9 +1,8 @@
 package com.reducetechnologies.tables_utils
 
 import com.reducetechnologies.tables_utils.table_contracts.*
-import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
-import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
+import com.reducetechnologies.tables_utils.table_contracts.G0Table
 
 /**
  * Helps with GOST tables. Contains names of needed gost tables, presents an interface to

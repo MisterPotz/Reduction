@@ -1,6 +1,8 @@
 package com.reduction_technologies.database.tables_utils.table_contracts
 
 import com.google.gson.GsonBuilder
+import com.reducetechnologies.tables_utils.table_contracts.G0Row
+import com.reducetechnologies.tables_utils.table_contracts.G0Table
 import com.reduction_technologies.database.tables_utils.OneSidedDomain
 import com.reduction_technologies.database.tables_utils.TwoSidedDomain
 import org.junit.jupiter.api.Assertions.*

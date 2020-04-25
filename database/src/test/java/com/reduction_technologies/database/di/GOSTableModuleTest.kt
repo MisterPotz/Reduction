@@ -18,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.ExtensionContext
 
 class InstantExecutorExtension : BeforeEachCallback, AfterEachCallback {
-
     override fun beforeEach(context: ExtensionContext?) {
         ArchTaskExecutor.getInstance()
             .setDelegate(object : TaskExecutor() {
@@ -33,9 +32,7 @@ class InstantExecutorExtension : BeforeEachCallback, AfterEachCallback {
     override fun afterEach(context: ExtensionContext?) {
         ArchTaskExecutor.getInstance().setDelegate(null)
     }
-
 }
-
 
 /**
  * Tests for livedata via livedata mocking observers

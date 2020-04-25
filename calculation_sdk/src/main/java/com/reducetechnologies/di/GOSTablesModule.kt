@@ -1,9 +1,9 @@
 package com.reducetechnologies.di
 
 import com.reducetechnologies.tables_utils.table_contracts.*
-import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
-import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
+import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
+import com.reducetechnologies.tables_utils.table_contracts.G0Table
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 
 /**
  * Can produce gost table for further work with them

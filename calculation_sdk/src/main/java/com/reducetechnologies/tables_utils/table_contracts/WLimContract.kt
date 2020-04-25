@@ -1,4 +1,4 @@
-package com.reduction_technologies.database.tables_utils.table_contracts
+package com.reducetechnologies.tables_utils.table_contracts
 
 import com.reduction_technologies.database.tables_utils.TwoSidedDomain
 
