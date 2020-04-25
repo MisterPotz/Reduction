@@ -2,9 +2,9 @@ package com.reduction_technologies.database.helpers
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.reducetechnologies.tables_utils.TableHolder
 import com.reduction_technologies.database.databases_utils.CommonItem
+import com.reduction_technologies.database.di.ApplicationScope
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
@@ -18,6 +18,7 @@ import kotlin.coroutines.coroutineContext
  * 2) Caching once obtained data in LiveData format - so once the data us updated,
  * repository can propagate those changes downstream in livedata, if it was once returned.
  */
+@ApplicationScope
 class Repository @Inject internal constructor(
     internal val context: Context,
     /**

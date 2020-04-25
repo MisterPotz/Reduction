@@ -4,9 +4,8 @@ import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.Encyclo
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
 import com.reduction_technologies.database.di.ApplicationScope
 import dagger.Component
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 @Component(modules = [AppModule::class])
 interface AppComponent {
     //fun inject(target : MainActivity)

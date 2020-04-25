@@ -3,13 +3,13 @@ package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 import androidx.lifecycle.*
 import com.reducetechnologies.reduction.android.util.CategoryAdapterPositionSaver
 import com.reduction_technologies.database.databases_utils.CommonItem
+import com.reduction_technologies.database.di.ApplicationScope
 import com.reduction_technologies.database.helpers.CategoryTag
 import com.reduction_technologies.database.helpers.Repository
 import kotlinx.coroutines.*
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class SharedViewModel @Inject constructor(private val repository: Repository) :
     ViewModel() {
 

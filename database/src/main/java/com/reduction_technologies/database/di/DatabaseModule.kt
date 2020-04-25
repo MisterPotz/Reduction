@@ -20,11 +20,11 @@ class DatabaseModule(val context: Context) {
         UserDatabaseHelper(context)
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun context() = context
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun repository(): Repository {
         return Repository(context(), constantDatabaseHelper(), userDatabaseHelper())
     }
@@ -32,7 +32,7 @@ class DatabaseModule(val context: Context) {
 
 
 @Component(modules = [DatabaseModule::class])
-@Singleton
+@ApplicationScope
 interface DatabaseComponent {
     // injecting necessary classes into repository
     fun repository(): Repository
