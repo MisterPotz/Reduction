@@ -13,14 +13,14 @@ import timber.log.Timber
 
 class CalculationFragment : Fragment() {
 
-    private lateinit var calculationViewModel: CalculationViewModel
+//    private lateinit var calculationViewModel: CalculationViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        calculationViewModel = ViewModelProvider(this).get(CalculationViewModel::class.java)
+//        calculationViewModel = ViewModelProvider(this).get(CalculationViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_calculation, container, false)
         val textView: TextView = root.findViewById(R.id.title)
 

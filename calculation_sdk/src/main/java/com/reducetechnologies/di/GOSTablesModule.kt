@@ -2,7 +2,7 @@ package com.reducetechnologies.di
 
 import com.reducetechnologies.tables_utils.table_contracts.*
 import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
-import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
+import com.reducetechnologies.tables_utils.table_contracts.G0Table
 import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 
 /**

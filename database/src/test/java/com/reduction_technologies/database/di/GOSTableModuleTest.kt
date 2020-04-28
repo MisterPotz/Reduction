@@ -1,164 +1,69 @@
 package com.reduction_technologies.database.di
 
 import android.content.Context
-import androidx.test.core.app.ApplicationProvider
-import org.junit.Before
-import org.junit.jupiter.api.Assertions
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
+import com.reducetechnologies.tables_utils.TableHolder
+import com.reduction_technologies.database.helpers.ConstantDatabaseHelper
+import com.reduction_technologies.database.helpers.Repository
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.*
+import org.junit.jupiter.api.Assertions.*
+
+import androidx.arch.core.executor.ArchTaskExecutor
+import androidx.arch.core.executor.TaskExecutor
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.ExtensionContext
+
+class InstantExecutorExtension : BeforeEachCallback, AfterEachCallback {
+    override fun beforeEach(context: ExtensionContext?) {
+        ArchTaskExecutor.getInstance()
+            .setDelegate(object : TaskExecutor() {
+                override fun executeOnDiskIO(runnable: Runnable) = runnable.run()
+
+                override fun postToMainThread(runnable: Runnable) = runnable.run()
+
+                override fun isMainThread(): Boolean = true
+            })
+    }
+
+    override fun afterEach(context: ExtensionContext?) {
+        ArchTaskExecutor.getInstance().setDelegate(null)
+    }
+}
 
 /**
- * Собственно тесты можно пилить здесь.
+ * Tests for livedata via livedata mocking observers
  */
-@RunWith(RobolectricTestRunner::class)
-@Config(manifest= Config.NONE)
+@ExtendWith(InstantExecutorExtension::class)
 internal class GOSTableModuleTest {
-    lateinit var databaseComponent: DatabaseComponent
-
-    @Before
-    fun setUp() {
-        val context =
-            ApplicationProvider.getApplicationContext<Context>()
-
-        // Using dependencies to create component
-        databaseComponent = DaggerDatabaseComponent.builder()
-            .databaseModule(DatabaseModule(context))
-            .build()
+    // Mocking specific test values of tableholder
+    val tableHolder = run<TableHolder> {
+        val holder = mockk<TableHolder>()
+        every { holder.fatigue } returns mockk() {
+            every { rows } returns listOf(mockk() {
+                every { load } returns -120
+            })
+        }
+        holder
     }
 
-    /**
-     * Tests dagger-style table dependencies injection
-    */
-    @org.junit.Test
-    fun get_source_via_table_component() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getSourceTable()
-
-        Assertions.assertNotNull(table)
+    val mockedConstantDatabase = mockk<ConstantDatabaseHelper>() {
+        every { getTables() } answers {
+            tableHolder
+        }
     }
 
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun get_fatigue_via_table_component() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getFatigue()
+    val repository = Repository(mockk<Context>(), mockedConstantDatabase, mockk())
 
-        Assertions.assertNotNull(table)
-    }
+    @Test
+    fun getTablesTest() {
 
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun get_g0() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getG0()
-
-        Assertions.assertNotNull(table)
-    }
-
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun get_ed() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getEDTable()
-
-        Assertions.assertNotNull(table)
-    }
-
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun get_HRC() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getHRCTable()
-
-        Assertions.assertNotNull(table)
-    }
-
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun get_RA40() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getRA40()
-
-        Assertions.assertNotNull(table)
-    }
-
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun get_SGTT() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getSGTTTable()
-
-        Assertions.assertNotNull(table)
-    }
-
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun get_Modules() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getStandartModules()
-
-        Assertions.assertNotNull(table)
-    }
-
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun get_tip_tipre() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getTIP_TipreTable()
-
-        Assertions.assertNotNull(table)
-    }
-
-    /**
-     * Tests dagger-style table dependencies injection
-     */
-    @org.junit.Test
-    fun combined() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getFatigue()
-        val g0 = tableComponent.getG0()
-        val source = tableComponent.getSourceTable()
-
-        Assertions.assertNotNull(g0)
-        Assertions.assertNotNull(table)
-        Assertions.assertNotNull(g0)
-        Assertions.assertNotNull(source)
+        val tables = runBlocking {
+            repository.getTables()
+        }
+        assertEquals(-120, tables.value!!.fatigue.rows[0].load)
     }
 }

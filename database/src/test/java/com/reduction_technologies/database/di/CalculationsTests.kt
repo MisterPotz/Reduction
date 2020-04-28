@@ -1,16 +1,17 @@
 package com.reduction_technologies.database.di
 
 import android.content.Context
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import com.reducetechnologies.calculations.*
-import com.reducetechnologies.di.CalculationModule
 import com.reducetechnologies.di.CalculationsComponent
-import com.reducetechnologies.di.DaggerCalculationsComponent
 import com.reducetechnologies.specificationsAndRequests.Specifications
 import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
 import com.reducetechnologies.tables_utils.table_contracts.SGTTTable
 import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
+import org.junit.Rule
 import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -26,7 +27,6 @@ import kotlin.math.abs
 internal class CalculationsModuleTest {
     lateinit var databaseComponent: DatabaseComponent
     lateinit var calculationComponent : CalculationsComponent
-    lateinit var tableComponent: GOSTableComponent
     lateinit var input: InputData
     //Methods
     lateinit var edMethod: EDMethodsClass
@@ -52,6 +52,12 @@ internal class CalculationsModuleTest {
     val zc2redScope = ZCREDScope()
 
     /**
+     * Нужно для правильной работы внутренних слоев работы с бд
+     */
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
+
+    /**
      * [isAccurate] - просто проверяет, укладывается ли расхождение с учебником в 5%
      */
     fun isAccurate(num1: Float, num2: Float) : Boolean = (((abs(num1 - num2))/num2) < 0.05f)
@@ -61,20 +67,23 @@ internal class CalculationsModuleTest {
         val context =
             ApplicationProvider.getApplicationContext<Context>()
 
-        // Using dependencies to create component
+        // Сначала в любом случае сначала получаем databaseComponent - он имеет методы для получения calculationModule и билдера calculationComponent
         databaseComponent = DaggerDatabaseComponent.builder()
             .databaseModule(DatabaseModule(context))
             .build()
-        calculationComponent= DaggerCalculationsComponent.builder().calculationModule(
-            CalculationModule(DaggerGOSTableComponent.builder().gOSTableModule(GOSTableModule()).databaseComponent(databaseComponent).build())
-        ).build()
-        tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
+        // псведо-асинхронно получаем calculationModule
+        val calculationModule = runBlocking { databaseComponent.calculationModule().await() }
+
+        // и наконец, через билдер билдим calculationComponent, кладя в него ранее полученный calculationModule
+        calculationComponent =
+            databaseComponent.calculationsBuilder()
+                .get()
+                .calculationModule(calculationModule).build()
+
         //Tables late initialization
-        sourceTable = tableComponent.getSourceTable()
-        fatigueTable = tableComponent.getFatigue()
-        SGTTTable = tableComponent.getSGTTTable()
+        sourceTable = calculationComponent.getSourceTable()
+        fatigueTable = calculationComponent.getFatigueTable()
+        SGTTTable = calculationComponent.getSGTTTable()
         //Methods late initialization
         edMethod = calculationComponent.getEDMethods()
         allReducersMethod = calculationComponent.getAllReducersOptions()
@@ -153,11 +162,8 @@ internal class CalculationsModuleTest {
      * Tests dagger-style table dependencies injection
      */
     @org.junit.Test
-    fun get_source_via_table_component() {
-        val tableComponent = DaggerGOSTableComponent.builder()
-            .databaseComponent(databaseComponent)
-            .gOSTableModule(GOSTableModule()).build()
-        val table = tableComponent.getSourceTable()
+    fun get_source_via_calculation_component() {
+        val table = calculationComponent.getSourceTable()
         Assertions.assertNotNull(table.betMaRow.list[0])
         println(table.betMaRow.list[0])
 

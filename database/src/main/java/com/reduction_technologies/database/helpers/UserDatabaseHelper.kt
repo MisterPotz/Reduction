@@ -3,17 +3,15 @@ package com.reduction_technologies.database.helpers
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.reduction_technologies.database.databases_utils.CommonItem
-import com.reduction_technologies.database.databases_utils.DatabaseConstantsContract
-import com.reduction_technologies.database.databases_utils.DatabaseType
-import com.reduction_technologies.database.databases_utils.UserTables
+import com.reduction_technologies.database.databases_utils.*
 
 /**
  * DataBase helper for data set with user-defined data. Only user frequent changing data can be stored here.
  * @see ConstantDatabaseHelper
  */
-class UserDatabaseHelper(val context: Context) :
-    SQLiteOpenHelper(context, database.title, null, database.version) {
+internal class UserDatabaseHelper(val context: Context) :
+    SQLiteOpenHelper(context, database.title, null, database.version),
+    CursorBuilder {
     // TODO Надо как-то элегантнее сделать либо соответствие датабейза таблице либо организацию
     // работы с запросом таблиц посредством хелпера
     private val SQL_CREATE_ENTRIES =
@@ -37,5 +35,12 @@ class UserDatabaseHelper(val context: Context) :
         DatabaseConstantsContract {
         override val database: DatabaseType =
             DatabaseType.User
+    }
+
+    override fun getCommonCursorBuilder(
+        tableName: String,
+        columns: Array<String>
+    ): RCursorAdapterBuilder<CommonItem> {
+        return RCursorAdapterBuilder(this, tableName, columns)
     }
 }

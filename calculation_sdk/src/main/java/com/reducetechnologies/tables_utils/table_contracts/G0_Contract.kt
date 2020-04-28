@@ -1,7 +1,8 @@
-package com.reduction_technologies.database.tables_utils.table_contracts
+package com.reducetechnologies.tables_utils.table_contracts
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.reducetechnologies.tables_utils.TableExtractor
 import com.reduction_technologies.database.json_utils.GsonRegister
 import com.reduction_technologies.database.tables_utils.TwoSidedDomain
 
@@ -17,9 +18,13 @@ data class G0Row(
 }
 
 data class G0Table(val rows : List<G0Row>) {
-    companion object : GsonRegister {
+    companion object : GsonRegister, TableExtractor<G0Table> {
         override fun prepareGson(): Gson {
             return GsonBuilder().create()
+        }
+
+        override fun extractFromStringWithGson(string: String, gson: Gson): G0Table {
+            return gson.fromJson(string, G0Table::class.java)
         }
     }
 }

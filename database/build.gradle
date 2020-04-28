@@ -83,6 +83,8 @@ dependencies {
     implementation libraries.kotlinCoroutines
     testImplementation libraries.kotlinCoroutines
 
+    implementation libraries.liveDataExt
+
     implementation libraries.gson
     testImplementation libraries.gson
 
@@ -135,4 +137,9 @@ dependencies {
 
     kapt libraries.daggerAndroid
     kaptTest libraries.daggerAndroidProcessor
+
+    implementation libraries.lifecycle
+    testImplementation libraries.lifecycle
+
+    testImplementation 'android.arch.core:core-testing:1.1.1'
 }

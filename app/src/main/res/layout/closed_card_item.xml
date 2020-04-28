@@ -5,27 +5,27 @@
     android:id="@+id/itemCard"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/card_outer_margin"
-    android:layout_marginTop="@dimen/card_outer_margin"
-    android:layout_marginRight="@dimen/card_outer_margin"
+    android:layout_marginLeft="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginBottom="4dp"
     android:clickable="true"
     android:focusable="true"
     android:maxWidth="120dp"
     android:minHeight="50dp"
-    app:cardElevation="5dp">
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingStart="@dimen/material_horizontal_margin"
-        android:paddingEnd="@dimen/material_horizontal_margin"
         android:layout_gravity="center"
         >
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="alpha 1"
+            android:layout_marginStart="@dimen/material_horizontal_margin"
+            android:layout_marginEnd="@dimen/material_horizontal_margin"
             style="@style/Subtitle1"
             android:id="@+id/itemName"
             />

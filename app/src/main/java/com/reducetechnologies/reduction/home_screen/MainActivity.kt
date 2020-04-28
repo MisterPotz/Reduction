@@ -11,8 +11,10 @@ import androidx.navigation.NavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.setupWithNavController
-import com.reduction_technologies.database.helpers.ConstantDatabaseHelper
 import kotlinx.android.synthetic.main.apptoolbar.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 object SingletoneContextCounter {
     var fragments: Int = 0
@@ -20,8 +22,9 @@ object SingletoneContextCounter {
 
 /**
  * Нужно что-то, чтобы хранило фрагменты и обеспечивало с ними безопасную работу.
+ * [CoroutineScope] необходима, чтобы иметь высокоуровневые корутины на уровне активности
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CoroutineScope by MainScope(){
     val debugTree = Timber.DebugTree()
     private var currentNavController: LiveData<NavController>? = null
 
@@ -33,9 +36,6 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState
-
-        val helper = ConstantDatabaseHelper(this)
-
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -45,6 +45,15 @@ class MainActivity : AppCompatActivity() {
         // BottomNavigationBar with Navigation
         setupBottomNavigationBar()
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val debug = Timber.DebugTree()
+        Timber.plant(debug)
+        Timber.i("onSaveInstanceState called in activity")
+        Timber.uproot(debug)
+    }
+
 
     /**
      * Called on first creation and when restoring state.
