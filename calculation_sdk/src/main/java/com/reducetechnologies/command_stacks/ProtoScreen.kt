@@ -60,7 +60,7 @@ abstract class ProtoScreen(
 
     // Проаналазировать список полей и заполнить на их основе список меток, присущих данному Protoscreen
     // Фабричный метод для тегов
-    abstract fun fillTags()
+    abstract fun fillTags()//Я так понял, этот метод можно выкидывать, здесь компэнион это уже делает
 
     companion object {
         fun tags(fields: List<Field>): List<RequiredProcessing> {
