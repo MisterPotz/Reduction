@@ -1,4 +1,4 @@
-package com.reducetechnologies.command_stacks
+package com.reducetechnologies.command_stacks_deprecated
 
 import mu.KotlinLogging
 
@@ -30,8 +30,7 @@ interface Taggable {
 abstract class ProtoScreen(
     // Заголовок карточки
     val titlePane: String,
-    // Идентификатор прото-экрана для опознавания бэком
-    val protoScreenId: Int,
+
     // Список полей, присущих этому прото-экрану
     val fields: List<Field>
 ) : Taggable {
@@ -74,6 +73,24 @@ abstract class ProtoScreen(
         }
     }
 }
+
+/**
+ * Содержит данные, зависящие от реализации. Скрывает за собой данные, релевантные тому или
+ * иному типу поля. Пример. Если поле содержит ввод - значит это одна реализация. Если только вывод -
+ * другая
+ */
+interface SpecificationDependent {
+    val data : SpecificationData
+}
+
+/**
+ * Содержит изменчивые данные для разных типов полей.
+ */
+interface SpecificationData {
+
+}
+
+class InputSpecification(override val data: SpecificationData) : SpecificationDependent
 
 /**
  * [fieldId] Хранит номер ID, присвоенный бэку этому полю. После того как поле отработало, клиент возвращает

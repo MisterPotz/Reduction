@@ -5,5 +5,4 @@ import dagger.Module
 
 @Module(includes = [DatabaseModule::class])
 class AppModule {
-
 }

@@ -1,6 +1,6 @@
-package com.reducetechnologies.screens_api
+package com.reducetechnologies.screens_api_deprecated
 
-import com.reducetechnologies.command_stacks.ProtoScreen
+import com.reducetechnologies.command_stacks_deprecated.ProtoScreen
 
 /**
  * Предоставляет АПИ для общения фронта с бэком для передачи последним первому необходимых

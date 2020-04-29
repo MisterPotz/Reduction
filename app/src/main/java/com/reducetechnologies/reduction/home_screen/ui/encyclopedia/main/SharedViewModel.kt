@@ -1,6 +1,7 @@
 package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
 import androidx.lifecycle.*
+import com.reducetechnologies.command_infrastructure.CalculationSdkBuilder
 import com.reducetechnologies.reduction.android.util.CategoryAdapterPositionSaver
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
@@ -10,7 +11,10 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @ApplicationScope
-class SharedViewModel @Inject constructor(private val repository: Repository) :
+class SharedViewModel @Inject constructor(
+    private val repository: Repository,
+    private val calculationSdkBuilder : CalculationSdkBuilder
+) :
     ViewModel() {
 
     val text: LiveData<String> = MutableLiveData<String>().apply {
