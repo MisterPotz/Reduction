@@ -59,6 +59,10 @@ internal class CalculationSdkImpl(
         return pScreenDelegate.hasNext()
     }
 
+    override fun finalResults(): CalculationResults {
+        return StubResults()
+    }
+
     private fun checkDelegateHasNext() : Boolean {
         if (!pScreenDelegate.hasNext()) {
             throw IllegalStateException("delegate doesnt have any screens prepared at moment")

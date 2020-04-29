@@ -10,6 +10,7 @@ import javax.inject.Scope
  * Метка для обозначения того, что класс, выдаваемый под ней должен быть сингльтоном на уровне
  * только вычислительного экрана
  */
+
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 annotation class CalculationSdkScope

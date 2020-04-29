@@ -10,7 +10,10 @@ enum class InputTextType {
     INTEGER, FLOAT
 }
 
-data class AdditionalInputText(val encyclodpediaId: Int? = null, var answer: String? = null, var error: String? = null)
+/**
+ * [hint] - can contain some additional data (like, this value is measured in kylonewtons, etc.)
+ */
+data class AdditionalInputText(val encyclodpediaId: Int? = null, var answer: String? = null, var error: String? = null, val hint: String? = null)
 
 data class InputTextSpec(
     val title: String,

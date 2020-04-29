@@ -1,4 +1,4 @@
-package com.reducetechnologies.reduction.android.util.common_item
+package com.reducetechnologies.reduction.android.util.common_item_category_adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
 import androidx.cardview.widget.CardView
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.HolderItemsOrientation

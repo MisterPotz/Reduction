@@ -1,7 +1,7 @@
 package com.reducetechnologies.command_infrastructure
 
 // contains calculation classes
-internal class PScreenSourceDelegate() : PScreenSource() {
+internal class PScreenSourceDelegate : PScreenSource() {
     // simple stack that is consumed. Being build with some other classes (or with calculation on flow)
     override protected val preparedStack: MutableList<PScreen> = mutableListOf(
         PScreen(

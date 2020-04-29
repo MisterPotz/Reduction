@@ -25,5 +25,7 @@ interface CalculationSdk {
     fun getNextPScreen() : PScreen
 
     fun hasNextPScreen() : Boolean
+
+    fun finalResults() : CalculationResults
 }
 

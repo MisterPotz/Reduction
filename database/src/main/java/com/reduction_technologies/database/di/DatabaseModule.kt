@@ -7,7 +7,6 @@ import com.reduction_technologies.database.helpers.UserDatabaseHelper
 import dagger.Component
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class DatabaseModule(val context: Context) {
