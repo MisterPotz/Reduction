@@ -9,11 +9,13 @@ import androidx.fragment.app.Fragment
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
+import com.reduction_technologies.database.di.ApplicationScope
 import timber.log.Timber
 import javax.inject.Inject
 
 class CalculationFragment : Fragment() {
     @Inject
+    @ApplicationScope
     lateinit var viewModel : SharedViewModel
 
     override fun onCreateView(

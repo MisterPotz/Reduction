@@ -1,7 +1,5 @@
 package com.reducetechnologies.command_infrastructure
 
-import javax.xml.soap.Text
-
 /**
  * Contains data that depends on [PFieldType]
  */
@@ -12,7 +10,7 @@ enum class InputTextType {
     INTEGER, FLOAT
 }
 
-data class AdditionalInputText(val encyclodpediaId: Int)
+data class AdditionalInputText(val encyclodpediaId: Int? = null, var answer: String? = null, var error: String? = null)
 
 data class InputTextSpec(
     val title: String,
@@ -22,7 +20,7 @@ data class InputTextSpec(
 ) : PTypeSpecific
 
 // InputImage
-data class AdditionalInputImage(val imagePaths: List<String>, val encyclodpediaId: Int)
+data class AdditionalInputImage(val imagePaths: List<String>, val encyclodpediaId: Int? = null, var answer: Int? = null)
 
 data class InputPictureSpec(
     val title: String,
@@ -31,7 +29,7 @@ data class InputPictureSpec(
 ) : PTypeSpecific
 
 // InputList
-data class AdditionalInputList(val options: List<String>, val encyclodpediaId: Int)
+data class AdditionalInputList(val options: List<String>, val encyclodpediaId: Int? = null, var answer: Int? = null)
 
 data class InputListSpec(
     val title: String,
@@ -46,7 +44,7 @@ enum class TextType {
 
 data class AdditionalText(val type: TextType)
 
-data class TextSpec(val text: String, val additional: AdditionalText) : PTypeSpecific
+data class TextSpec(val text: String, val additional: AdditionalText = AdditionalText(TextType.BODY)) : PTypeSpecific
 
 // Math text field
 /**

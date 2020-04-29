@@ -9,6 +9,6 @@ class CalculationSdkBuilder() {
 
     fun buildSdk(options : Options?) : CalculationSdk {
         // some logics
-        return CalculationSdkImpl()
+        return CalculationSdkImpl(PScreenSourceDelegate())
     }
 }
