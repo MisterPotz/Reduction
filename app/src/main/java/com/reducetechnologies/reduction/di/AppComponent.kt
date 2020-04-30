@@ -2,6 +2,7 @@ package com.reducetechnologies.reduction.di
 
 import com.reducetechnologies.di.CalculationSdkComponent
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFragment
+import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.FlowFragment
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.EncyclopediaFragment
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
 import com.reduction_technologies.database.di.ApplicationScope
@@ -14,6 +15,7 @@ interface AppComponent {
     fun sharedViewModel(): SharedViewModel
     fun inject(fragment: EncyclopediaFragment)
     fun inject(fragment: CalculationFragment)
+    fun inject(fragment: FlowFragment)
 
     fun calcSdkBuilder(): Provider<CalculationSdkComponent.Factory>
 }

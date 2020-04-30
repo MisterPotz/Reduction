@@ -4,6 +4,8 @@ import androidx.lifecycle.*
 import com.reducetechnologies.di.CalculationSdkComponent
 import com.reducetechnologies.reduction.android.util.CategoryAdapterPositionSaver
 import com.reducetechnologies.reduction.android.util.common_item_util.CommonItemUtils
+import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkCommute
+import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
 import com.reduction_technologies.database.helpers.CategoryTag
@@ -24,7 +26,10 @@ class SharedViewModel @Inject constructor(
 
     val commonItemUtils = CommonItemUtils()
 
-    val calcSdkHelper : CalculationSdkHelper = CalculationSdkHelper(componentFactory)
+    val calcSdkHelper: CalculationSdkHelper =
+        CalculationSdkHelper(
+            componentFactory
+        )
 
     private val _allEncyclopdiaItems: LiveData<List<CommonItem>> by lazy {
         updateAllEncyclopediaItems()
@@ -60,5 +65,17 @@ class SharedViewModel @Inject constructor(
 
     fun getSavedLayoutPositions(): CategoryAdapterPositionSaver<CategoryTag> {
         return categoriesAdapterSaver
+    }
+
+    fun startCalculation(): CalculationSdkCommute? {
+        // already calculating
+        if (calcSdkHelper.isActive) {
+            return null
+        }
+        return calcSdkHelper.startCalculation()
+    }
+
+    fun getActualCommute() : CalculationSdkCommute? {
+        return calcSdkHelper.getCommuteIfActive()
     }
 }

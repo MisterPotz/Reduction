@@ -31,6 +31,11 @@ interface CalculationSdk {
      */
     fun isNextLast() : Boolean
 
+    /**
+     * List of all previously validated and remembered pscreens
+     */
+    fun getAllValidated() : List<WrappedPScreen>
+
     fun finalResults() : CalculationResults
 }
 

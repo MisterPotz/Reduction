@@ -1,4 +1,4 @@
-package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
+package com.reducetechnologies.reduction.home_screen.ui.calculation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +9,7 @@ import com.reducetechnologies.command_infrastructure.PScreen
 import com.reducetechnologies.command_infrastructure.WrappedPScreen
 import com.reducetechnologies.di.CalculationSdkComponent
 import com.reduction_technologies.database.helpers.LiveDataClassStorage
+import java.lang.IllegalStateException
 import javax.inject.Provider
 
 /**
@@ -24,7 +25,7 @@ class CalculationSdkHelper(
 ) {
     var isActive = false
         private set
-    private var onSessionStopped: ((CalculationResults) -> Unit)? = null
+    var onSessionStopped: ((CalculationResults) -> Unit)? = null
     private enum class Direction { CHANGES_OUT, CHANGES_IN }
 
     private  var dispatchedLiveDatas : LiveDataClassStorage<Direction>? = null
@@ -46,6 +47,7 @@ class CalculationSdkHelper(
         dispatchedLiveDatas = getLiveDataStorage()
         outData = getOutLiveData()
         inData = getInLiveData()
+        inData!!.observeForever(inObserver)
     }
 
     private fun reinitCalculationSdk() {
@@ -53,13 +55,16 @@ class CalculationSdkHelper(
     }
 
     private fun reinit() {
+        isActive = true
         inData?.removeObserver(inObserver)
         reinitLiveDatas()
         reinitCalculationSdk()
     }
 
     private fun finish() {
+        onSessionStopped?.invoke(object : CalculationResults { })
         inData!!.removeObserver(inObserver)
+        isActive = false
         inData = null
         outData = null
         dispatchedLiveDatas = null
@@ -67,21 +72,32 @@ class CalculationSdkHelper(
     }
 
     private val inObserver = Observer<PScreen> {
-        TODO("Observer for information coming from user, then passed to sdk")
+        validateIncoming(it)
     }
 
     fun getDataForOut(): MutableLiveData<WrappedPScreen> = outData!!
 
     fun getDataForIn() : MutableLiveData<PScreen> = inData!!
 
-    fun setOnSessionStoppedCallback(callback: (CalculationResults) -> Unit) {
-        onSessionStopped = callback
+    // returns the live data for out direction
+    fun startCalculation() : CalculationSdkCommute{
+        if (isActive) {
+            throw IllegalStateException("isActive, can't reinit")
+        }
+        reinit()
+        outData!!.value = calculationSdk!!.init()
+        return getCommuteIfActive()!!
     }
 
-    // returns the live data for out direction
-    fun startCalculation() : LiveData<WrappedPScreen> {
-        outData!!.value = calculationSdk!!.init()
-        return outData!!
+    fun getCommuteIfActive() : CalculationSdkCommute? {
+        if (isActive) {
+            return object : CalculationSdkCommute(inData!!, outData!!) {
+                override fun getAllRecent(): List<WrappedPScreen> {
+                    return calculationSdk!!.getAllValidated()
+                }
+            }
+        } else
+            return null
     }
 
     private fun validateIncoming(pScreen: PScreen) {

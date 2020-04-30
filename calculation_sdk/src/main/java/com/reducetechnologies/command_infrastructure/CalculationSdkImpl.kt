@@ -63,6 +63,10 @@ internal class CalculationSdkImpl(
         return pScreenDelegate.isNextLast()
     }
 
+    override fun getAllValidated(): List<WrappedPScreen> {
+        return queue.getAllCommitted()
+    }
+
     override fun finalResults(): CalculationResults {
         return StubResults()
     }

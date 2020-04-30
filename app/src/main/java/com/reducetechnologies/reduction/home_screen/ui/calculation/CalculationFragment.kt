@@ -4,12 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import com.reducetechnologies.reduction.R
+import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
+import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PScreenManager
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
 import com.reduction_technologies.database.di.ApplicationScope
+import kotlinx.android.synthetic.main.fragment_calculation.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,6 +23,13 @@ class CalculationFragment : Fragment() {
     @ApplicationScope
     lateinit var viewModel : SharedViewModel
 
+    private lateinit var pScreenManager : PScreenManager
+    private lateinit var calculationContainer : FrameLayout
+
+    init {
+        Timber.i("CalculationFragment recreated")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -25,11 +37,24 @@ class CalculationFragment : Fragment() {
     ): View? {
 //        calculationViewModel = ViewModelProvider(this).get(CalculationViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_calculation, container, false)
-        val textView: TextView = root.findViewById(R.id.title)
 
         SingletoneContextCounter.fragments++
         Timber.i("in onCreateView: current fragment amount: ${SingletoneContextCounter.fragments}")
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        (activity!!.application as App).appComponent.inject(this)
+
+        registerCalculationButton()
+    }
+
+
+    private fun registerCalculationButton() {
+        calcButton.setOnClickListener {
+            val action = CalculationFragmentDirections.actionCalculationFragmentToFlowFragment()
+            findNavController().navigate(action)
+        }
     }
 
     override fun onResume() {

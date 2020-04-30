@@ -111,6 +111,19 @@ class WatchingStorage<T>() {
         }
     }
 
+    /**
+     * Returns all instances that was committed through validation already
+     */
+    fun getAllCommitted() : List<T> {
+        if (queue.isEmpty()) {
+            return listOf()
+        } else {
+            // TODO тест на это
+            val lastIndex = if (currentIsPending) current - 1 else current
+            return queue.subList(0, lastIndex + 1).toList()
+        }
+    }
+
     fun hasNext() : Boolean {
         return current + 1 < queue.size
     }
