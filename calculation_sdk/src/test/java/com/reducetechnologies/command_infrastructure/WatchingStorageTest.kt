@@ -8,6 +8,8 @@ internal class WatchingStorageTest {
 
     class SampleObj
 
+    data class WrappedSampleObj(val obj : SampleObj)
+
     @Test
     fun addToBack() {
         val f1 = SampleObj()
@@ -53,6 +55,24 @@ internal class WatchingStorageTest {
         storage.getCurrent().let {
             assertEquals(f2, it)
         }
+    }
+
+    @Test
+    fun commitCurrentWithTransform() {
+        val f1 = SampleObj()
+        val wf1 = WrappedSampleObj(f1)
+
+        val storage = WatchingStorage<WrappedSampleObj>()
+
+        storage.init(wf1)
+        val current = storage.getCurrent()
+
+        assertEquals(wf1, current)
+
+        storage.commitCurrent(f1) {wrappedSampleObj, sampleObj ->
+            wrappedSampleObj.obj == sampleObj
+        }
+        assertTrue(!storage.hasNext())
     }
 
     @Test

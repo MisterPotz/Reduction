@@ -1,7 +1,6 @@
 package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
 import androidx.lifecycle.*
-import com.reducetechnologies.command_infrastructure.CalculationSdkBuilder
 import com.reducetechnologies.di.CalculationSdkComponent
 import com.reducetechnologies.reduction.android.util.CategoryAdapterPositionSaver
 import com.reducetechnologies.reduction.android.util.common_item_util.CommonItemUtils
@@ -25,7 +24,7 @@ class SharedViewModel @Inject constructor(
 
     val commonItemUtils = CommonItemUtils()
 
-    val calcSdkHelper : CalculationSdkHelper = CalculationSdkHelper()
+    val calcSdkHelper : CalculationSdkHelper = CalculationSdkHelper(componentFactory)
 
     private val _allEncyclopdiaItems: LiveData<List<CommonItem>> by lazy {
         updateAllEncyclopediaItems()

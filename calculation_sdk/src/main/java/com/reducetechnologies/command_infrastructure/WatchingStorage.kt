@@ -46,10 +46,30 @@ class WatchingStorage<T>() {
     }
 
     /**
+     * If stored objects have some characteristics that are hidden
+     */
+    fun <R> isCurrent(obj : R, compare: (T, R) -> Boolean) : Boolean {
+        checkIsInit()
+        if (queue.isEmpty()) return false
+        return compare(queue[current], obj)
+    }
+
+    /**
      * Current must be commited before giving out next
      */
     fun commitCurrent(obj: T) {
-        if (queue[current] == obj) {
+        if (isCurrent(obj)) {
+            currentIsPending = false
+        } else {
+            throw IllegalStateException("Committed value is not current")
+        }
+    }
+
+    /**
+     * Current must be commited before giving out next, for more complex objects
+     */
+    fun <R> commitCurrent(obj: R, compare: (T, R) -> Boolean) {
+        if (isCurrent(obj, compare)) {
             currentIsPending = false
         } else {
             throw IllegalStateException("Committed value is not current")

@@ -12,7 +12,7 @@ internal class CalculationSdkImplTest {
     // contains calculation classes
     internal class TestDelegate() : PScreenSource() {
         // simple stack that is consumed. Being build with some other classes (or with calculation on flow)
-        override protected val preparedStack: MutableList<PScreen> = mutableListOf(
+        override  val preparedStack: MutableList<PScreen> = mutableListOf(
             PScreen(
                 "Введите данные",
                 mutableListOf(
@@ -37,7 +37,11 @@ internal class CalculationSdkImplTest {
             )
         )
 
-        override fun validate(pScreen: PScreen): PScreen? {
+        override fun isNextLast(): Boolean {
+            return hasNext()
+        }
+
+        override fun validate(pScreen: PScreen): WrappedPScreen? {
             var isGood = true
             // логика проверки
             for (i in pScreen.fields) {
@@ -55,8 +59,8 @@ internal class CalculationSdkImplTest {
                     else -> Unit
                 }
             }
-            // если все норм возвратит нулл
-            return if (isGood) null else pScreen
+            // текущий последней если стек уже пуст
+            return if (isGood) null else WrappedPScreen(pScreen, preparedStack.size == 0)
         }
     }
 
@@ -76,21 +80,21 @@ internal class CalculationSdkImplTest {
     @Test
     fun validateCurrentWithReturn() {
         val calculationSdkImpl = CalculationSdkImpl(TestDelegate())
-        val pScreen =  calculationSdkImpl.init()
+        val wpScreen = calculationSdkImpl.init()
 
-       ( pScreen.fields[0].typeSpecificData as InputTextSpec).additional.answer = "asd"
-        val revalidate = calculationSdkImpl.validateCurrent(pScreen)
+        (wpScreen.pScreen.fields[0].typeSpecificData as InputTextSpec).additional.answer = "asd"
+        val revalidate = calculationSdkImpl.validateCurrent(wpScreen.pScreen)
         assertTrue(revalidate != null)
-        assertEquals(pScreen, revalidate)
+        assertEquals(wpScreen, revalidate)
     }
 
     @Test
     fun validateCurrentWithNoReturn() {
         val calculationSdkImpl = CalculationSdkImpl(TestDelegate())
-        val pScreen =  calculationSdkImpl.init()
+        val wpScreen = calculationSdkImpl.init()
 
-        ( pScreen.fields[0].typeSpecificData as InputTextSpec).additional.answer = "0.4"
-        val revalidate = calculationSdkImpl.validateCurrent(pScreen)
+        (wpScreen.pScreen.fields[0].typeSpecificData as InputTextSpec).additional.answer = "0.4"
+        val revalidate = calculationSdkImpl.validateCurrent(wpScreen.pScreen)
         assertTrue(revalidate == null)
     }
 
@@ -112,15 +116,15 @@ internal class CalculationSdkImplTest {
     @Test
     fun getNextPScreenWithValidating() {
         val calculationSdkImpl = CalculationSdkImpl(TestDelegate())
-        val screen = calculationSdkImpl.init()
-        (screen.fields[0].typeSpecificData as InputTextSpec).additional.answer = "0.4"
+        val wpScreen = calculationSdkImpl.init()
+        (wpScreen.pScreen.fields[0].typeSpecificData as InputTextSpec).additional.answer = "0.4"
 
         // check that currently stack is empty because waits for screen to be returned
         assertTrue(!calculationSdkImpl.hasNextPScreen())
-        calculationSdkImpl.validateCurrent(screen)
+        calculationSdkImpl.validateCurrent(wpScreen.pScreen)
 
         assertTrue(calculationSdkImpl.hasNextPScreen())
         val newScreen = calculationSdkImpl.getNextPScreen()
-        assertNotEquals(screen, newScreen)
+        assertNotEquals(wpScreen.pScreen, newScreen)
     }
 }

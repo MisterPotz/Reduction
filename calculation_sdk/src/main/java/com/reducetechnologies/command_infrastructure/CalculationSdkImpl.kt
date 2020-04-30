@@ -14,21 +14,21 @@ internal class CalculationSdkImpl(
     private val pScreenDelegate: PScreenSource
 ) : CalculationSdk {
     // queue, the last is extracted last, items appended to last element, the first element is returned first
-    private val queue = WatchingStorage<PScreen>()
+    private val queue = WatchingStorage<WrappedPScreen>()
 
-    override fun init(): PScreen {
+    override fun init(): WrappedPScreen {
         checkDelegateHasNext()
         // append initial pscreen to queue
         queue.init(pScreenDelegate.next())
         return queue.getCurrent()
     }
 
-    override fun validateCurrent(pscreen: PScreen): PScreen? {
-        if (queue.isCurrent(pscreen)) {
+    override fun validateCurrent(pscreen: PScreen): WrappedPScreen? {
+        if (queue.isCurrent(pscreen, this::comparedWrappedAndUnwrapped)) {
             val isGood = pScreenDelegate.validate(pscreen)
             // using delegates method to understand if pscreen is good
             if (isGood == null) {
-                queue.commitCurrent(pscreen)
+                queue.commitCurrent(pscreen, this::comparedWrappedAndUnwrapped)
                 return null
             } else {
                 // use delegate to return pscreen with error, replacing it as current in storage
@@ -40,7 +40,7 @@ internal class CalculationSdkImpl(
         }
     }
 
-    override fun getNextPScreen(): PScreen {
+    override fun getNextPScreen(): WrappedPScreen {
         checkDelegateHasNext()
         // getting new pscreen from delegate
         val next = pScreenDelegate.next()
@@ -59,16 +59,27 @@ internal class CalculationSdkImpl(
         return pScreenDelegate.hasNext()
     }
 
+    override fun isNextLast(): Boolean {
+        return pScreenDelegate.isNextLast()
+    }
+
     override fun finalResults(): CalculationResults {
         return StubResults()
     }
 
-    private fun checkDelegateHasNext() : Boolean {
+    private fun checkDelegateHasNext(): Boolean {
         if (!pScreenDelegate.hasNext()) {
             throw IllegalStateException("delegate doesnt have any screens prepared at moment")
         } else {
             return true
         }
+    }
+
+    private fun comparedWrappedAndUnwrapped(
+        wrappedPScreen: WrappedPScreen,
+        pscreen: PScreen
+    ): Boolean {
+        return wrappedPScreen.pScreen == pscreen
     }
 }
 

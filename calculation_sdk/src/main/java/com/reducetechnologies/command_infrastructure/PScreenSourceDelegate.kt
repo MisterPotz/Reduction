@@ -23,7 +23,11 @@ internal class PScreenSourceDelegate : PScreenSource() {
         )
     )
 
-    override fun validate(pScreen: PScreen) : PScreen? {
+    override fun isNextLast(): Boolean {
+        return preparedStack.size == 1
+    }
+
+    override fun validate(pScreen: PScreen) : WrappedPScreen? {
         // логика проверки
         // если все норм возвратит нулл
         return null
