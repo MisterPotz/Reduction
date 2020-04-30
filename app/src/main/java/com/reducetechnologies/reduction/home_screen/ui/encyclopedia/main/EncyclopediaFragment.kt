@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
-import com.reducetechnologies.reduction.android.util.common_item.CategoriesAdapterCommon
+import com.reducetechnologies.reduction.android.util.common_item_category_adapter.CategoriesAdapterCommon
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
 import com.reduction_technologies.database.di.ApplicationScope
 import timber.log.Timber
