@@ -36,11 +36,6 @@ internal class CalculationSdkImplTest {
                 )
             )
         )
-
-        override fun isNextLast(): Boolean {
-            return hasNext()
-        }
-
         override fun validate(pScreen: PScreen): WrappedPScreen? {
             var isGood = true
             // логика проверки
@@ -60,7 +55,8 @@ internal class CalculationSdkImplTest {
                 }
             }
             // текущий последней если стек уже пуст
-            return if (isGood) null else WrappedPScreen(pScreen, preparedStack.size == 0)
+            // TODO сделать правильный индекс
+            return if (isGood) null else WrappedPScreen(pScreen, preparedStack.size == 0, 0)
         }
     }
 

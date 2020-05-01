@@ -28,6 +28,18 @@ class WatchingStorage<T>() {
         }
     }
 
+    fun getNextFreeIndex() : Int {
+        return queue.lastIndex + 1
+    }
+
+    fun currentIndex() : Int {
+        return current
+    }
+
+    fun isCurrentLast() : Boolean {
+        return current == queue.size - 1
+    }
+
     /**
      * Setting current to be pending - it is given out
      */
@@ -109,6 +121,10 @@ class WatchingStorage<T>() {
                 current += 1
             }
         }
+    }
+
+    fun getCurrentSilenttly() : T {
+        return queue[current]
     }
 
     /**
