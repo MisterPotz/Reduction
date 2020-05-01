@@ -49,7 +49,6 @@ internal class CalculationsModuleTest {
     val zucepScope = ZUCEPScope()
     val zuc2hScope = ZUC2HScope()
     val zucfScope = ZUCFScope()
-    val zc2redScope = ZCREDScope()
 
     /**
      * Нужно для правильной работы внутренних слоев работы с бд
@@ -136,7 +135,7 @@ internal class CalculationsModuleTest {
             LH = 10000,
             NRR = 1,
             KOL = 1000,
-            UREMA = 5f,
+            UREMA = 35f,
             TIPRE = sourceTable.tipreRow.list[5],
             NP = sourceTable.npRow.list[5],
             BETMI = (sourceTable.betMiRow.list[5]*PI.toFloat()/180f),
@@ -385,24 +384,40 @@ internal class CalculationsModuleTest {
     @org.junit.Test
     fun test_zcred_method(){
         val reducerOptions = allReducersMethod.tryToCalculateOptions(input)
-        val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1])
+        val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
         reducerOptions.forEach {
             println(it.u)
         }
         val creationDataList = ZCREDMethod.enterZCRED(
             input = input,
-            zcredScope = zc2redScope,
             options = someOptions
         )
-        var toPrint = creationDataList[0].gearWheelStepsArray[0].dopnScope.toString()
+        creationDataList.forEach {
+            println("Next")
+            it.gearWheelStepsArray.forEach {
+                var toPrint = it.dopnScope.toString()
+                println(toPrint)
+                toPrint = it.zuc1hScope.toString()
+                println(toPrint)
+                toPrint = it.zucepScope.toString()
+                println(toPrint)
+                toPrint = it.zuc2hScope.toString()
+                println(toPrint)
+                toPrint = it.zucfScope.toString()
+                println(toPrint)
+            }
+            println(it.zcredScope.toString())
+        }
+        /*var i: Int = 0
+        var toPrint = creationDataList[0].gearWheelStepsArray[i].dopnScope.toString()
         println(toPrint)
-        toPrint = creationDataList[0].gearWheelStepsArray[0].zuc1hScope.toString()
+        toPrint = creationDataList[0].gearWheelStepsArray[i].zuc1hScope.toString()
         println(toPrint)
-        toPrint = creationDataList[0].gearWheelStepsArray[0].zucepScope.toString()
+        toPrint = creationDataList[0].gearWheelStepsArray[i].zucepScope.toString()
         println(toPrint)
-        toPrint = creationDataList[0].gearWheelStepsArray[0].zuc2hScope.toString()
+        toPrint = creationDataList[0].gearWheelStepsArray[i].zuc2hScope.toString()
         println(toPrint)
-        toPrint = creationDataList[0].gearWheelStepsArray[0].zucfScope.toString()
-        println(toPrint)
+        toPrint = creationDataList[0].gearWheelStepsArray[i].zucfScope.toString()
+        println(toPrint)*/
     }
 }

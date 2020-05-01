@@ -9,6 +9,7 @@ data class CreationData(
     //val inputData: InputData, скорее всего будем передавать input напрямую
     val edScope: EDScope,
     val option: ReducerOptionTemplate,
+    val zcredScope: ZCREDScope,
     val gearWheelStepsArray: Array<OneGearWheelStep> = arrayOf()
 )
 
@@ -22,19 +23,17 @@ data class OneGearWheelStep(
 )
 
 class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsClass) {
-    fun enterZCRED(input: InputData, zcredScope: ZCREDScope, options: List<ReducerOptionTemplate>): List<CreationData> {
+    fun enterZCRED(input: InputData, options: List<ReducerOptionTemplate>): List<CreationData> {
         var creationDataList: MutableList<CreationData> = arrayListOf()
         if (input.ISTCol == 1)
             return ZC1RED(
                 input = input,
-                zcredScope = zcredScope,
                 options = options,
                 creationDataList = creationDataList
             )
         else
             return ZC2RED(
                 input = input,
-                zcredScope = zcredScope,
                 options = options,
                 creationDataList = creationDataList
             )
@@ -99,12 +98,12 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
 
     private fun ZC2RED(
         input: InputData,
-        zcredScope: ZCREDScope,
         options: List<ReducerOptionTemplate>,
         creationDataList: MutableList<CreationData>
     ): List<CreationData> {
         options.forEach { option ->
             option.apply {
+                val zcredScope = ZCREDScope()
                 //Тихоходная ступень
                 if (option.EDScope!!.PED != null){
                     zcredScope.TVL3 =
@@ -140,7 +139,7 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                 )
                 //zc2redScope.TVL1 = 0f вроде она у нас бесполезна, мы не печатаем внутри ничего
                 zcredScope.TVL2 =
-                    zcredScope.TVL3!! * input.OMEG / (option.uT * sqrt(input.KPD) * input.NW)
+                    zcredScope.TVL3!! * input.OMEG / (firstStep.zuc1hScope.UCalculated * sqrt(input.KPD) * input.NW)
                 if (input.TIPRE == 4) {
                     input.apply {
                         NP = 1
@@ -173,10 +172,11 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                     )
                 )
                 zcredScope.TVL1 =
-                    zcredScope.TVL2!! * input.NW / (uB * sqrt(input.KPD) * input.OMEG)//здесь возможно формула перепутана, NW and OMEG местами
+                    zcredScope.TVL2!! * input.NW / (secondStep.zuc1hScope.UCalculated * sqrt(input.KPD) * input.OMEG)//здесь возможно формула перепутана, NW and OMEG местами
                 val creationData = CreationData(
                     edScope = EDScope,
                     option = this,
+                    zcredScope = zcredScope,
                     gearWheelStepsArray = arrayOf(firstStep, secondStep)
                 )
                 creationDataList.add(creationData)
@@ -187,12 +187,12 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
 
     private fun ZC1RED(
         input: InputData,
-        zcredScope: ZCREDScope,
         options: List<ReducerOptionTemplate>,
         creationDataList: MutableList<CreationData>
     ): List<CreationData> {
         options.forEach { option ->
             option.apply {
+                val zcredScope = ZCREDScope()
                 //Единственная ступень
                 if (option.EDScope!!.PED != null){
                     zcredScope.TVL2 =
@@ -233,6 +233,7 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                 val creationData = CreationData(
                     edScope = EDScope,
                     option = this,
+                    zcredScope = zcredScope,
                     gearWheelStepsArray = arrayOf(onlyStep)
                 )//Возвращаем только 1 ступень
                 creationDataList.add(creationData)

@@ -151,6 +151,11 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
     }
 
     private fun whereToGo(args: Arguments, zuc1HScope: ZUC1HScope) {
+        if (zuc1HScope.BETFS) {
+            //Уход в cosALF
+            cosALF(args, zuc1HScope)
+            return
+        }
         if (args.inputData.BETMI > 0f) {
             //Уход в cosBET
             cosBET(args, zuc1HScope)
@@ -277,7 +282,7 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
                     return
                 }
                 SCHET++
-                if (SCHET > 3) {
+                if (SCHET > 15) {
                     //Идём в 105
                     anglePrecise(args, zuc1HScope)
                     return
