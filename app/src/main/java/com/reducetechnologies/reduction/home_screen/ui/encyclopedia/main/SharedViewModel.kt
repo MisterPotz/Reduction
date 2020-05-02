@@ -4,8 +4,8 @@ import androidx.lifecycle.*
 import com.reducetechnologies.di.CalculationSdkComponent
 import com.reducetechnologies.reduction.android.util.CategoryAdapterPositionSaver
 import com.reducetechnologies.reduction.android.util.common_item_util.CommonItemUtils
-import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkCommute
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
+import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PScreenSwitcher
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
 import com.reduction_technologies.database.helpers.CategoryTag
@@ -30,6 +30,8 @@ class SharedViewModel @Inject constructor(
         CalculationSdkHelper(
             componentFactory
         )
+
+    private var pScreenSwitcher : PScreenSwitcher? = null
 
     private val _allEncyclopdiaItems: LiveData<List<CommonItem>> by lazy {
         updateAllEncyclopediaItems()
@@ -67,15 +69,17 @@ class SharedViewModel @Inject constructor(
         return categoriesAdapterSaver
     }
 
-    fun startCalculation(): CalculationSdkCommute? {
+    fun startCalculation(): Boolean {
         // already calculating
         if (calcSdkHelper.isActive) {
-            return null
+            return false
         }
-        return calcSdkHelper.startCalculation()
+        calcSdkHelper.startCalculation()
+        pScreenSwitcher = PScreenSwitcher(calcSdkHelper)
+        return true
     }
 
-    fun getActualCommute() : CalculationSdkCommute? {
-        return calcSdkHelper.getCommuteIfActive()
+    fun screenSwitcher() : PScreenSwitcher? {
+        return pScreenSwitcher
     }
 }

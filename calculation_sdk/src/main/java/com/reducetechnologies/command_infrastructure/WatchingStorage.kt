@@ -123,7 +123,7 @@ class WatchingStorage<T>() {
         }
     }
 
-    fun getCurrentSilenttly() : T {
+    fun getCurrentSilently() : T {
         return queue[current]
     }
 

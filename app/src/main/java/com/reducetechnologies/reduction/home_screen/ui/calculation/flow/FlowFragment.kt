@@ -8,10 +8,8 @@ import android.widget.Button
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.reducetechnologies.command_infrastructure.needsInput
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
-import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkCommute
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
 import com.reduction_technologies.database.di.ApplicationScope
 import timber.log.Timber
@@ -20,49 +18,43 @@ import javax.inject.Inject
 /**
  * Responsible for building protoscreen, and taking argument from it
  */
-class FlowFragment() : Fragment(){
+class FlowFragment() : Fragment() {
     @Inject
     @ApplicationScope
     lateinit var viewModel: SharedViewModel
 
     private lateinit var controlPrev: Button
-    private lateinit var controlNext : Button
-    private lateinit var controlEnter :Button
-    private lateinit var pScreenManager : PScreenManager
-    private lateinit var cardContainer : FrameLayout
-    private lateinit var commute: CalculationSdkCommute
-
-    private lateinit var buttonStateDelegate : ButtonStateDelegate
-
-    private fun initCommute() {
-        commute = viewModel.getActualCommute()!!
-        // TODO прооблема - когда обновится экран - тогда сюда придет новый, да, но в этот момент
-        //  экран скорее всего будет старый, так что должен быть какой-то стек. Но тогда это будет
-        //  дублированием кода: CalculationSdkImpl уже умеет на самом деле помечать с индексами.
-        commute.outData.observe(viewLifecycleOwner, Observer {
-            // updating button states
-            fetchPrevStatus()
-            fetchNeedsInput(it.pScreen.needsInput())
-            fetchHasNext(!it.isLast)
-
-            pScreenManager.showPScreen(it.pScreen)
-        })
-        Timber.i("Commute initialized")
-    }
+    private lateinit var controlNext: Button
+    private lateinit var controlEnter: Button
+    private lateinit var cardContainer: FrameLayout
+    private lateinit var pScreenSwitcher: PScreenSwitcher
+    private lateinit var buttonStateDelegate: ButtonStateDelegate
+    private lateinit var pScreenInflater: PScreenInflater
 
     private fun setupEnterButton() {
         controlEnter.setOnClickListener {
-            // filling response
-            pScreenManager.getFilled().let {
-                commute.inData.value = it
-            }
+            pScreenSwitcher.enter()
+            updateScreen()
         }
     }
 
-    private fun nextEnterButton() {
-        controlNext.setOnClickListener {
-
+    private fun setupPrevButton() {
+        controlPrev.setOnClickListener {
+            pScreenSwitcher.prev()
+            updateScreen()
         }
+    }
+
+    private fun setupNextButton() {
+        controlNext.setOnClickListener {
+            pScreenSwitcher.next()
+            updateScreen()
+        }
+    }
+
+    private fun updateScreen() {
+        val pscreen = pScreenSwitcher.current()
+
     }
 
     override fun onCreateView(
@@ -75,7 +67,9 @@ class FlowFragment() : Fragment(){
         controlNext = controlModule.findViewById<Button>(R.id.controlNext)
         controlEnter = controlModule.findViewById(R.id.controlEnter)
         buttonStateDelegate = ButtonStateDelegate(controlPrev, controlNext, controlEnter)
-
+        setupEnterButton()
+        setupNextButton()
+        setupPrevButton()
         val main = inflater.inflate(R.layout.split_control_card_layout, container, false).apply {
             val frame = findViewById<FrameLayout>(R.id.controls)
             frame.addView(controlModule)
@@ -87,22 +81,23 @@ class FlowFragment() : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (activity!!.application as App).appComponent.inject(this)
-        pScreenManager = PScreenManager(cardContainer)
-        initCommute()
-        setupEnterButton()
+        // obtaining model delegate, responsible for switching screens
+        pScreenSwitcher = viewModel.screenSwitcher()!!
+        pScreenInflater = PScreenInflater(cardContainer)
+        fetchPrevStatus()
+        fetchHasNext()
+        fetchNeedsInput()
     }
 
     private fun fetchPrevStatus() {
-        commute.getAllRecent().let {
-            buttonStateDelegate.hasPrev(it.isNotEmpty())
-        }
+        buttonStateDelegate.hasPrev(pScreenSwitcher.havePrevious())
     }
 
-    private fun fetchNeedsInput(boolean: Boolean) {
-        buttonStateDelegate.mustBeEntered(boolean)
+    private fun fetchNeedsInput() {
+        buttonStateDelegate.mustBeEntered(!pScreenSwitcher.currentWasValidatedSuccessfully)
     }
 
-    private fun fetchHasNext(boolean: Boolean) {
-        buttonStateDelegate.hasNext(boolean)
+    private fun fetchHasNext() {
+        buttonStateDelegate.hasNext(pScreenSwitcher.haveNext())
     }
 }

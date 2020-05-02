@@ -32,5 +32,7 @@ interface CalculationSdk {
     fun getAllValidated() : List<WrappedPScreen>
 
     fun finalResults() : CalculationResults
+
+    fun currentPending() : WrappedPScreen?
 }
 

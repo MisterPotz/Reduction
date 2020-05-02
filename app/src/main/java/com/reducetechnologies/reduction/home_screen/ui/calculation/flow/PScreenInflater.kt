@@ -1,23 +1,14 @@
 package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.reducetechnologies.command_infrastructure.PScreen
-import com.reducetechnologies.command_infrastructure.needsInput
-import com.reducetechnologies.reduction.R
-import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkCommute
-import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
-import timber.log.Timber
 
 /**
  * Manages screens that are shown before / during / after calculation process
  * [container] - view where current fragment is placed
  */
-class PScreenManager(
+class PScreenInflater(
     val container: ViewGroup
     // to use livedata
 
