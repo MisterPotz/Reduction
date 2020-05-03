@@ -3,6 +3,7 @@ package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 import com.reducetechnologies.command_infrastructure.WrappedPScreen
 import com.reducetechnologies.command_infrastructure.needsInput
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
+import timber.log.Timber
 import java.lang.IllegalStateException
 
 /**
@@ -74,6 +75,7 @@ class PScreenSwitcher(val helper: CalculationSdkHelper) {
             if (!needsInput()) {
                 helper.validate(current().pScreen)
             }
+            Timber.i("getting next from helper")
             helper.next()
             fetchUpdates()
         }
