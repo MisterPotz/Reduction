@@ -1,26 +1,14 @@
 package com.reducetechnologies.command_infrastructure
 
+import com.reducetechnologies.command_infrastructure.p_screens.InputPScreen
+import com.reducetechnologies.command_infrastructure.p_screens.StandbyPScreen
+
 // contains calculation classes
 internal class PScreenSourceDelegate : PScreenSource() {
     // simple stack that is consumed. Being build with some other classes (or with calculation on flow)
     override protected val preparedStack: MutableList<PScreen> = mutableListOf(
-        PScreen(
-            "Введите данные",
-            mutableListOf(
-                PField(
-                    PFieldType.INPUT_TEXT, InputTextSpec(
-                        "Коэффициент высоты модификации головки зуба",
-                        InputTextType.FLOAT, "0.4", AdditionalInputText()
-                    ), 1
-                ),
-                PField(
-                    PFieldType.INPUT_LIST, InputListSpec(
-                        "будет ли расчет этой хрени", 0,
-                        AdditionalInputList(options = listOf("Да", "Нет"))
-                    ), 2
-                )
-            )
-        )
+        InputPScreen.getPScreen(),
+        StandbyPScreen.getPScreen()
     )
 
     override fun isNextLast(): Boolean {

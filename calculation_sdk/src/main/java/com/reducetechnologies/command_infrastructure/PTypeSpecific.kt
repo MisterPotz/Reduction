@@ -32,7 +32,7 @@ data class InputPictureSpec(
 ) : PTypeSpecific
 
 // InputList
-data class AdditionalInputList(val options: List<String>, val encyclodpediaId: Int? = null, var answer: Int? = null)
+data class AdditionalInputList(val options: List<String>, val encyclodpediaId: Int? = null, var answer: Int? = null, val hint: String? = null)
 
 data class InputListSpec(
     val title: String,
@@ -45,7 +45,7 @@ enum class TextType {
     BODY, HEADLINE
 }
 
-data class AdditionalText(val type: TextType)
+data class AdditionalText(val type: TextType, val encyclodpediaId: Int? = null)
 
 data class TextSpec(val text: String, val additional: AdditionalText = AdditionalText(TextType.BODY)) : PTypeSpecific
 
