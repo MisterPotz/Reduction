@@ -19,6 +19,9 @@
     <string name="action_settings">Настройки</string>
     <string name="settings_about">О приложении</string>
 
+    <string name="float_hint">дробное число</string>
+    <string name="integer_hint">целое число</string>
+
     <string name="about_text_desctiption">Данное приложение носит обучающий характер и призвано облегчить
         жизнь студентов при расчете редукторов. Главные функции приложения:\n
         · поэтапный расчет редуктора по заданным характеристикам с поясняющими элементами;\n

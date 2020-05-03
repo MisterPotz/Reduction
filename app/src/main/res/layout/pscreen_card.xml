@@ -18,15 +18,17 @@
             android:layout_margin="@dimen/material_standard_margin"
             android:text="PScreen One"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/fieldsList"
+            app:layout_constraintVertical_chainStyle="spread_inside"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fieldsList"
-            android:layout_margin="@dimen/material_standard_margin"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_margin="@dimen/material_standard_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pScreenTitle" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

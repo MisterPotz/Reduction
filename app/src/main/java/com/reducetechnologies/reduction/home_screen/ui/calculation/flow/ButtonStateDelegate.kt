@@ -9,16 +9,19 @@ class ButtonStateDelegate(val prev: Button, var next: Button, var enter: Button)
     private var mustBeEntered = false
 
     private fun setHasPrevVisibility() {
-        prev.isClickable = hasPrev
-        // TODO also can show tost
+//        prev.isClickable = hasPrev
+        prev.isEnabled = hasPrev
     }
 
     private fun setHasNextVisibility() {
-        next.isClickable = hasNext && !mustBeEntered
+//        next.isClickable = hasNext && !mustBeEntered
+        next.isEnabled = hasNext && !mustBeEntered
+            // if (hasNext && !mustBeEntered) View.VISIBLE else View.GONE
     }
 
     private fun setEnterVisibility() {
-        enter.visibility = if (mustBeEntered) View.VISIBLE else View.GONE
+//        enter.visibility = if (mustBeEntered) View.VISIBLE else View.GONE
+        enter.isEnabled = mustBeEntered
     }
 
     fun hasPrev(boolean: Boolean) {

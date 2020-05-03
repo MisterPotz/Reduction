@@ -8,24 +8,37 @@ internal class PScreenSourceDelegate : PScreenSource() {
             "Введите данные",
             mutableListOf(
                 PField(
-                    PFieldType.INPUT_TEXT, InputTextSpec(
-                        "Коэффициент высоты модификации головки зуба",
-                        InputTextType.FLOAT, "0.4", AdditionalInputText()
+                    PFieldType.TEXT, TextSpec(
+                        "Коэффициент высоты модификации головки зуба нужен. Просто нужен. Для чего - хз.",
+                        AdditionalText(TextType.HEADLINE)
                     ), 1
                 ),
                 PField(
-                    PFieldType.INPUT_LIST, InputListSpec(
-                        "будет ли расчет этой хрени", 0,
-                        AdditionalInputList(options = listOf("Да", "Нет"))
+                    PFieldType.TEXT, TextSpec(
+                        "Расчет редукторов почему-то представлен только фортраном"
+                    ), 2
+                )
+            )
+        ),
+        PScreen(
+            "Тестовая вторая страничка",
+            mutableListOf(
+                PField(
+                    PFieldType.INPUT_TEXT, InputTextSpec(
+                        "Коэффициент поляризации",
+                        InputTextType.FLOAT,
+                        "",
+                        AdditionalInputText(hint = "че нить такое")
+                    ), 1
+                ),
+                PField(
+                    PFieldType.TEXT, TextSpec(
+                        "Просто дичч"
                     ), 2
                 )
             )
         )
     )
-
-    override fun isNextLast(): Boolean {
-        return preparedStack.size == 1
-    }
 
     override fun validate(pScreen: PScreen) : WrappedPScreen? {
         // логика проверки

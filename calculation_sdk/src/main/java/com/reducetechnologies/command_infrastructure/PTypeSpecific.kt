@@ -44,7 +44,7 @@ data class InputListSpec(
 ) : PTypeSpecific
 
 // TextField
-enum class TextType {
+enum class TextType{
     BODY, HEADLINE
 }
 

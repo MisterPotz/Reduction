@@ -69,6 +69,11 @@ class PScreenSwitcher(val helper: CalculationSdkHelper) {
             throw IllegalStateException("Cant return next as it is not yet available")
         }
         if (!(isInPrevious() || (hasPending() && isBeforePending()))) {
+            // каждый пскрин должен быть провалидирован, даже если не было ввода
+            // поскольку для скринов, где ввод не требуется, кнопка ввода заблокирована, валидация проходит при next
+            if (!needsInput()) {
+                helper.validate(current().pScreen)
+            }
             helper.next()
             fetchUpdates()
         }

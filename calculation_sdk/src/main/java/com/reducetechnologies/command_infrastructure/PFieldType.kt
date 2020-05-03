@@ -9,3 +9,7 @@ enum class PFieldType(val needsInput : Boolean) {
     TEXT(false),
     PICTURE(false)
 }
+
+fun Int.toPFieldType() : PFieldType {
+    return PFieldType.values()[this]
+}

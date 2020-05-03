@@ -7,12 +7,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
 import com.reduction_technologies.database.di.ApplicationScope
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -53,8 +51,8 @@ class FlowFragment() : Fragment() {
     }
 
     private fun updateScreen() {
-        val pscreen = pScreenSwitcher.current()
-
+        fetchAllButtons()
+        pScreenInflater.showPScreen(pScreenSwitcher.current().pScreen)
     }
 
     override fun onCreateView(
@@ -62,7 +60,17 @@ class FlowFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val controlModule = inflater.inflate(R.layout.calculation_flow_control, container, false)
+        val main = inflater.inflate(R.layout.split_control_card_layout, container, false).apply {
+            val frame = findViewById<FrameLayout>(R.id.controls)
+            createControlView(inflater, frame)
+//            frame.addView(controlModule)
+        }
+        cardContainer = main.findViewById(R.id.card)
+        return main
+    }
+
+    private fun createControlView(inflater: LayoutInflater, parent: ViewGroup) {
+        val controlModule = inflater.inflate(R.layout.calculation_flow_control, parent, true)
         controlPrev = controlModule.findViewById<Button>(R.id.controlPrev)
         controlNext = controlModule.findViewById<Button>(R.id.controlNext)
         controlEnter = controlModule.findViewById(R.id.controlEnter)
@@ -70,13 +78,6 @@ class FlowFragment() : Fragment() {
         setupEnterButton()
         setupNextButton()
         setupPrevButton()
-        val main = inflater.inflate(R.layout.split_control_card_layout, container, false).apply {
-            val frame = findViewById<FrameLayout>(R.id.controls)
-            frame.addView(controlModule)
-            cardContainer = findViewById(R.id.card)
-        }
-
-        return main
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,9 +85,7 @@ class FlowFragment() : Fragment() {
         // obtaining model delegate, responsible for switching screens
         pScreenSwitcher = viewModel.screenSwitcher()!!
         pScreenInflater = PScreenInflater(cardContainer)
-        fetchPrevStatus()
-        fetchHasNext()
-        fetchNeedsInput()
+        updateScreen()
     }
 
     private fun fetchPrevStatus() {
@@ -99,5 +98,11 @@ class FlowFragment() : Fragment() {
 
     private fun fetchHasNext() {
         buttonStateDelegate.hasNext(pScreenSwitcher.haveNext())
+    }
+
+    private fun fetchAllButtons() {
+        fetchHasNext()
+        fetchNeedsInput()
+        fetchPrevStatus()
     }
 }
