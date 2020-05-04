@@ -17,9 +17,9 @@ import timber.log.Timber
 import java.lang.StringBuilder
 
 class InputTextBinder : PFieldBinder {
-    private var inputText: EditText? = null
-    private var titleText: TextView? = null
-    private var inputLayout: TextInputLayout? = null
+    private lateinit var inputText: EditText
+    private lateinit var titleText: TextView
+    private lateinit var inputLayout: TextInputLayout
     private val stringBuilder = StringBuilder()
     private var textWatcher : TextWatcher? = null
     private fun pickNumberHint(inputType: InputTextType): String {
@@ -29,24 +29,21 @@ class InputTextBinder : PFieldBinder {
         }
     }
 
-    override fun bind(spec: PTypeSpecific, view: View) {
-        stringBuilder.clear()
+    override fun init(view: View) {
         initialViewBind(view)
+    }
+
+    override fun bind(spec: PTypeSpecific) {
+        stringBuilder.clear()
         clearState()
         rebind(spec)
 
     }
 
     private fun initialViewBind(view: View) {
-        if (inputText == null) {
-            inputText = view.findViewById(R.id.textInputField)
-        }
-        if (titleText == null) {
-            titleText = view.findViewById(R.id.inputTextTitle)
-        }
-        if (inputLayout == null) {
-            inputLayout = view.findViewById(R.id.textInputLayout)
-        }
+        inputText = view.findViewById(R.id.textInputField)
+        titleText = view.findViewById(R.id.inputTextTitle)
+        inputLayout = view.findViewById(R.id.textInputLayout)
     }
 
     private fun clearState() {
@@ -69,11 +66,11 @@ class InputTextBinder : PFieldBinder {
             override fun beforeTextChanged( s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
-        inputText!!.addTextChangedListener(textWatcher)
-        titleText!!.text = textSpec.title
-        inputLayout!!.hint = buildHint(textSpec.additional.hint, textSpec.type)
+        inputText.addTextChangedListener(textWatcher)
+        titleText.text = textSpec.title
+        inputLayout.hint = buildHint(textSpec.additional.hint, textSpec.type)
         textSpec.additional.error?.let {
-            inputText!!.error = textSpec.additional.error
+            inputText.error = textSpec.additional.error
         }
     }
 

@@ -140,4 +140,9 @@ dependencies {
     kaptTest libraries.daggerAndroidProcessor
 
     testImplementation libraries.mockk
+
+    implementation libraries.picasso
+
+    implementation libraries.glide
+    kapt libraries.glideProcessor
 }

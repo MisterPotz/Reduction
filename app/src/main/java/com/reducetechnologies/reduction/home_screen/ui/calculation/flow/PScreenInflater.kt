@@ -1,7 +1,9 @@
 package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +15,9 @@ import com.reducetechnologies.reduction.R
  * [container] - view where current fragment is placed
  */
 class PScreenInflater(
-    val container: ViewGroup
+    val context: Context,
+    val container: ViewGroup,
+    val windowManager: WindowManager
     // to use livedata
 
 ) {
@@ -28,7 +32,7 @@ class PScreenInflater(
         val title = view.findViewById<TextView>(R.id.pScreenTitle)
         title.text = pScreen.title
         recycler.layoutManager = LinearLayoutManager(container.context)
-        recycler.adapter = PFieldAdapter(pScreen)
+        recycler.adapter = PFieldAdapter(context, pScreen, windowManager)
     }
 
     // fills in input from view

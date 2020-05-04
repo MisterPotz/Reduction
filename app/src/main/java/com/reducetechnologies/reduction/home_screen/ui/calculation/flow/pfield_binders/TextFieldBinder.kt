@@ -13,10 +13,12 @@ import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PFieldBi
 
 class TextFieldBinder : PFieldBinder {
     private var text: TextView? = null
-    override fun bind(spec: PTypeSpecific, view: View) {
-        if (text == null) {
-            text = view.findViewById(R.id.textField)
-        }
+
+    override fun init(view: View) {
+        text = view.findViewById(R.id.textField)
+    }
+
+    override fun bind(spec: PTypeSpecific) {
         val textSpec = (spec as TextSpec)
         text!!.text = textSpec.text
         val id = when (textSpec.additional.type) {

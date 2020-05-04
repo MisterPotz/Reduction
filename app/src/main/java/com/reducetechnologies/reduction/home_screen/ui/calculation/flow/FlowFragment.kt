@@ -84,7 +84,7 @@ class FlowFragment() : Fragment() {
         (activity!!.application as App).appComponent.inject(this)
         // obtaining model delegate, responsible for switching screens
         pScreenSwitcher = viewModel.screenSwitcher()!!
-        pScreenInflater = PScreenInflater(cardContainer)
+        pScreenInflater = PScreenInflater(context!!,cardContainer, activity!!.windowManager)
         updateScreen()
     }
 

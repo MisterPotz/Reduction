@@ -35,12 +35,61 @@ internal class PScreenSourceDelegate : PScreenSource() {
                     PFieldType.TEXT, TextSpec(
                         "Просто дичч"
                     ), 2
+                ),
+                PField(
+                    PFieldType.PICTURE,
+                    PictureSpec(
+                        pictureSourceType = PictureSourceType.PATH,
+                        source = PictureStringPath("encyclopedia_pictures/reductor.jpg")
+                    ),
+                    3
+                ),
+                PField(
+                    PFieldType.INPUT_PICTURE,
+                    InputPictureSpec(
+                        "Введите схему", null, AdditionalInputImage(
+                            generateInputPicturesList(), null, null
+                        )
+                    ), 4
+                ),
+                PField(
+                    PFieldType.TEXT, TextSpec(
+                        "Ищщо дичи"
+                    ), 5
+                ),
+                PField(
+                    PFieldType.PICTURE,
+                    PictureSpec(
+                        pictureSourceType = PictureSourceType.PATH,
+                        source = PictureStringPath("input_pictures/1.jpg")
+                    ),
+                    6
+                ),
+                PField(
+                    PFieldType.TEXT, TextSpec(
+                        "И еще чуть чуть"
+                    , AdditionalText(TextType.HEADLINE)
+                    ), 5
+                ),
+                PField(
+                    PFieldType.PICTURE,
+                    PictureSpec(
+                        pictureSourceType = PictureSourceType.PATH,
+                        source = PictureStringPath("input_pictures/10.jpg")
+                    ),
+                    6
                 )
             )
         )
     )
 
-    override fun validate(pScreen: PScreen) : WrappedPScreen? {
+    private fun generateInputPicturesList() : List<String>{
+        return List<String>(14) {
+            "input_pictures/${it+1}.jpg"
+        }
+    }
+
+    override fun validate(pScreen: PScreen): WrappedPScreen? {
         // логика проверки
         // если все норм возвратит нулл
         return null

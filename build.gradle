@@ -104,5 +104,8 @@ ext.libraries = [
         "mockk"                 : "io.mockk:mockk:1.9.3",
 
         // For running unit tests in android sandbox
-        "robolectric"           : "org.robolectric:robolectric:${robolectricVersion}"
+        "robolectric"           : "org.robolectric:robolectric:${robolectricVersion}",
+        "picasso"               : 'com.squareup.picasso:picasso:2.71828',
+        "glide" :    'com.github.bumptech.glide:glide:4.11.0',
+        "glideProcessor" : 'com.github.bumptech.glide:compiler:4.11.0'
 ]
