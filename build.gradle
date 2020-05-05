@@ -107,5 +107,6 @@ ext.libraries = [
         "robolectric"           : "org.robolectric:robolectric:${robolectricVersion}",
         "picasso"               : 'com.squareup.picasso:picasso:2.71828',
         "glide" :    'com.github.bumptech.glide:glide:4.11.0',
-        "glideProcessor" : 'com.github.bumptech.glide:compiler:4.11.0'
+        "glideProcessor" : 'com.github.bumptech.glide:compiler:4.11.0',
+        "katexView" : 'com.github.judemanutd:katexview:1.0.2'
 ]

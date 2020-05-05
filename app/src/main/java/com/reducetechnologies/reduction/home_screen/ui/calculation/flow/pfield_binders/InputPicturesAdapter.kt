@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -17,9 +16,7 @@ import com.google.android.material.card.MaterialCardView
 import com.reducetechnologies.command_infrastructure.InputPictureSpec
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.FileStringUtils
-import com.squareup.picasso.Picasso
 import timber.log.Timber
-import kotlin.properties.Delegates
 
 class InputPicturesAdapter(val context: Context,
                            val preparedPaths: List<String>,

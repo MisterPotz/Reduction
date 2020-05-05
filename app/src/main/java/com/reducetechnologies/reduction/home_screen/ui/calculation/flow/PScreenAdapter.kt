@@ -8,7 +8,6 @@ import android.view.WindowManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.pfield_binders.*
-import kotlinx.coroutines.flow.callbackFlow
 import timber.log.Timber
 
 interface PFieldBinder {
@@ -77,8 +76,7 @@ class PFieldAdapter(val context: Context, val pScreen: PScreen, val windowManage
             PFieldType.PICTURE -> PictureBinder(context, windowManager).also { it.setCallback(this::callback) }
             PFieldType.INPUT_PICTURE -> InputPictureBinder(context, windowManager)
             PFieldType.INPUT_LIST -> InputListBinder()
-//            PFieldType.MATH_TEXT -> MathTextBinder()
-            else -> TODO("not all cases implemented")
+            PFieldType.MATH_TEXT -> MathTextBinder()
         }
     }
 
@@ -89,8 +87,7 @@ class PFieldAdapter(val context: Context, val pScreen: PScreen, val windowManage
             PFieldType.PICTURE -> PictureBinder.inflate(inflater!!, root)
             PFieldType.INPUT_PICTURE -> InputPictureBinder.inflate(inflater!!, root)
             PFieldType.INPUT_LIST -> InputListBinder.inflate(inflater!!, root)
-//            PFieldType.MATH_TEXT -> MathTextBinder.inflate(inflater!!, root)
-            else -> TODO("not all cases implemented")
+            PFieldType.MATH_TEXT -> MathTextBinder.inflate(inflater!!, root)
         }
     }
 

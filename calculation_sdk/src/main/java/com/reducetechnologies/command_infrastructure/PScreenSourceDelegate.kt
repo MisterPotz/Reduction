@@ -89,6 +89,13 @@ internal class PScreenSourceDelegate : PScreenSource() {
                         )
                     ),
                     7
+                ),
+                PField(
+                    PFieldType.MATH_TEXT,
+                    MathTextSpec(
+                        text = "some normal text with formula ->  $$ \\newline S_{fb} = \\bigg(\\cfrac{K_L} { K_T K_R } \\bigg) \\cdot S_{fb}^{'}  $$"
+                    ),
+                    8
                 )
             )
         )

@@ -1,6 +1,5 @@
 package com.reducetechnologies.reduction.home_screen.ui.calculation.flow.pfield_binders
 
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
