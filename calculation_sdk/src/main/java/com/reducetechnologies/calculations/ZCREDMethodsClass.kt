@@ -229,7 +229,7 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                 //zc2redScope.TVL1 = 0f вроде она у нас бесполезна, мы не печатаем внутри ничего
                 zcredScope.TVL3 = 0f
                 zcredScope.TVL1 =
-                    zcredScope.TVL2!! * input.NW / (uB * sqrt(input.KPD) * input.OMEG)//здесь возможно формула перепутана, NW and OMEG местами
+                    zcredScope.TVL2!! * input.NW / (onlyStep.zuc1hScope.UCalculated * sqrt(input.KPD) * input.OMEG)//здесь возможно формула перепутана, NW and OMEG местами
                 val creationData = CreationData(
                     edScope = EDScope,
                     option = this,

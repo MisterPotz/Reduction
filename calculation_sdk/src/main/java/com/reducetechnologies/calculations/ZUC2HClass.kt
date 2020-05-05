@@ -105,7 +105,7 @@ class ZUC2HMethodsClass() {
     private fun HRC2Check(args: Arguments, zuc2hScope: ZUC2HScope) {
         args.apply {
             if (option.HRC[1] <= 35f) {
-                if (zuc1hScope.BET < 0f)
+                if (zuc1hScope.BET <= 0f)
                     zuc2hScope.DELH = 0.006f
                 if (abs(inputData.HG) > 0)
                     zuc2hScope.DELH = 0.004f
@@ -116,7 +116,7 @@ class ZUC2HMethodsClass() {
                 return
             }
             else {
-                if (zuc1hScope.BET < 0f)
+                if (zuc1hScope.BET <= 0f)
                     zuc2hScope.DELH = 0.014f
                 if (abs(inputData.HG) > 0)
                     zuc2hScope.DELH = 0.01f

@@ -27,16 +27,30 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
     private var SCHET2: Int = 0
 
     private fun AWChoose(args: Arguments, zuc1HScope: ZUC1HScope) {
-        zuc1HScope.AW = RA40.list.first { it > zuc1HScope.AW }//Ура мать твою, я ляМБДА программист!!1!
+        zuc1HScope.AW = RA40.list.first { it >= zuc1HScope.AW }//Ура мать твою, я ляМБДА программист!!1!
         //Идём в BWChoose
         BWChoose(args, zuc1HScope)
+    }
+
+    /*
+    Это моя добавочная функция, которая нужна только для того, чтобы не было дробного межосевого
+    расстояния. Она применяется только 1 раз
+     */
+    private fun AWChooseReturn(args: Arguments, zuc1HScope: ZUC1HScope) {
+        zuc1HScope.AW = RA40.list.first { it > zuc1HScope.AW }
+        return
     }
 
     private fun MChoose(args: Arguments, zuc1HScope: ZUC1HScope) {
         zuc1HScope.apply {
             if (DSGF == 0f)
                 MR = 1.039f*BW!!/(args.option.PSIM*args.inputData.NWR)
-            args.dopnScope.M = MStandart.list.first { it > MR!! }
+            if (MStandart.list.last() <= MR!!){
+                args.dopnScope.M = MStandart.list.last()
+            }
+            else {
+                args.dopnScope.M = MStandart.list.first { it > MR!! }
+            }
             //Возвращаемся в BWChoose
             return
         }
@@ -130,6 +144,7 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
             AW = args.dopnScope.M*ZSUM* cos(ALFT!!) /(2* cos(BET) * cos(
                 ALFTW!!
             ))
+            AWChooseReturn(args, zuc1HScope)
             if (BETFS && (X1FS || X2FS)) {
                 //Уход в расчёт U
                 uCalculate(args, zuc1HScope)
@@ -404,7 +419,7 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
             if (DSGH == 0f) {
                 if (args.inputData.TIPRE == 4 && args.inputData.NW > 1)
                     Z2R = Z2//Не понимаю надобность ZR
-                if (BET + args.inputData.BETMI > 0)
+                if ((BET + args.inputData.BETMI) > 0f)
                     AKA = 430f
                 else
                     AKA = 495f

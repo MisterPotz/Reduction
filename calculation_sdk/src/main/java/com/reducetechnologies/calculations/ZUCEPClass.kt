@@ -112,6 +112,9 @@ class ZUCEPMethodsClass() {
     private fun case1(args: Arguments, zucepScope: ZUCEPScope) {
         zucepScope.apply {
             if (args.SIGN*(ROL[1] - ROP[1]) <= 0f && CF[1] > 0.15f*args.dopnScope.M) {
+                //Если при пересчёте оказалось, что в этот раз интерференции больше нет, нужно
+                //обнулять флаг
+                interference = false
                 //Уход в calculationOfQualityIndicators
                 calculationOfQualityIndicators(args, zucepScope)
                 return
@@ -128,6 +131,9 @@ class ZUCEPMethodsClass() {
                 return
             }
             else {
+                //Если при пересчёте оказалось, что в этот раз интерференции больше нет, нужно
+                //обнулять флаг
+                interference = false
                 //Уход в hollow
                 hollow(args, zucepScope)
                 return
@@ -144,6 +150,9 @@ class ZUCEPMethodsClass() {
                 return
             }
             else {
+                //Если при пересчёте оказалось, что в этот раз интерференции больше нет, нужно
+                //обнулять флаг
+                zucepScope.interference = false
                 //Уход в hollow
                 hollow(args, zucepScope)
                 return
@@ -152,10 +161,11 @@ class ZUCEPMethodsClass() {
     }
 
     private fun fullIndicatorsCalculation(args: Arguments, zucepScope: ZUCEPScope) {
-        //Здесь наверное нужно придумать логику для отброса такого варианта
-        println("Произошла интерференция во впадинах или слишком малый радиальный зазор\n" +
+        //Сразу по входу помечаем с помощью флага, что была интерференция
+        zucepScope.interference = true
+        /*println("Произошла интерференция во впадинах или слишком малый радиальный зазор\n" +
                 "(либо отбросить вариант, либо дать рекомендации по применению неизношенного\n" +
-                "долбяка) \n")
+                "долбяка) \n")*/
         if (args.HK1 > 0 || args.inputData.PAR) {
             //Уход в calculationOfQualityIndicators
             calculationOfQualityIndicators(args, zucepScope)
@@ -177,10 +187,7 @@ class ZUCEPMethodsClass() {
                     (tan(ALFK[1]) - tan(args.zuc1HScope.ALFTW!!))
             EPALF = EA[0] + EA[1]
             EAM = max(EA[0], EA[1])
-            if (EPALF!! < args.EPMI) {
-                //Нужно тоже придумать отсеивание
-                println("Коэффициент перекрытия меньше нормы ${args.EPMI} и равен: $EPALF")
-            }
+            isEpalfLess = EPALF!! < args.EPMI // Для того, чтобы понять, что там происходит с перекрытием
             DA[0] = DK[0]
             DA[1] = DK[1]
             var V2: Float = PI.toFloat()*D[1]*args.N2* cos(args.zuc1HScope.ALFT!!) /(6000f*
@@ -220,5 +227,7 @@ data class ZUCEPScope(
     var Z0: Int = 0,//задаётся потом
     var X0: Float = 0f,//принимается стандартно, но может быть другим
     val D0: Float = 1f,//ЭТО ЗАГЛУШКА!!! Но почему-то эта переменная не применяется в методе
-    var DA0: Float = 1f//Здесь вроде 0, если не задано
+    var DA0: Float = 1f,//Здесь вроде 0, если не задано
+    var interference: Boolean = false,//True if the interference has been
+    var isEpalfLess: Boolean = false//True if EPALF < EPMI, but it matters only in SPUR wheels
 )

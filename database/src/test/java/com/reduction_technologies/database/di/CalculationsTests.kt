@@ -28,6 +28,7 @@ internal class CalculationsModuleTest {
     lateinit var databaseComponent: DatabaseComponent
     lateinit var calculationComponent : CalculationsComponent
     lateinit var input: InputData
+    lateinit var inputOneStaged: InputData
     //Methods
     lateinit var edMethod: EDMethodsClass
     lateinit var allReducersMethod: AllReducersOptionsClass
@@ -54,12 +55,72 @@ internal class CalculationsModuleTest {
      * Нужно для правильной работы внутренних слоев работы с бд
      */
     @get:Rule
-    val rule = InstantTaskExecutorRule()
+    val rule = InstantTaskExecutorRule()//если эта дичь не видит её, нужно синхронизировать грэдл
 
     /**
      * [isAccurate] - просто проверяет, укладывается ли расхождение с учебником в 5%
      */
     fun isAccurate(num1: Float, num2: Float) : Boolean = (((abs(num1 - num2))/num2) < 0.05f)
+
+    fun setInput(
+        isED: Boolean,
+        TT: Float,
+        NT: Float,
+        LH: Int,
+        NRR: Int,
+        KOL: Int,
+        UREMA: Float,
+        ind: Int,
+        isChevrone: Boolean,
+        isInner: Boolean,
+        KPD: Float = 0.97f,
+        ISTCol: Int,
+        PAR: Boolean
+    ) : InputData {
+        if (ind > 13 || ind < 0) {
+            IllegalArgumentException("Index $ind was less than 0 or more than 13")
+        }
+        if (ISTCol > 2 || ISTCol < 1) {
+            IllegalArgumentException("IstCol $ISTCol was less than 1 or more than 2")
+        }
+        val wheelSubtype: Array<Specifications.WheelSubtype> =
+            if (ind == 0 || ind == 4 || ind == 13) {
+                arrayOf(Specifications.WheelSubtype.SPUR, Specifications.WheelSubtype.SPUR)
+            } else if (ind == 1 || ind == 5 || ind == 6 || ind == 9 || ind == 10 || ind == 11 || ind == 12) {
+                arrayOf(Specifications.WheelSubtype.HELICAL,
+                    Specifications.WheelSubtype.HELICAL)
+            } else {
+                arrayOf(Specifications.WheelSubtype.CHEVRON,
+                    Specifications.WheelSubtype.CHEVRON)
+            }
+        return InputData(
+            isED = isED,
+            TT = TT,
+            NT = NT,
+            LH = LH,
+            NRR = NRR,
+            KOL = KOL,
+            UREMA = UREMA,
+            TIPRE = sourceTable.tipreRow.list[ind],
+            NP = sourceTable.npRow.list[ind],
+            BETMI = (sourceTable.betMiRow.list[ind]*PI.toFloat()/180f),
+            BETMA = (sourceTable.betMaRow.list[ind]*PI.toFloat()/180f),
+            OMEG = sourceTable.omegRow.list[ind],
+            NW = sourceTable.nwRow.list[ind],
+            NZAC = arrayOf(sourceTable.nzaC1Row.list[ind], sourceTable.nzaC2Row.list[ind]),
+            NWR = sourceTable.nwrRow.list[ind].getNWR(isChevrone = isChevrone),
+            BKAN = sourceTable.bkanRow.list[ind],
+            SIGN = arrayOf(
+                sourceTable.signRow.list[ind].getSign(isInner),
+                sourceTable.signRow.list[ind].getSign(isInner)),
+            CONSOL = arrayOf(sourceTable.consolRow.list[ind], sourceTable.consolRow.list[ind]),
+            KPD = KPD,
+            ISTCol = ISTCol,
+            wheelType = Specifications.WheelType.CYLINDRICAL,
+            wheelSubtype = wheelSubtype,
+            PAR = PAR
+        )
+    }
 
     @Before
     fun setUp() {
@@ -128,6 +189,7 @@ internal class CalculationsModuleTest {
                 Specifications.WheelSubtype.SPUR),
             PAR = false
         )*/
+        //Тип 5 (нуммерация с 0)
         input = InputData(
             isED = false,
             TT = 774.3f,
@@ -150,6 +212,34 @@ internal class CalculationsModuleTest {
             CONSOL = arrayOf(sourceTable.consolRow.list[5], sourceTable.consolRow.list[5]),
             KPD = 0.9f,
             ISTCol = 2,
+            wheelType = Specifications.WheelType.CYLINDRICAL,
+            wheelSubtype = arrayOf(Specifications.WheelSubtype.HELICAL,
+                Specifications.WheelSubtype.HELICAL),
+            PAR = false
+        )
+        //тип 1
+        inputOneStaged = InputData(
+            isED = false,
+            TT = 510f,
+            NT = 303f,
+            LH = 32000,
+            NRR = 3,
+            KOL = 10000,
+            UREMA = 4.8f,
+            TIPRE = sourceTable.tipreRow.list[1],
+            NP = sourceTable.npRow.list[1],
+            BETMI = (sourceTable.betMiRow.list[1]*PI.toFloat()/180f),
+            BETMA = (sourceTable.betMaRow.list[1]*PI.toFloat()/180f),
+            OMEG = sourceTable.omegRow.list[1],
+            NW = sourceTable.nwRow.list[1],
+            NZAC = arrayOf(sourceTable.nzaC1Row.list[1], sourceTable.nzaC2Row.list[1]),
+            NWR = sourceTable.nwrRow.list[1].getNWR(isChevrone = false),
+            BKAN = sourceTable.bkanRow.list[1],
+            SIGN = arrayOf(sourceTable.signRow.list[1].getSign(false),
+                sourceTable.signRow.list[1].getSign(false)),
+            CONSOL = arrayOf(sourceTable.consolRow.list[1], sourceTable.consolRow.list[1]),
+            KPD = 0.97f,
+            ISTCol = 1,
             wheelType = Specifications.WheelType.CYLINDRICAL,
             wheelSubtype = arrayOf(Specifications.WheelSubtype.HELICAL,
                 Specifications.WheelSubtype.HELICAL),
@@ -385,16 +475,16 @@ internal class CalculationsModuleTest {
     fun test_zcred_method(){
         val reducerOptions = allReducersMethod.tryToCalculateOptions(input)
         val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
-        reducerOptions.forEach {
+        /*reducerOptions.forEach {
             println(it.u)
-        }
+        }*/
         val creationDataList = ZCREDMethod.enterZCRED(
             input = input,
-            options = someOptions
+            options = reducerOptions
         )
-        creationDataList.forEach {
-            println("Next")
-            it.gearWheelStepsArray.forEach {
+        creationDataList.forEachIndexed {index, element ->
+            println(index)
+            element.gearWheelStepsArray.forEach {
                 var toPrint = it.dopnScope.toString()
                 println(toPrint)
                 toPrint = it.zuc1hScope.toString()
@@ -406,18 +496,126 @@ internal class CalculationsModuleTest {
                 toPrint = it.zucfScope.toString()
                 println(toPrint)
             }
-            println(it.zcredScope.toString())
+            println(element.zcredScope.toString())
         }
-        /*var i: Int = 0
-        var toPrint = creationDataList[0].gearWheelStepsArray[i].dopnScope.toString()
-        println(toPrint)
-        toPrint = creationDataList[0].gearWheelStepsArray[i].zuc1hScope.toString()
-        println(toPrint)
-        toPrint = creationDataList[0].gearWheelStepsArray[i].zucepScope.toString()
-        println(toPrint)
-        toPrint = creationDataList[0].gearWheelStepsArray[i].zuc2hScope.toString()
-        println(toPrint)
-        toPrint = creationDataList[0].gearWheelStepsArray[i].zucfScope.toString()
-        println(toPrint)*/
+        // More or less correctly
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged(){
+        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputOneStaged)
+        val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+        /*reducerOptions.forEach {
+            println(it.u)
+        }*/
+        val creationDataList = ZCREDMethod.enterZCRED(
+            input = inputOneStaged,
+            options = reducerOptions
+        )
+        creationDataList.forEachIndexed {index, element ->
+            println(index)
+            element.gearWheelStepsArray.forEach {
+                var toPrint = it.dopnScope.toString()
+                println(toPrint)
+                toPrint = it.zuc1hScope.toString()
+                println(toPrint)
+                toPrint = it.zucepScope.toString()
+                println(toPrint)
+                toPrint = it.zuc2hScope.toString()
+                println(toPrint)
+                toPrint = it.zucfScope.toString()
+                println(toPrint)
+            }
+            println(element.zcredScope.toString())
+        }
+        //More or less correctly
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_zero_scheme(){
+        val inputO = setInput(
+            isED = false,
+            TT = 510f,
+            NT = 303f,
+            LH = 32000,
+            NRR = 3,
+            KOL = 10000,
+            UREMA = 4.8f,
+            ind = 0,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 1,
+            PAR = false
+        )
+        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
+        val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+        /*reducerOptions.forEach {
+            println(it.u)
+        }*/
+        val creationDataList = ZCREDMethod.enterZCRED(
+            input = inputO,
+            options = reducerOptions
+        )
+        creationDataList.forEachIndexed {index, element ->
+            println(index)
+            element.gearWheelStepsArray.forEach {
+                var toPrint = it.dopnScope.toString()
+                println(toPrint)
+                toPrint = it.zuc1hScope.toString()
+                println(toPrint)
+                toPrint = it.zucepScope.toString()
+                println(toPrint)
+                toPrint = it.zuc2hScope.toString()
+                println(toPrint)
+                toPrint = it.zucfScope.toString()
+                println(toPrint)
+            }
+            println(element.zcredScope.toString())
+        }
+        //More or less correctly
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_second_scheme(){
+        val inputO = setInput(
+            isED = false,
+            TT = 510f,
+            NT = 303f,
+            LH = 32000,
+            NRR = 3,
+            KOL = 10000,
+            UREMA = 4.8f,
+            ind = 2,
+            isChevrone = true,
+            isInner = false,
+            ISTCol = 1,
+            PAR = false
+        )
+        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
+        val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+        /*reducerOptions.forEach {
+            println(it.u)
+        }*/
+        val creationDataList = ZCREDMethod.enterZCRED(
+            input = inputO,
+            options = reducerOptions
+        )
+        creationDataList.forEachIndexed {index, element ->
+            println(index)
+            element.gearWheelStepsArray.forEach {
+                var toPrint = it.dopnScope.toString()
+                println(toPrint)
+                toPrint = it.zuc1hScope.toString()
+                println(toPrint)
+                toPrint = it.zucepScope.toString()
+                println(toPrint)
+                toPrint = it.zuc2hScope.toString()
+                println(toPrint)
+                toPrint = it.zucfScope.toString()
+                println(toPrint)
+            }
+            println(element.zcredScope.toString())
+        }
+        //More or less correctly
     }
 }
