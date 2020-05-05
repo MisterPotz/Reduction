@@ -13,6 +13,4 @@
             android:layout_height="wrap_content"
             android:text="Some info input"/>
     </com.google.android.material.textfield.TextInputLayout>
-
-
 </LinearLayout>

@@ -21,7 +21,8 @@ import timber.log.Timber
 class InputPicturesAdapter(val context: Context,
                            val preparedPaths: List<String>,
                            val windowManager: WindowManager,
-                           val spec: InputPictureSpec
+                           val spec: InputPictureSpec,
+                           val onSelected: (Int?) -> Unit
 ) : RecyclerView.Adapter<InputPicturesAdapter.InputPictureHolder>() {
     private var inflater: LayoutInflater? = null
     private var width = 0
@@ -29,6 +30,7 @@ class InputPicturesAdapter(val context: Context,
     private var currentlySelected: Int? = spec.additional.answer
         set(value) {
             field = value
+            onSelected(value)
             spec.additional.answer = value
         }
     private var recyclerView: RecyclerView? = null

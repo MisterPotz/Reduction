@@ -22,7 +22,7 @@ class TextFieldBinder : PFieldBinder {
         val textSpec = (spec as TextSpec)
         text!!.text = textSpec.text
         val id = when (textSpec.additional.type) {
-            TextType.BODY -> R.style.Body1
+            TextType.BODY -> R.style.Body2
             TextType.HEADLINE -> R.style.Headline6
         }
         TextViewCompat.setTextAppearance(text!!, id)

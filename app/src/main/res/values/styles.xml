@@ -77,7 +77,10 @@
 
     <style name="Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
 
+    <style name="Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/colorOnSecondary</item>
     </style>
 
     <style name="Caption" parent="TextAppearance.MaterialComponents.Caption">

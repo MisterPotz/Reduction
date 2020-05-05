@@ -17,6 +17,7 @@ import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PFieldBi
 class InputPictureBinder(val context: Context, val windowManager: WindowManager): PFieldBinder {
     private lateinit var pictures : RecyclerView
     private lateinit var title: TextView
+    private lateinit var counter: TextView
     private var inputPictureSpec : InputPictureSpec?= null
     private var adapter : InputPicturesAdapter? = null
     private var layoutManager : RecyclerView.LayoutManager? = null
@@ -24,7 +25,8 @@ class InputPictureBinder(val context: Context, val windowManager: WindowManager)
     override fun bind(spec: PTypeSpecific) {
         inputPictureSpec = spec as InputPictureSpec
         title.text = inputPictureSpec!!.title
-        adapter = InputPicturesAdapter(context,prepareStrings(), windowManager, inputPictureSpec!!)
+        inputPictureSpec!!.additional.answer?.let { onSelected(it) }
+        adapter = InputPicturesAdapter(context,prepareStrings(), windowManager, inputPictureSpec!!, this::onSelected)
         layoutManager = LinearLayoutManager(pictures.context, RecyclerView.HORIZONTAL, false)
         pictures.adapter = adapter
         pictures.setHasFixedSize(true)
@@ -34,6 +36,7 @@ class InputPictureBinder(val context: Context, val windowManager: WindowManager)
     override fun init(view: View) {
         pictures = view.findViewById(R.id.selectablePictures)
         title = view.findViewById(R.id.inputPictureTitle)
+        counter = view.findViewById(R.id.selected)
     }
 
     private fun prepareStrings() : List<String> {
@@ -41,6 +44,10 @@ class InputPictureBinder(val context: Context, val windowManager: WindowManager)
         return inputPictureSpec!!.additional.imagePaths.map {
             FileStringUtils.pathAsPicassoImage(it)
         }
+    }
+
+    private fun onSelected(selected : Int?) {
+        counter.text = selected?.let { (it + 1).toString() } ?: ""
     }
 
     companion object : CompanionInflater {
