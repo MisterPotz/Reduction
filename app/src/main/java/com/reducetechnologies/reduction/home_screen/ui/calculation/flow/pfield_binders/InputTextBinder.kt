@@ -22,6 +22,8 @@ class InputTextBinder : PFieldBinder {
     private lateinit var inputLayout: TextInputLayout
     private val stringBuilder = StringBuilder()
     private var textWatcher : TextWatcher? = null
+    private var inputTextSpec : InputTextSpec? = null
+
     private fun pickNumberHint(inputType: InputTextType): String {
         return when (inputType) {
             InputTextType.FLOAT -> inputText!!.context.getString(R.string.float_hint)
@@ -37,7 +39,6 @@ class InputTextBinder : PFieldBinder {
         stringBuilder.clear()
         clearState()
         rebind(spec)
-
     }
 
     private fun initialViewBind(view: View) {
@@ -48,29 +49,29 @@ class InputTextBinder : PFieldBinder {
 
     private fun clearState() {
         if (textWatcher != null) {
-            inputText!!.removeTextChangedListener(textWatcher)
+            inputText.removeTextChangedListener(textWatcher)
         }
     }
 
     private fun rebind(spec: PTypeSpecific) {
-        val textSpec = (spec as InputTextSpec)
-        textSpec.additional.answer?.let { inputText!!.setText(it) }
+        inputTextSpec = spec as InputTextSpec
+        inputTextSpec!!.additional.answer?.let { inputText!!.setText(it) } ?: kotlin.run { inputText!!.setText("") }
 
         textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
                     Timber.i("Got string: $s")
-                    spec.additional.answer = it.toString()
+                    inputTextSpec!!.additional.answer = it.toString()
                 }
             }
             override fun beforeTextChanged( s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
         inputText.addTextChangedListener(textWatcher)
-        titleText.text = textSpec.title
-        inputLayout.hint = buildHint(textSpec.additional.hint, textSpec.type)
-        textSpec.additional.error?.let {
-            inputText.error = textSpec.additional.error
+        titleText.text = inputTextSpec!!.title
+        inputLayout.hint = buildHint(inputTextSpec!!.additional.hint, inputTextSpec!!.type)
+        inputTextSpec!!.additional.error?.let {
+            inputText.error = inputTextSpec!!.additional.error
         }
     }
 
