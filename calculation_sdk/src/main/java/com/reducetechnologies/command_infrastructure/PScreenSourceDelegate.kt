@@ -1,9 +1,17 @@
 package com.reducetechnologies.command_infrastructure
 
+import com.reducetechnologies.command_infrastructure.p_screens.InputPScreen
+import com.reducetechnologies.command_infrastructure.p_screens.StandbyPScreen
+
 // contains calculation classes
 internal class PScreenSourceDelegate : PScreenSource() {
     // simple stack that is consumed. Being build with some other classes (or with calculation on flow)
     override protected val preparedStack: MutableList<PScreen> = mutableListOf(
+        InputPScreen.getPScreen(),
+        StandbyPScreen.getPScreen()
+    )
+
+    private val testList = mutableListOf(
         PScreen(
             "Введите данные",
             mutableListOf(
@@ -89,41 +97,6 @@ internal class PScreenSourceDelegate : PScreenSource() {
                         )
                     ),
                     7
-                ),
-                PField(
-                    PFieldType.MATH_TEXT,
-                    MathTextSpec(
-                        text = "some normal text with formula ->  $$ \\newline S_{fb} = \\bigg(\\cfrac{K_L} { K_T K_R } \\bigg) \\cdot S_{fb}^{'}  $$"
-                    ),
-                    8
-                ),
-                PField(
-                    PFieldType.MATH_TEXT,
-                    MathTextSpec(
-                        text = "some normal text with formula ->  $$ \\newline S_{fb} = \\bigg(\\cfrac{K_L} { K_T K_R } \\bigg) \\cdot S_{fb}^{'}  $$"
-                    ),
-                    8
-                ),
-                PField(
-                    PFieldType.MATH_TEXT,
-                    MathTextSpec(
-                        text = "some normal text with formula ->  $$ \\newline S_{fb} = \\bigg(\\cfrac{K_L} { K_T K_R } \\bigg) \\cdot S_{fb}^{'}  $$"
-                    ),
-                    8
-                ),
-                PField(
-                    PFieldType.MATH_TEXT,
-                    MathTextSpec(
-                        text = "some normal text with formula ->  $$ \\newline S_{fb} = \\bigg(\\cfrac{K_L} { K_T K_R } \\bigg) \\cdot S_{fb}^{'}  $$"
-                    ),
-                    8
-                ),
-                PField(
-                    PFieldType.MATH_TEXT,
-                    MathTextSpec(
-                        text = "some normal text with formula ->  $$ \\newline S_{fb} = \\bigg(\\cfrac{K_L} { K_T K_R } \\bigg) \\cdot S_{fb}^{'}  $$"
-                    ),
-                    8
                 ),
                 PField(
                     PFieldType.MATH_TEXT,
