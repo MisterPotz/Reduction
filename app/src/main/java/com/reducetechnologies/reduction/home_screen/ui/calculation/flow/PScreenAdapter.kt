@@ -15,6 +15,7 @@ interface PFieldBinder {
     fun init(view: View)
     fun onAttach() {}
     fun setCallback(callback: (View, Int) -> Unit ) {}
+    fun setInputable(inputable: Boolean) { }
 }
 
 class PFieldHolder(
@@ -33,9 +34,16 @@ class PFieldHolder(
     fun onAttach() {
         pFieldBinder.onAttach()
     }
+    fun setInputable(inputable : Boolean) {
+        pFieldBinder.setInputable(inputable)
+    }
 }
 
-class PFieldAdapter(val context: Context, val pScreen: PScreen, val windowManager: WindowManager) :
+class PFieldAdapter(
+    val context: Context,
+    val pScreen: PScreen,
+    val windowManager: WindowManager,
+    val inputable: Boolean) :
     RecyclerView.Adapter<PFieldHolder>() {
     private var inflater: LayoutInflater? = null
     private var recyclerView: RecyclerView? = null
@@ -72,10 +80,10 @@ class PFieldAdapter(val context: Context, val pScreen: PScreen, val windowManage
     private fun getPFieldBinder(type: PFieldType): PFieldBinder {
         return when (type) {
             PFieldType.TEXT -> TextFieldBinder()
-            PFieldType.INPUT_TEXT -> InputTextBinder()
+            PFieldType.INPUT_TEXT -> InputTextBinder(inputable)
             PFieldType.PICTURE -> PictureBinder(context, windowManager).also { it.setCallback(this::callback) }
-            PFieldType.INPUT_PICTURE -> InputPictureBinder(context, windowManager)
-            PFieldType.INPUT_LIST -> InputListBinder()
+            PFieldType.INPUT_PICTURE -> InputPictureBinder(context, windowManager, inputable)
+            PFieldType.INPUT_LIST -> InputListBinder(inputable)
             PFieldType.MATH_TEXT -> MathTextBinder()
         }
     }

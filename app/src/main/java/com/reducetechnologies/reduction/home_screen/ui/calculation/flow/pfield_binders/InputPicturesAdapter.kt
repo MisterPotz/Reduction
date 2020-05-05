@@ -22,6 +22,7 @@ class InputPicturesAdapter(val context: Context,
                            val preparedPaths: List<String>,
                            val windowManager: WindowManager,
                            val spec: InputPictureSpec,
+                           val inputable: Boolean,
                            val onSelected: (Int?) -> Unit
 ) : RecyclerView.Adapter<InputPicturesAdapter.InputPictureHolder>() {
     private var inflater: LayoutInflater? = null
@@ -29,9 +30,11 @@ class InputPicturesAdapter(val context: Context,
     private var height = 0
     private var currentlySelected: Int? = spec.additional.answer
         set(value) {
-            field = value
-            onSelected(value)
-            spec.additional.answer = value
+            if (inputable) {
+                field = value
+                onSelected(value)
+                spec.additional.answer = value
+            }
         }
     private var recyclerView: RecyclerView? = null
 

@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.gson.GsonBuilder
 import com.reducetechnologies.tables_utils.GOSTableContract
+import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 import com.reduction_technologies.database.databases_utils.*
-
-import com.reduction_technologies.database.tables_utils.table_contracts.*
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.*
 
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue

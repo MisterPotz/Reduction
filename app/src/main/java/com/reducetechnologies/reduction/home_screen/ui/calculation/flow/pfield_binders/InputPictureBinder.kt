@@ -14,7 +14,7 @@ import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.FileStringUtils
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PFieldBinder
 
-class InputPictureBinder(val context: Context, val windowManager: WindowManager): PFieldBinder {
+class InputPictureBinder(val context: Context, val windowManager: WindowManager, val inputable: Boolean): PFieldBinder {
     private lateinit var pictures : RecyclerView
     private lateinit var title: TextView
     private lateinit var counter: TextView
@@ -26,11 +26,20 @@ class InputPictureBinder(val context: Context, val windowManager: WindowManager)
         inputPictureSpec = spec as InputPictureSpec
         title.text = inputPictureSpec!!.title
         inputPictureSpec!!.additional.answer?.let { onSelected(it) }
-        adapter = InputPicturesAdapter(context,prepareStrings(), windowManager, inputPictureSpec!!, this::onSelected)
+        adapter = InputPicturesAdapter(
+            context,prepareStrings(),
+            windowManager,
+            inputPictureSpec!!,
+            inputable,
+            this::onSelected)
         layoutManager = LinearLayoutManager(pictures.context, RecyclerView.HORIZONTAL, false)
         pictures.adapter = adapter
         pictures.setHasFixedSize(true)
         pictures.layoutManager = layoutManager
+    }
+
+    override fun setInputable(inputable: Boolean) {
+
     }
 
     override fun init(view: View) {

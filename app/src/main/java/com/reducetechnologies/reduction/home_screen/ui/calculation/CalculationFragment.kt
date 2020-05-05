@@ -46,6 +46,10 @@ class CalculationFragment : Fragment() {
         registerCalculationButton()
     }
 
+    private fun updateButton() {
+        calcButton.text = if (viewModel.isCalculationActive()) getString(R.string.continue_calculation) else getString(
+                    R.string.new_calculation)
+    }
 
     private fun registerCalculationButton() {
         calcButton.setOnClickListener {
@@ -57,6 +61,7 @@ class CalculationFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        updateButton()
         Timber.i("in onResume: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
 

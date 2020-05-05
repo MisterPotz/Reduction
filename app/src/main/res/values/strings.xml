@@ -19,8 +19,8 @@
     <string name="action_settings">Настройки</string>
     <string name="settings_about">О приложении</string>
 
-    <string name="float_hint">дробное число</string>
-    <string name="integer_hint">целое число</string>
+    <string name="float_hint">float</string>
+    <string name="integer_hint">integer</string>
 
     <string name="about_text_desctiption">Данное приложение носит обучающий характер и призвано облегчить
         жизнь студентов при расчете редукторов. Главные функции приложения:\n
@@ -35,4 +35,8 @@
     <string name="enter">Ввести</string>
     <string name="content_descr_simple_picture">simple picture</string>
     <string name="selected">Выбрано :</string>
+    <string name="enter_data">Введите все данные</string>
+    <string name="continue_calculation">Продолжить расчет</string>
+    <string name="new_calculation">Новый расчет</string>
+    <string name="calculation">Расчет</string>
 </resources>

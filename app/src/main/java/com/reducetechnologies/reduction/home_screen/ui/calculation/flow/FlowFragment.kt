@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
@@ -31,8 +32,12 @@ class FlowFragment() : Fragment() {
 
     private fun setupEnterButton() {
         controlEnter.setOnClickListener {
-            pScreenSwitcher.enter()
-            updateScreen()
+            if (pScreenInflater.getFilled() != null) {
+                pScreenSwitcher.enter()
+                updateScreen()
+            } else {
+                Toast.makeText(context, getString(R.string.enter_data), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -52,7 +57,7 @@ class FlowFragment() : Fragment() {
 
     private fun updateScreen() {
         fetchAllButtons()
-        pScreenInflater.showPScreen(pScreenSwitcher.current().pScreen)
+        pScreenInflater.showPScreen(pScreenSwitcher.current().pScreen, !pScreenSwitcher.currentWasValidatedSuccessfully)
     }
 
     override fun onCreateView(
@@ -86,6 +91,7 @@ class FlowFragment() : Fragment() {
         pScreenSwitcher = viewModel.screenSwitcher()!!
         pScreenInflater = PScreenInflater(context!!,cardContainer, activity!!.windowManager)
         updateScreen()
+
     }
 
     private fun fetchPrevStatus() {

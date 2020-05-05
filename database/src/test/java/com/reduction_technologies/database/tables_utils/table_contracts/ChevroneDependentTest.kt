@@ -1,6 +1,8 @@
 package com.reduction_technologies.database.tables_utils.table_contracts
 
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.*
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.NWRDependent
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.NWRRow
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.NWRSimple
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 

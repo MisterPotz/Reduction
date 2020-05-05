@@ -75,8 +75,13 @@ class SharedViewModel @Inject constructor(
             return false
         }
         calcSdkHelper.startCalculation()
+        // TODO в будущем, когда будут результаты, pScreenSwitcher надо будет обращать в нулл, иначе будет баг и краш
         pScreenSwitcher = PScreenSwitcher(calcSdkHelper)
         return true
+    }
+
+    fun isCalculationActive() : Boolean {
+        return calcSdkHelper.isActive
     }
 
     fun screenSwitcher() : PScreenSwitcher? {

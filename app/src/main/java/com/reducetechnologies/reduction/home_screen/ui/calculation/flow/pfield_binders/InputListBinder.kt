@@ -12,7 +12,7 @@ import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PFieldBinder
 import timber.log.Timber
 
-class InputListBinder : PFieldBinder {
+class InputListBinder(val inputable: Boolean) : PFieldBinder {
     private lateinit var view: View
     private lateinit var radioGroup: RadioGroup
     private lateinit var title: TextView
@@ -37,6 +37,8 @@ class InputListBinder : PFieldBinder {
             val radioButton: MaterialRadioButton = MaterialRadioButton(view.context)
             radioButton.id = i
             radioButton.text = spec!!.additional.options[i]
+            radioButton.isEnabled = inputable
+            radioButton.isClickable = inputable
             radioGroup.addView(radioButton)
         }
     }
@@ -50,6 +52,8 @@ class InputListBinder : PFieldBinder {
         }
         title = view.findViewById(R.id.title)
         inflater = LayoutInflater.from(view.context)
+        radioGroup.isEnabled = inputable
+        radioGroup.isClickable = inputable
     }
 
     companion object : CompanionInflater {

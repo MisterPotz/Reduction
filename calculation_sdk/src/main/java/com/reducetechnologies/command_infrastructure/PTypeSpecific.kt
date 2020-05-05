@@ -1,5 +1,10 @@
 package com.reducetechnologies.command_infrastructure
 
+import com.reduction_technologies.database.tables_utils.DomainDefinable
+import com.reduction_technologies.database.tables_utils.DomainDefinableFloat
+import com.reduction_technologies.database.tables_utils.OneSidedDomain
+import com.reduction_technologies.database.tables_utils.TwoSidedDomain
+
 /**
  * Contains data that depends on [PFieldType]
  */
@@ -12,11 +17,13 @@ enum class InputTextType {
 
 /**
  * [hint] - can contain some additional data (like, this value is measured in kylonewtons, etc.)
+ * [domain] - defines verification logics (validation of user input)
  */
 data class AdditionalInputText(val encyclodpediaId: Int? = null,
                                var answer: String? = null,
                                var error: String? = null,
-                               val hint: String? = null)
+                               val hint: String? = null,
+                               val domain : TwoSidedDomain? = null)
 
 data class InputTextSpec(
     val title: String,

@@ -4,6 +4,7 @@ import java.lang.IllegalStateException
 
 interface DomainDefinable<in T : Comparable<T>> {
     fun isInDomain(num: T): Boolean
+    fun unequalityNotation() : String
 }
 
 /**
@@ -32,6 +33,10 @@ data class OneSidedDomain(val conditionSign: String, val num: Float) : DomainDef
         }
     }
 
+    override fun unequalityNotation(): String {
+        return "x $conditionSign $num"
+    }
+
     override fun toString(): String {
         return "$conditionSign $num"
     }
@@ -42,8 +47,13 @@ data class OneSidedDomain(val conditionSign: String, val num: Float) : DomainDef
  */
 data class TwoSidedDomain(val leftSide: OneSidedDomain, val rightSide: OneSidedDomain) :
     DomainDefinableFloat() {
+
     override fun isInDomain(num: Float): Boolean {
         return leftSide.isInDomain(num) && rightSide.isInDomain(num)
+    }
+
+    override fun unequalityNotation(): String {
+        return "${leftSide.unequalityNotation()}, ${rightSide.unequalityNotation()}"
     }
 
     override fun toString(): String {

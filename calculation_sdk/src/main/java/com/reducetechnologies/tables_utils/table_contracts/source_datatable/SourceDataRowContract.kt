@@ -1,4 +1,4 @@
-package com.reduction_technologies.database.tables_utils.table_contracts.source_datatable
+package com.reducetechnologies.tables_utils.table_contracts.source_datatable
 
 data class TIPRERow(val list: List<Int>)
 

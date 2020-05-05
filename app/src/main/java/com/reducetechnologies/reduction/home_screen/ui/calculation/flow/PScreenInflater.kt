@@ -23,20 +23,25 @@ class PScreenInflater(
 ) {
     private val inflater = LayoutInflater.from(container.context)
     private var currentPScreen : PScreen? = null
+    private var adapter : PFieldAdapter? = null
 
-    fun showPScreen(pScreen: PScreen) {
+    fun showPScreen(pScreen: PScreen, isInputable: Boolean) {
         container.removeAllViews()
         currentPScreen = pScreen
         val view = inflater.inflate(R.layout.pscreen_card, container, true)
         val recycler = view.findViewById<RecyclerView>(R.id.fieldsList)
         val title = view.findViewById<TextView>(R.id.pScreenTitle)
         title.text = pScreen.title
+        adapter =  PFieldAdapter(context, pScreen, windowManager, isInputable)
         recycler.layoutManager = LinearLayoutManager(container.context)
-        recycler.adapter = PFieldAdapter(context, pScreen, windowManager)
+        recycler.adapter = adapter!!
     }
 
     // fills in input from view
-    fun getFilled() : PScreen {
-        TODO("Must survey all UI fields that has input and take the input to pscreen - then return in")
+    fun getFilled() : PScreen? {
+        if (PScreenValidator.validatePScreen(pScreen = currentPScreen!!)) {
+            return currentPScreen!!
+        }
+        return null
     }
 }

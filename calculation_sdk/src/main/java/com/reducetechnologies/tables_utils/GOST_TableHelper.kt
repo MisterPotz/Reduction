@@ -1,9 +1,9 @@
 package com.reducetechnologies.tables_utils
 
 import com.reducetechnologies.tables_utils.table_contracts.*
-import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
-import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
+import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
+import com.reducetechnologies.tables_utils.table_contracts.G0Table
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 
 /**
  * Helps with GOST tables. Contains names of needed gost tables, presents an interface to
@@ -27,7 +27,7 @@ object GOSTableContract {
  * Structure, used to hold all necessary tables
  */
 data class TableHolder(
-    val fatigue :FatigueTable,
+    val fatigue : FatigueTable,
     /*val w_lim = "2.5",*/
     val g_0 : G0Table,
     val source_data : SourceDataTable,

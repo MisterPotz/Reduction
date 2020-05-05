@@ -16,7 +16,7 @@
     <fragment
         android:id="@+id/flowFragment"
         android:name="com.reducetechnologies.reduction.home_screen.ui.calculation.flow.FlowFragment"
-        android:label="FlowFragment"
+        android:label="@string/calculation"
         tool:layout="@layout/split_control_card_layout"
         />
 </navigation>
