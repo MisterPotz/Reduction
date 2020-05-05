@@ -24,7 +24,7 @@ class InputPictureBinder(val context: Context, val windowManager: WindowManager)
     override fun bind(spec: PTypeSpecific) {
         inputPictureSpec = spec as InputPictureSpec
         title.text = inputPictureSpec!!.title
-        adapter = InputPicturesAdapter(context,prepareStrings(), windowManager)
+        adapter = InputPicturesAdapter(context,prepareStrings(), windowManager, inputPictureSpec!!)
         layoutManager = LinearLayoutManager(pictures.context, RecyclerView.HORIZONTAL, false)
         pictures.adapter = adapter
         pictures.setHasFixedSize(true)

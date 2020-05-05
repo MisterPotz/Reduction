@@ -23,7 +23,7 @@ object SingletoneContextCounter {
  * Нужно что-то, чтобы хранило фрагменты и обеспечивало с ними безопасную работу.
  * [CoroutineScope] необходима, чтобы иметь высокоуровневые корутины на уровне активности
  */
-class MainActivity : AppCompatActivity(), CoroutineScope by MainScope(){
+class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     val debugTree = Timber.DebugTree()
     private var currentNavController: LiveData<NavController>? = null
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/material_small_margin"
+    android:layout_marginBottom="@dimen/material_small_margin"
+    android:orientation="vertical"
+    >
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/material_small_margin"
+        android:text="Enter decision"
+        android:gravity="center"
+        android:id="@+id/title"
+        style="@style/TextAppearance.AppCompat.Body2"
+    />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:divider="@drawable/layout_divider"
+            android:showDividers="middle"
+            android:id="@+id/radioGroup"
+            >
+        </RadioGroup>
+    </HorizontalScrollView>
+</LinearLayout>

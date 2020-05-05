@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.card.MaterialCardView
+import com.reducetechnologies.command_infrastructure.InputPictureSpec
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.FileStringUtils
 import com.squareup.picasso.Picasso
@@ -21,13 +22,18 @@ import timber.log.Timber
 import kotlin.properties.Delegates
 
 class InputPicturesAdapter(val context: Context,
-                           val preparedPaths: List<String>, val windowManager: WindowManager
+                           val preparedPaths: List<String>,
+                           val windowManager: WindowManager,
+                           val spec: InputPictureSpec
 ) : RecyclerView.Adapter<InputPicturesAdapter.InputPictureHolder>() {
     private var inflater: LayoutInflater? = null
-    private val picasso = Picasso.get()
     private var width = 0
     private var height = 0
-    private var currentlySelected: Int? = null
+    private var currentlySelected: Int? = spec.additional.answer
+        set(value) {
+            field = value
+            spec.additional.answer = value
+        }
     private var recyclerView: RecyclerView? = null
 
     init {
@@ -111,18 +117,13 @@ class InputPicturesAdapter(val context: Context,
         }
 
         private fun fetchPicture(preparedPath: String, width: Int, height: Int) {
-        /*    val sharedOptions: RequestOptions = RequestOptions()
+            val sharedOptions: RequestOptions = RequestOptions()
                 .override((width.toDouble() / 2.0).toInt(), (height.toDouble() / 3.5).toInt())
                 .fitCenter()
             Glide
                 .with(context)
                 .load(Uri.parse(FileStringUtils.pathAsPicassoImage(path)))
                 .apply(sharedOptions)
-                .into(image!!)*/
-            picasso
-                .load(preparedPath)
-                .resize((width.toDouble() / 2.0).toInt(), (height.toDouble() / 3.5).toInt())
-                .centerInside()
                 .into(image!!)
         }
     }

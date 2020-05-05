@@ -68,7 +68,7 @@ internal class PScreenSourceDelegate : PScreenSource() {
                 PField(
                     PFieldType.TEXT, TextSpec(
                         "И еще чуть чуть"
-                    , AdditionalText(TextType.HEADLINE)
+                        , AdditionalText(TextType.HEADLINE)
                     ), 5
                 ),
                 PField(
@@ -78,14 +78,25 @@ internal class PScreenSourceDelegate : PScreenSource() {
                         source = PictureStringPath("input_pictures/10.jpg")
                     ),
                     6
+                ),
+                PField(
+                    PFieldType.INPUT_LIST,
+                    InputListSpec(
+                        "Будет ли закалка", null, AdditionalInputList(
+                            listOf(
+                                "Да", "Нет", "Не знаю что такое, сам разберись"
+                            )
+                        )
+                    ),
+                    7
                 )
             )
         )
     )
 
-    private fun generateInputPicturesList() : List<String>{
+    private fun generateInputPicturesList(): List<String> {
         return List<String>(14) {
-            "input_pictures/${it+1}.jpg"
+            "input_pictures/${it + 1}.jpg"
         }
     }
 
