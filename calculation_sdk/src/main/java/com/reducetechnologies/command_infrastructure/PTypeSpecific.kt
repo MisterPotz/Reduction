@@ -63,7 +63,7 @@ data class TextSpec(val text: String, val additional: AdditionalText = Additiona
 /**
  * [text] is formatted as per katex documentation
  */
-class AdditionalMathText()
+data class AdditionalMathText(val stub : Int = 0)
 data class MathTextSpec(val text: String, val mathTextField: AdditionalMathText = AdditionalMathText()) : PTypeSpecific
 
 // Picture
