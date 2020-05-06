@@ -14,21 +14,14 @@
     android:maxWidth="120dp"
     android:minHeight="50dp"
     app:cardElevation="4dp">
-
-    <LinearLayout
+    <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/material_horizontal_margin"
+        android:layout_marginEnd="@dimen/material_horizontal_margin"
+        style="@style/Subtitle1"
+        android:id="@+id/itemName"
         android:layout_gravity="center"
-        >
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/material_horizontal_margin"
-            android:layout_marginEnd="@dimen/material_horizontal_margin"
-            style="@style/Subtitle1"
-            android:id="@+id/itemName"
-            />
-    </LinearLayout>
+        />
 
 </com.google.android.material.card.MaterialCardView>

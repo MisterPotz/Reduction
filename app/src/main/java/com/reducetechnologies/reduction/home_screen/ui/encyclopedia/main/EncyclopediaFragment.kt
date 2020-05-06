@@ -2,6 +2,7 @@ package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
 import android.content.Context
 import android.os.Bundle
+import android.util.SparseArray
 import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -11,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
-import com.reducetechnologies.reduction.android.util.common_item_category_adapter.CategoriesAdapterCommon
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
+import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class EncyclopediaFragment : Fragment() {
     lateinit var viewModel: SharedViewModel
 
     private lateinit var recyclerView: RecyclerView
-    private var categoriesAdapterCommon : CategoriesAdapterCommon? = null
+    private var categoryAdapter: CategoriesSimpleAdapter<CommonItem, CategoryCommonItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,13 @@ class EncyclopediaFragment : Fragment() {
         })
 
         recyclerView = view.findViewById(R.id.categories_list)
+        categoryAdapter = CategoriesSimpleAdapter<CommonItem, CategoryCommonItem>(
+            null,
+            CommonItemEncyclopediaViewInflater,
+            CommonItemEncyclopediaViewBinder
+        )
+        recyclerView.adapter = categoryAdapter!!
+        recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -87,27 +95,41 @@ class EncyclopediaFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         Timber.i("saving in onPause")
-        categoriesAdapterCommon?.onSaveState()
+        val saved = SimplePositionSaver(
+            recyclerView.layoutManager?.onSaveInstanceState(),
+            categoryAdapter?.onSave() ?: PositionsSaver(
+                SparseArray()
+            )
+        )
+        viewModel.savedEncyclopediaScreenState = saved
 
         Timber.i("in onPause: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
 
     override fun onStart() {
         super.onStart()
-        categoriesAdapterCommon =
-            CategoriesAdapterCommon(viewModel.getAllSortedItems(), lifecycleOwner = viewLifecycleOwner, positionSaver = viewModel.getSavedLayoutPositions())
-        Timber.i("recyclerView = $recyclerView")
-        recyclerView.apply {
-            adapter = categoriesAdapterCommon
-            layoutManager = LinearLayoutManager(this@EncyclopediaFragment.context)
-        }
+        viewModel.getAllSortedItems().observe(viewLifecycleOwner, Observer {
+            Timber.i("Got sorted results, map : ${it.size}")
+            val list = it.toSortedMap(Comparator { o1, o2 ->
+                o1.getPosition() - o2.getPosition()
+            }).map {
+                CategoryCommonItem(it.key.getPosition(), it.key.title, it.value)
+            }
+            categoryAdapter!!.setList(list)
+        })
         Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
     }
 
     override fun onResume() {
         super.onResume()
         Timber.i("in onResume: current fragment amount: ${SingletoneContextCounter.fragments}")
-        categoriesAdapterCommon!!.restoreState()
+        val savedState = viewModel.savedEncyclopediaScreenState
+        savedState?.let { saver ->
+            categoryAdapter!!.onRestore(saver.inner)
+            saver.outer?.let {
+                recyclerView.layoutManager?.onRestoreInstanceState(it)
+            }
+        }
     }
 
     override fun onStop() {

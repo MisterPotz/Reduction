@@ -31,6 +31,8 @@ class SharedViewModel @Inject constructor(
             componentFactory
         )
 
+    var savedEncyclopediaScreenState : SimplePositionSaver? = null
+
     private var pScreenSwitcher : PScreenSwitcher? = null
 
     private val _allEncyclopdiaItems: LiveData<List<CommonItem>> by lazy {
@@ -42,9 +44,6 @@ class SharedViewModel @Inject constructor(
             MutableLiveData(commonItemUtils.splitByTags(it))
         }
     }
-
-    private val categoriesAdapterSaver: CategoryAdapterPositionSaver<CategoryTag> =
-        CategoryAdapterPositionSaver()
 
     fun getAllEncyclopediaItems(): LiveData<List<CommonItem>> {
         updateAllEncyclopediaItems()
@@ -63,10 +62,6 @@ class SharedViewModel @Inject constructor(
     fun getAllSortedItems(): LiveData<Map<CategoryTag, List<CommonItem>>> {
         updateAllEncyclopediaItems()
         return sortedByTagItems
-    }
-
-    fun getSavedLayoutPositions(): CategoryAdapterPositionSaver<CategoryTag> {
-        return categoriesAdapterSaver
     }
 
     fun startCalculation(): Boolean {
