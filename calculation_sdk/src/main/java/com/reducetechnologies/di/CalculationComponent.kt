@@ -1,6 +1,7 @@
 package com.reducetechnologies.di
 
 import com.reducetechnologies.calculations.*
+import com.reducetechnologies.calculations_entity.CalculationsEntity
 import com.reducetechnologies.tables_utils.table_contracts.*
 import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 import dagger.Module
@@ -105,6 +106,12 @@ class CalculationModule(val tables: GOSTableComponentInterface) {
     fun getZUCFMethods(): ZUCFMethodsClass {
         return ZUCFMethodsClass()
     }
+
+    /*@Provides
+    @CalculationScope
+    fun getCalculationsEntity(inputData: InputData): CalculationsEntity {
+        return CalculationsEntity(inputData = inputData)
+    }*/
     /*@Provides
     @CalculationScope
     fun getZCREDMethods() : ZCREDMethodsClass{
@@ -130,6 +137,7 @@ interface CalculationsComponent {
     fun getZUCFMethods(): ZUCFMethodsClass
     fun getZUCMethods(): ZUCMethodsClass
     fun getZCREDMethods(): ZCREDMethodsClass
+    /*fun getCalculationsEntity(inputData: InputData): CalculationsEntity*/
 
     fun getHRCTable() : HRCTable
     fun getEdDataTable() : EDDataTable
