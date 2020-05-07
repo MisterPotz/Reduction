@@ -14,6 +14,8 @@ import java.io.FileOutputStream
  * User data is stored in another database.
  * The main purpose of this helper class is to put an asset database into the
  * Android given place for storing databases.
+ * To take locales into considerations, different versions of databases are stored.
+ * Full list of locles is defined here {@link AppLocale}
  */
 internal class ConstantDatabaseHelper(val context: Context) :
     SQLiteOpenHelper(context, database.title, null, database.version),
@@ -38,7 +40,7 @@ internal class ConstantDatabaseHelper(val context: Context) :
     }
 
     private fun installDatabaseFromAssets() {
-        val inputStream = context.assets.open("$ASSETS_PATH/${database.title}.db")
+        val inputStream = context.assets.open(databasePath)
 
         try {
             val outputFile = File(context.getDatabasePath(database.title).path)
@@ -108,11 +110,19 @@ internal class ConstantDatabaseHelper(val context: Context) :
     /**
      * Return all entities from main table
      */
-    fun getAllItems(): List<CommonItem> {
-        val cursor = getCommonCursorBuilder(mainTable.name, mainTable.columns.toTypedArray())
+    fun getAllItems(locale: AppLocale): List<CommonItem> {
+        val localizedTable= considerLocaleForTableName(locale)
+        val cursor = getCommonCursorBuilder(localizedTable, mainTable.columns.toTypedArray())
             .setReader(CursorCommonItemReader).create()
 
         return cursor.getList()
+    }
+
+    /**
+     * Returns name of localized table
+     */
+    private fun considerLocaleForTableName(locale: AppLocale) : String {
+        return "${mainTable.name}_${locale.name}"
     }
 
     companion object : DatabaseConstantsContract {
@@ -120,6 +130,8 @@ internal class ConstantDatabaseHelper(val context: Context) :
             DatabaseType.Constant
 
         const val ASSETS_PATH = "databases"
+        val databasePath = "$ASSETS_PATH/${database.title}.db"
+
         const val PREFERENCES_VERSION = "const_database_versions"
     }
 }

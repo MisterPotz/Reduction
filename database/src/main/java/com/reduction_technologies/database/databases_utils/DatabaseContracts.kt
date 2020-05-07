@@ -30,7 +30,9 @@ enum class DatabaseType(
                     Columns.TITLE,
                     Columns.TAG,
                     Columns.ABOUT,
-                    Columns.ADDITIONAL
+                    Columns.ADDITIONAL,
+                    Columns.TEXT_KEY,
+                    Columns.MATH_TITLE
                 ),
                 tags = listOf(
                     Tags.TABLE,
@@ -73,7 +75,8 @@ data class TableContract(
     val columns: List<ColumnContract>,
     val tags: List<Tags>
 )
-fun List<ColumnContract>.toTypedArray() : Array<String>{
+
+fun List<ColumnContract>.toTypedArray(): Array<String> {
     return map { it.castString() }.toTypedArray()
 }
 
@@ -92,7 +95,7 @@ enum class UserTables : DatabaseTable { Favorites }
  */
 interface ColumnContract {
     val item: String
-    fun castString() : String = item
+    fun castString(): String = item
 }
 
 enum class Columns(override val item: String) :
@@ -101,7 +104,9 @@ enum class Columns(override val item: String) :
     TITLE("TITLE"),
     ABOUT("ABOUT"),
     ADDITIONAL("ADDITIONAL"),
-    TAG("TAG")
+    TAG("TAG"),
+    TEXT_KEY("TEXT_KEY"),
+    MATH_TITLE("MATH_TITLE")
 }
 
 /**
@@ -109,7 +114,7 @@ enum class Columns(override val item: String) :
  */
 interface TagContract {
     val item: String
-    fun castString() : String = item
+    fun castString(): String = item
 }
 
 enum class Tags(override val item: String) :

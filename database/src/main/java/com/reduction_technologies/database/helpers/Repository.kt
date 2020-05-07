@@ -9,6 +9,8 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
+enum class AppLocale{ RU }
+
 /**
  * The purpose of this class is to provide the rest code of application with useful data related
  * to GOST tables, encyclopedia, and user favorite items.
@@ -28,7 +30,9 @@ class Repository @Inject internal constructor(
     /**
      * Injectible for the sake of testing and reusability
      */
-    internal val userDatabaseHelper: UserDatabaseHelper
+    internal val userDatabaseHelper: UserDatabaseHelper,
+
+    private val locale : AppLocale
 ) {
     internal enum class LiveDataType { TABLES, ALL_ENCYCLOPEDIA }
 
@@ -40,7 +44,7 @@ class Repository @Inject internal constructor(
             storageDelegate.registerOrReturn<TableHolder>(LiveDataType.TABLES)
 
         // enforcing structured concurrency
-        val task = CoroutineScope(coroutineContext + Dispatchers.IO).launch {
+        CoroutineScope(coroutineContext + Dispatchers.IO).launch {
             val tables = constantDatabaseHelper.getTables()
             liveData.postValue(tables)
         }
@@ -50,12 +54,13 @@ class Repository @Inject internal constructor(
 
     // get all encyclopedia items from the database asynchonously, suspend - for structured concurrency
     suspend fun getEncyclopediaItems(): LiveData<List<CommonItem>> {
+        // TODO localise here everything
         val liveData =
             storageDelegate.registerOrReturn<List<CommonItem>>(LiveDataType.ALL_ENCYCLOPEDIA)
 
         // enforcing structured concurrency
         CoroutineScope(coroutineContext + Dispatchers.IO).launch {
-            val allItems = constantDatabaseHelper.getAllItems()
+            val allItems = constantDatabaseHelper.getAllItems(locale)
             liveData.postValue(allItems)
         }
         return liveData
