@@ -1,4 +1,4 @@
-package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
+package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -77,17 +77,18 @@ open class CategoriesAdapter<Tag : Positionable, T>(
         if (!modelHolders.containsKey(position)) {
             val category = liveData.value!!.keys.find { it.getPosition() == position }!!
             val manager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-            modelHolders[position] = ModelHolder(
-                delegate.tags[position],
-                ScatteredAdapter(
-                    lifecycleOwner,
-                    subLiveDatas[category]!!,
-                    tagHolderCreator,
-                    itemHolderCreatorBuilder,
-                    categoryAdapterPositionSaver.getSaverForTag(category)
-                ),
-                manager
-            )
+            modelHolders[position] =
+                ModelHolder(
+                    delegate.tags[position],
+                    ScatteredAdapter(
+                        lifecycleOwner,
+                        subLiveDatas[category]!!,
+                        tagHolderCreator,
+                        itemHolderCreatorBuilder,
+                        categoryAdapterPositionSaver.getSaverForTag(category)
+                    ),
+                    manager
+                )
         }
         return modelHolders[position]!!
     }
@@ -96,7 +97,9 @@ open class CategoriesAdapter<Tag : Positionable, T>(
         setInflaterIfNot(parent)
         val root =
             inflater!!.inflate(R.layout.category_tag_holder, parent, false)
-        return CategoryHolder(root)
+        return CategoryHolder(
+            root
+        )
     }
 
     override fun getItemCount(): Int {

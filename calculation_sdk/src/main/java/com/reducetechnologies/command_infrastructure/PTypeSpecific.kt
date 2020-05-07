@@ -64,7 +64,7 @@ data class TextSpec(val text: String, val additional: AdditionalText = Additiona
  * [text] is formatted as per katex documentation
  */
 data class AdditionalMathText(val stub : Int = 0)
-data class MathTextSpec(val text: String, val mathTextField: AdditionalMathText = AdditionalMathText()) : PTypeSpecific
+data class MathTextSpec(var text: String, val mathTextField: AdditionalMathText = AdditionalMathText()) : PTypeSpecific
 
 // Picture
 enum class PictureSourceType {

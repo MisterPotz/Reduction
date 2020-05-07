@@ -3,7 +3,7 @@ package com.reducetechnologies.reduction.android.util.common_item_category_adapt
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.reducetechnologies.reduction.android.util.CategoryAdapterPositionSaver
-import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.CategoriesAdapter
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.CategoriesAdapter
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.helpers.CategoryTag
 

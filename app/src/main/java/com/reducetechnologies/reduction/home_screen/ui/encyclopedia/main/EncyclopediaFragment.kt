@@ -10,9 +10,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.reducetechnologies.command_infrastructure.PField
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.*
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
 import timber.log.Timber
@@ -25,6 +27,7 @@ class EncyclopediaFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private var categoryAdapter: CategoriesSimpleAdapter<CommonItem, CategoryCommonItem>? = null
+    private val parseGson by lazy { PField.makeGson() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,11 +58,16 @@ class EncyclopediaFragment : Fragment() {
         })
 
         recyclerView = view.findViewById(R.id.categories_list)
-        categoryAdapter = CategoriesSimpleAdapter<CommonItem, CategoryCommonItem>(
-            null,
-            CommonItemEncyclopediaViewInflater,
-            CommonItemEncyclopediaViewBinder
-        )
+        categoryAdapter =
+            CategoriesSimpleAdapter<CommonItem, CategoryCommonItem>(
+                null,
+                CommonItemEncyclopediaViewInflater,
+                CommonItemEncyclopediaViewBinder
+            ) { commonItem ->
+                val action
+                        = EncyclopediaFragmentDirections.actionEncyclopediaFragmentToItemFragment(commonItem.about!!)
+                findNavController().navigate(action)
+            }
         recyclerView.adapter = categoryAdapter!!
         recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
     }
@@ -95,12 +103,14 @@ class EncyclopediaFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         Timber.i("saving in onPause")
-        val saved = SimplePositionSaver(
-            recyclerView.layoutManager?.onSaveInstanceState(),
-            categoryAdapter?.onSave() ?: PositionsSaver(
-                SparseArray()
+        val saved =
+            SimplePositionSaver(
+                recyclerView.layoutManager?.onSaveInstanceState(),
+                categoryAdapter?.onSave()
+                    ?: PositionsSaver(
+                        SparseArray()
+                    )
             )
-        )
         viewModel.savedEncyclopediaScreenState = saved
 
         Timber.i("in onPause: current fragment amount: ${SingletoneContextCounter.fragments}")
@@ -113,7 +123,11 @@ class EncyclopediaFragment : Fragment() {
             val list = it.toSortedMap(Comparator { o1, o2 ->
                 o1.getPosition() - o2.getPosition()
             }).map {
-                CategoryCommonItem(it.key.getPosition(), it.key.title, it.value)
+                CategoryCommonItem(
+                    it.key.getPosition(),
+                    it.key.title,
+                    it.value
+                )
             }
             categoryAdapter!!.setList(list)
         })

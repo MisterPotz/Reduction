@@ -13,22 +13,14 @@
         >
         <action
             android:id="@+id/action_encyclopediaFragment_to_itemFragment"
-            app:destination="@id/item_fragment"
+            app:destination="@id/itemFragment"
             app:popUpTo="@+id/navigation_encyclopedia" />
         <action
             android:id="@+id/action_navigation_encyclopedia_to_settingsFragment"
             app:destination="@id/settingsFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/item_fragment"
-        android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.item.ItemFragment"
-        android:label="item_fragment"
-        tools:layout="@layout/item_fragment" >
-        <argument
-            android:name="title"
-            app:argType="string"
-            android:defaultValue="Some title" />
-    </fragment>
+
+
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.settings.SettingsFragment"
@@ -43,4 +35,14 @@
         android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.settings.about.AboutFragment"
         android:label="@string/settings_about"
         tools:layout="@layout/about"/>
+
+    <fragment
+        android:id="@+id/itemFragment"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.item.ItemFragment"
+        android:label="fragment_item"
+        tools:layout="@layout/fragment_item" >
+        <argument
+            android:name="itemPScreen"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -2,10 +2,10 @@ package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
 import androidx.lifecycle.*
 import com.reducetechnologies.di.CalculationSdkComponent
-import com.reducetechnologies.reduction.android.util.CategoryAdapterPositionSaver
 import com.reducetechnologies.reduction.android.util.common_item_util.CommonItemUtils
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PScreenSwitcher
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.SimplePositionSaver
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
 import com.reduction_technologies.database.helpers.CategoryTag

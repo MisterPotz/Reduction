@@ -1,11 +1,13 @@
-package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
+package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util
 
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.Category
 import com.reduction_technologies.database.databases_utils.CommonItem
 
 class CategoryCommonItem(
     val id: Int,
     val title: String,
-    val list: List<CommonItem>): Category<CommonItem> {
+    val list: List<CommonItem>):
+    Category<CommonItem> {
 
     override fun getItems(): List<CommonItem> {
         return list

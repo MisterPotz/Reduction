@@ -1,4 +1,4 @@
-package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
+package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util
 
 import android.os.Parcelable
 import android.util.SparseArray

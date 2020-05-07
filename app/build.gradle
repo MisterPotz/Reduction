@@ -86,6 +86,7 @@ dependencies {
     /**
      * Using JUnit Jupiter 5 in Android and unit tests
      */
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation libraries.junit
     androidTestImplementation libraries.junit
 

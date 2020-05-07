@@ -1,4 +1,4 @@
-package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
+package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util
 
 import android.content.Context
 import android.view.View
@@ -13,7 +13,7 @@ interface ViewInflater {
 
 interface ViewBinder<R> {
     fun bind(item: R)
-
+    fun current() : R
     interface Factory<R> {
         fun createViewBinder(view:View) : ViewBinder<R>
     }

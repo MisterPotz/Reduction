@@ -1,9 +1,8 @@
-package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
+package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util
 
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Xml
-import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -18,7 +17,8 @@ import timber.log.Timber
 import java.io.IOException
 
 
-class CommonItemEncyclopediaViewBinder(val itemView : View) : ViewBinder<CommonItem> {
+class CommonItemEncyclopediaViewBinder(val itemView : View) :
+    ViewBinder<CommonItem> {
     val group : MaterialCardView = itemView.findViewById(R.id.itemCard)
     val text : TextView = itemView.findViewById(R.id.itemName)
     // used to obtain real size of text
@@ -87,9 +87,17 @@ class CommonItemEncyclopediaViewBinder(val itemView : View) : ViewBinder<CommonI
         mathText.visibility = mathVisibility
     }
 
-    companion object : ViewBinder.Factory<CommonItem> {
+    companion object :
+        ViewBinder.Factory<CommonItem> {
         override fun createViewBinder(view: View): ViewBinder<CommonItem> {
-            return CommonItemEncyclopediaViewBinder(itemView = view)
+            return CommonItemEncyclopediaViewBinder(
+                itemView = view
+            )
         }
+    }
+
+    override fun current(): CommonItem {
+        Timber.i("Current  requested: $currentItem ")
+        return currentItem!!
     }
 }

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions.*
 
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor
+import com.reduction_technologies.database.helpers.AppLocale
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
@@ -59,7 +60,7 @@ internal class GOSTableModuleTest {
         }
     }
 
-    val repository = Repository(mockk<Context>(), mockedConstantDatabase, mockk())
+    val repository = Repository(mockk<Context>(), mockedConstantDatabase, mockk(), AppLocale.RU)
 
     @Test
     fun getTablesTest() {

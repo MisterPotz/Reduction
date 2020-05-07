@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.command_infrastructure.PScreen
 import com.reducetechnologies.reduction.R
+import com.reducetechnologies.reduction.android.util.PScreenSimpleeInflater
 
 /**
  * Manages screens that are shown before / during / after calculation process
@@ -26,15 +27,17 @@ class PScreenInflater(
     private var adapter : PFieldAdapter? = null
 
     fun showPScreen(pScreen: PScreen, isInputable: Boolean) {
-        container.removeAllViews()
-        currentPScreen = pScreen
+/*        container.removeAllViews()
         val view = inflater.inflate(R.layout.pscreen_card, container, true)
         val recycler = view.findViewById<RecyclerView>(R.id.fieldsList)
         val title = view.findViewById<TextView>(R.id.pScreenTitle)
         title.text = pScreen.title
         adapter =  PFieldAdapter(context, pScreen, windowManager, isInputable)
         recycler.layoutManager = LinearLayoutManager(container.context)
-        recycler.adapter = adapter!!
+        recycler.adapter = adapter!!*/
+        currentPScreen = pScreen
+        PScreenSimpleeInflater.inflatPScreen(currentPScreen!!, container, windowManager, inflater)
+
     }
 
     // fills in input from view

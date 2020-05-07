@@ -1,6 +1,6 @@
 package com.reducetechnologies.reduction.android.util.common_item_category_adapter
 
-import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.CategoriesInfoDelegate
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.CategoriesInfoDelegate
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.helpers.CategoryTag
 

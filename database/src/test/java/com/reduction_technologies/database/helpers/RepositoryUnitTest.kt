@@ -30,7 +30,7 @@ class RepositoryUnitTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         // Using dependencies to create component
         databaseComponent = DaggerDatabaseComponent.builder()
-            .databaseModule(DatabaseModule(context))
+            .databaseModule(DatabaseModule(context, AppLocale.RU))
             .build()
     }
 

@@ -8,6 +8,7 @@ import com.reducetechnologies.command_infrastructure.MathTextSpec
 import com.reducetechnologies.command_infrastructure.PTypeSpecific
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PFieldBinder
+import com.reduction_technologies.database.databases_utils.prepareMathText
 
 class MathTextBinder : PFieldBinder {
     private lateinit var mathView : KatexView
@@ -15,7 +16,8 @@ class MathTextBinder : PFieldBinder {
 
     override fun bind(spec: PTypeSpecific) {
         mathSpec = spec as MathTextSpec
-        mathView.setText(spec.text)
+        val text = prepareMathText(spec.text)
+        mathView.setText(text)
     }
 
     override fun init(view: View) {
