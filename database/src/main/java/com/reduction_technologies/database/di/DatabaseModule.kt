@@ -28,6 +28,12 @@ class DatabaseModule(val context: Context, val locale: AppLocale) {
     fun repository(): Repository {
         return Repository(context(), constantDatabaseHelper(), userDatabaseHelper(), locale)
     }
+
+    @Provides
+    @ApplicationScope
+    fun locale() : AppLocale {
+        return locale
+    }
 }
 
 

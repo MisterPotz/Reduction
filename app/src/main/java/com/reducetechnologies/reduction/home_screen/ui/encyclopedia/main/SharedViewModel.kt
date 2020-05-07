@@ -1,13 +1,16 @@
 package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
+import android.content.Context
 import androidx.lifecycle.*
 import com.reducetechnologies.di.CalculationSdkComponent
+import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.common_item_util.CommonItemUtils
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PScreenSwitcher
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.SimplePositionSaver
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
+import com.reduction_technologies.database.helpers.AppLocale
 import com.reduction_technologies.database.helpers.CategoryTag
 import com.reduction_technologies.database.helpers.Repository
 import kotlinx.coroutines.*
@@ -16,8 +19,10 @@ import javax.inject.Provider
 
 @ApplicationScope
 class SharedViewModel @Inject constructor(
+    private val context : Context,
     private val repository: Repository,
-    private val componentFactory: Provider<CalculationSdkComponent.Factory>
+    private val componentFactory: Provider<CalculationSdkComponent.Factory>,
+    private val appLocale: AppLocale
 ) : ViewModel() {
 
     val text: LiveData<String> = MutableLiveData<String>().apply {
@@ -81,5 +86,12 @@ class SharedViewModel @Inject constructor(
 
     fun screenSwitcher() : PScreenSwitcher? {
         return pScreenSwitcher
+    }
+
+    fun mapCategoryToLocal(categoryTag: CategoryTag) : String {
+        return when (categoryTag) {
+            CategoryTag.TABLE -> context.getString(R.string.tables)
+            CategoryTag.VARIABLE -> context.getString(R.string.variables)
+        }
     }
 }

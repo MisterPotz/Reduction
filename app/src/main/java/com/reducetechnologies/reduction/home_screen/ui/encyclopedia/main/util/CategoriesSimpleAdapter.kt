@@ -11,7 +11,6 @@ import androidx.core.util.putAll
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.reduction_technologies.database.databases_utils.CommonItem
 import timber.log.Timber
 
 typealias ItemSelectedCallback<R> = (R) -> Unit

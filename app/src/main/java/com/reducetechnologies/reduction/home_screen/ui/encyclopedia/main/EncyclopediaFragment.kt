@@ -125,7 +125,7 @@ class EncyclopediaFragment : Fragment() {
             }).map {
                 CategoryCommonItem(
                     it.key.getPosition(),
-                    it.key.title,
+                    viewModel.mapCategoryToLocal(it.key),
                     it.value
                 )
             }
