@@ -140,7 +140,7 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                 //zc2redScope.TVL1 = 0f вроде она у нас бесполезна, мы не печатаем внутри ничего
                 zcredScope.TVL2 =
                     zcredScope.TVL3!! * input.OMEG / (firstStep.zuc1hScope.UCalculated * sqrt(input.KPD) * input.NW)
-                if (input.TIPRE == 4) {
+                if (input.TIPRE == 4 && input.SIGN[0] == 1 && input.SIGN[1] == 1) {
                     input.apply {
                         NP = 1
                         if (NZAC[1] == 1) {
@@ -160,6 +160,7 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                         IST = 0,
                         N2 = NV3 * uT,
                         T2 = zcredScope.TVL2!!,
+                        AWTipre4 = firstStep.zuc1hScope.AW,
                         uStup = uB,
                         inputData = input,
                         dopnScope = secondStep.dopnScope,

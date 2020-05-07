@@ -93,6 +93,8 @@ internal class CalculationsModuleTest {
                 arrayOf(Specifications.WheelSubtype.CHEVRON,
                     Specifications.WheelSubtype.CHEVRON)
             }
+        val isInnerLastTwo =
+            ind == 12 || ind == 13
         return InputData(
             isED = isED,
             TT = TT,
@@ -111,7 +113,7 @@ internal class CalculationsModuleTest {
             NWR = sourceTable.nwrRow.list[ind].getNWR(isChevrone = isChevrone),
             BKAN = sourceTable.bkanRow.list[ind],
             SIGN = arrayOf(
-                sourceTable.signRow.list[ind].getSign(isInner),
+                sourceTable.signRow.list[ind].getSign(isInnerLastTwo),
                 sourceTable.signRow.list[ind].getSign(isInner)),
             CONSOL = arrayOf(sourceTable.consolRow.list[ind], sourceTable.consolRow.list[ind]),
             KPD = KPD,
@@ -120,6 +122,62 @@ internal class CalculationsModuleTest {
             wheelSubtype = wheelSubtype,
             PAR = PAR
         )
+    }
+
+    fun testScheme(
+        isED: Boolean,
+        TT: Float,
+        NT: Float,
+        LH: Int,
+        NRR: Int,
+        KOL: Int,
+        UREMA: Float,
+        ind: Int,
+        isChevrone: Boolean,
+        isInner: Boolean,
+        KPD: Float = 0.97f,
+        ISTCol: Int,
+        PAR: Boolean
+    ) {
+        val inputO = setInput(
+            isED = isED,
+            TT = TT,
+            NT = NT,
+            LH = LH,
+            NRR = NRR,
+            KOL = KOL,
+            UREMA = UREMA,
+            ind = ind,
+            isChevrone = isChevrone,
+            isInner = isInner,
+            ISTCol = ISTCol,
+            PAR = PAR
+        )
+        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
+        val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+        /*reducerOptions.forEach {
+            println(it.u)
+        }*/
+        val creationDataList = ZCREDMethod.enterZCRED(
+            input = inputO,
+            options = reducerOptions
+        )
+        creationDataList.forEachIndexed {index, element ->
+            println(index)
+            element.gearWheelStepsArray.forEach {
+                var toPrint = it.dopnScope.toString()
+                println(toPrint)
+                toPrint = it.zuc1hScope.toString()
+                println(toPrint)
+                toPrint = it.zucepScope.toString()
+                println(toPrint)
+                toPrint = it.zuc2hScope.toString()
+                println(toPrint)
+                toPrint = it.zucfScope.toString()
+                println(toPrint)
+            }
+            println(element.zcredScope.toString())
+        }
     }
 
     @Before
@@ -617,5 +675,259 @@ internal class CalculationsModuleTest {
             println(element.zcredScope.toString())
         }
         //More or less correctly
+        //1. Почему всегда принимает наименьший угол в шевронной передаче?
+        //2. Почему такой большой коэффициент осевого перекрытия?
     }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_third_scheme(){
+        val inputO = setInput(
+            isED = false,
+            TT = 510f,
+            NT = 303f,
+            LH = 32000,
+            NRR = 3,
+            KOL = 10000,
+            UREMA = 4.8f,
+            ind = 3,
+            isChevrone = true,
+            isInner = false,
+            ISTCol = 1,
+            PAR = false
+        )
+        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
+        val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+        /*reducerOptions.forEach {
+            println(it.u)
+        }*/
+        val creationDataList = ZCREDMethod.enterZCRED(
+            input = inputO,
+            options = reducerOptions
+        )
+        creationDataList.forEachIndexed {index, element ->
+            println(index)
+            element.gearWheelStepsArray.forEach {
+                var toPrint = it.dopnScope.toString()
+                println(toPrint)
+                toPrint = it.zuc1hScope.toString()
+                println(toPrint)
+                toPrint = it.zucepScope.toString()
+                println(toPrint)
+                toPrint = it.zuc2hScope.toString()
+                println(toPrint)
+                toPrint = it.zucfScope.toString()
+                println(toPrint)
+            }
+            println(element.zcredScope.toString())
+        }
+        //More or less correctly
+        //1. Почему всегда принимает наименьший угол в шевронной передаче?
+        //2. Почему такой большой коэффициент осевого перекрытия?
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_fourth_scheme(){
+        val inputO = setInput(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 4,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )
+        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
+        val someOptions: List<ReducerOptionTemplate> = listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+        /*reducerOptions.forEach {
+            println(it.u)
+        }*/
+        val creationDataList = ZCREDMethod.enterZCRED(
+            input = inputO,
+            options = reducerOptions
+        )
+        creationDataList.forEachIndexed {index, element ->
+            println(index)
+            element.gearWheelStepsArray.forEach {
+                var toPrint = it.dopnScope.toString()
+                println(toPrint)
+                toPrint = it.zuc1hScope.toString()
+                println(toPrint)
+                toPrint = it.zucepScope.toString()
+                println(toPrint)
+                toPrint = it.zuc2hScope.toString()
+                println(toPrint)
+                toPrint = it.zucfScope.toString()
+                println(toPrint)
+            }
+            println(element.zcredScope.toString())
+        }
+        //More or less correctly
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_sixth_scheme(){
+        testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 6,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )
+        //More or less correctly
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_7_scheme(){
+        testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 7,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )
+        //More or less correctly
+        //Здесь уже есть углы больше минимального, это хорошо, показывает, что это работает более-менее
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_8_scheme(){
+        testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 8,
+            isChevrone = true,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )
+        //More or less correctly
+        //Здесь уже есть углы больше минимального, это хорошо, показывает, что это работает более-менее
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_9_scheme(){
+        testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 9,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )
+        //More or less correctly
+        //Даже соосность соблюдается
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_10_scheme(){
+        testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 10,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )
+        //More or less correctly
+        //Даже соосность соблюдается
+        //Даже критерий некратности зубьев вроде соблюдается
+        //Чекнуть насч
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_11_scheme(){
+        testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 11,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 2,
+            PAR = true
+        )
+        //More or less correctly
+        //Даже соосность соблюдается
+        //Даже критерий некратности зубьев вроде соблюдается
+        //Чекнуть насчёт максимальных и минимальных передаточных отношений
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_12_scheme(){
+        testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 12,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )
+        //Со знаками разобрался, не совсем понятно, что там с интерференцией
+    }
+
+    @org.junit.Test
+    fun test_zcred_method_one_staged_13_scheme(){
+        testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 13,
+            isChevrone = false,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )
+        //С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
+    }
+
 }

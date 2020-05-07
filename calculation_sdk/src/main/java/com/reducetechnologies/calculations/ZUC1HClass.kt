@@ -1,7 +1,5 @@
 package com.reducetechnologies.calculations
 
-import com.reducetechnologies.calculation_util.SelectionTree
-import com.reducetechnologies.calculation_util.TreeBuilder
 import com.reducetechnologies.tables_utils.table_contracts.RA40Table
 import com.reducetechnologies.tables_utils.table_contracts.StandartModulesTable
 import kotlin.math.*
@@ -27,7 +25,12 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
     private var SCHET2: Int = 0
 
     private fun AWChoose(args: Arguments, zuc1HScope: ZUC1HScope) {
-        zuc1HScope.AW = RA40.list.first { it >= zuc1HScope.AW }//Ура мать твою, я ляМБДА программист!!1!
+        if (RA40.list.last() <= zuc1HScope.AW!!){
+            zuc1HScope.AW = RA40.list.last()
+        }
+        else {
+            zuc1HScope.AW = RA40.list.first { it >= zuc1HScope.AW }//Ура мать твою, я ляМБДА программист!!1!
+        }
         //Идём в BWChoose
         BWChoose(args, zuc1HScope)
     }
@@ -36,9 +39,22 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
     Это моя добавочная функция, которая нужна только для того, чтобы не было дробного межосевого
     расстояния. Она применяется только 1 раз
      */
-    private fun AWChooseReturn(args: Arguments, zuc1HScope: ZUC1HScope) {
-        zuc1HScope.AW = RA40.list.first { it > zuc1HScope.AW }
+    private fun AWChooseReturnHelp(args: Arguments, zuc1HScope: ZUC1HScope) {
+        if (RA40.list.last() <= zuc1HScope.AW!!){
+            zuc1HScope.AW = RA40.list.last()
+        }
+        else {
+            zuc1HScope.AW = RA40.list.first { it >= zuc1HScope.AW }//Ура мать твою, я ляМБДА программист!!1!
+        }
         return
+    }
+
+    private fun BETlimitationHighHelp(args: Arguments, zuc1HScope: ZUC1HScope){
+        zuc1HScope.apply {
+            if (BET > args.inputData.BETMA) {
+                BET = args.inputData.BETMA
+            }
+        }
     }
 
     private fun MChoose(args: Arguments, zuc1HScope: ZUC1HScope) {
@@ -49,7 +65,7 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
                 args.dopnScope.M = MStandart.list.last()
             }
             else {
-                args.dopnScope.M = MStandart.list.first { it > MR!! }
+                args.dopnScope.M = MStandart.list.first { it >= MR!! }
             }
             //Возвращаемся в BWChoose
             return
@@ -110,18 +126,18 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
     }
 
     private fun Z1tipre4(args: Arguments, zuc1HScope: ZUC1HScope) {
-        //some logic
+        //По сути, это критерий некратности в передачах с многопарным зацеплением, он даже здесь выполняется
         zuc1HScope.apply {
             var CEL1: Float = abs(Z2R!! - args.SIGN * Z1!!).toFloat()/args.inputData.NW.toFloat()
-            var CEL2: Int = CEL1.roundToInt()
-            SCHET2++
+            var CEL2: Int = CEL1.toInt()
             while (CEL1 > CEL2.toFloat()) {
+                SCHET2++
                 if (SCHET2 <= 1)
                     Z1 = Z1!! - 1
                 if (SCHET2 > 1)
                     Z1 = Z1!! + 1
                 CEL1 = abs(Z2R!! - args.SIGN * Z1!!).toFloat()/args.inputData.NW.toFloat()
-                CEL2 = CEL1.roundToInt()
+                CEL2 = CEL1.toInt()
             }
             return
         }
@@ -144,7 +160,7 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
             AW = args.dopnScope.M*ZSUM* cos(ALFT!!) /(2* cos(BET) * cos(
                 ALFTW!!
             ))
-            AWChooseReturn(args, zuc1HScope)
+            AWChooseReturnHelp(args, zuc1HScope)
             if (BETFS && (X1FS || X2FS)) {
                 //Уход в расчёт U
                 uCalculate(args, zuc1HScope)
@@ -245,6 +261,7 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
             if (BET < args.inputData.BETMI){
                 BET = args.inputData.BETMI
             }//Этого нет в фортране, но это условие здесь определённо нужно, чтобы не получать углы меньше минимальных
+            //BETlimitationHighHelp(args, zuc1HScope)//Для ограничения по максимально возможному углу
             ALFT = atan(tan(args.inputData.ALF) / cos(BET))
             if (XSUM == 0f)
                 ALFTW = ALFT
@@ -282,9 +299,12 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
             if (Z1!! <= 10) {
                 Z1 = 10
                 if (!(args.inputData.TIPRE == 4 || args.IST == 0))
-                    ZSUM = (Z1!!*(args.u + args.SIGN) + 1f).toInt()//1f для правильного округления
+                    ZSUM = (Z1!!*(args.u + args.SIGN)).roundToInt()
             }
             if (!(args.inputData.NW == 1 || args.IST == 1)) {
+                if (DSGH == 0f) {
+                    Z2R = ZSUM - args.SIGN*Z1!!//Этой строчки нет, но без неё никак не задать Z2R
+                }
                 //Идём в числа зубьев многопоточных редукторов
                 Z1tipre4(args, zuc1HScope)
             }
@@ -330,6 +350,7 @@ class ZUC1HMethodsClass(val RA40: RA40Table, val MStandart: StandartModulesTable
                 if (BET < args.inputData.BETMI){
                     BET = args.inputData.BETMI
                 }//Этого нет в фортране, но это условие здесь определённо нужно, чтобы не получать углы меньше минимальных
+                //BETlimitationHighHelp(args, zuc1HScope)//Для ограничения по максимально возможному углу
             }
             ALFT = atan(tan(args.inputData.ALF) / cos(BET))
             INVAT = tan(ALFT!!) - ALFT!!
