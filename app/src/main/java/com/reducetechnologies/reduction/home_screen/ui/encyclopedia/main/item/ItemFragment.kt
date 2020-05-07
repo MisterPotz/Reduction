@@ -48,7 +48,7 @@ class ItemFragment : Fragment() {
 //            (it.typeSpecificData as MathTextSpec).text
 //            (it.typeSpecificData as MathTextSpec).text = addBackslashes((it.typeSpecificData as MathTextSpec).text)
 //        }
-        PScreenSimpleeInflater.inflatPScreen(pscreen, container, activity!!.windowManager, layoutInflater)
+        PScreenSimpleeInflater.inflatPScreen(pscreen, container, activity!!.windowManager, layoutInflater, false)
     }
 
     private fun addBackslashes(string : String): String {

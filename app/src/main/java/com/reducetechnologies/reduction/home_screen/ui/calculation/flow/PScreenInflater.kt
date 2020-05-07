@@ -36,7 +36,7 @@ class PScreenInflater(
         recycler.layoutManager = LinearLayoutManager(container.context)
         recycler.adapter = adapter!!*/
         currentPScreen = pScreen
-        PScreenSimpleeInflater.inflatPScreen(currentPScreen!!, container, windowManager, inflater)
+        PScreenSimpleeInflater.inflatPScreen(currentPScreen!!, container, windowManager, inflater, isInputable)
 
     }
 
