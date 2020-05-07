@@ -1,4 +1,4 @@
-package com.reducetechnologies.reduction.android.util.common_item
+package com.reducetechnologies.reduction.android.util.common_item_category_adapter
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData

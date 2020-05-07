@@ -1,16 +1,11 @@
-package com.reducetechnologies.reduction.android.util.common_item
+package com.reducetechnologies.reduction.android.util.common_item_category_adapter
 
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.core.view.marginEnd
-import androidx.core.view.marginLeft
 import androidx.core.view.marginStart
-import androidx.core.view.minusAssign
 
 import com.reducetechnologies.reduction.android.util.ScatteredHolderBindDelegate
 import com.reduction_technologies.database.databases_utils.CommonItem
-import java.lang.Double.max
 import java.lang.IllegalStateException
 import kotlin.math.max
 
