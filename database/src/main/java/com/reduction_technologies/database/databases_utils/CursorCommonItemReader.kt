@@ -21,7 +21,7 @@ object CursorCommonItemReader : ItemReader<CommonItem> {
         val tag = cursor.getStringK(TAG)
         val additional =
             cursor.getStringK(ADDITIONAL).let { if (it?.isEmpty() != false) null else it }
-        val mathText = cursor.getStringK(MATH_TITLE)?.let { prepareMathText(it) }
+        val mathText = cursor.getStringK(MATH_TITLE)
         val textKey = cursor.getStringK(TEXT_KEY)
 
         return CommonItem(

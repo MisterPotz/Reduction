@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.judemanutd.katexview.KatexView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+<FrameLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/mathView"
-    android:layout_margin="@dimen/material_small_margin">
-
-</com.judemanutd.katexview.KatexView>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:auto="http://schemas.android.com/tools">
+    <io.github.kexanie.library.MathView
+        android:id="@+id/mathView"
+        android:layout_margin="@dimen/material_small_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        auto:engine="KaTeX"
+        android:scrollbars="none"
+        android:scrollbarAlwaysDrawVerticalTrack="false"
+        android:nestedScrollingEnabled="false"
+        >
+    </io.github.kexanie.library.MathView>
+</FrameLayout>

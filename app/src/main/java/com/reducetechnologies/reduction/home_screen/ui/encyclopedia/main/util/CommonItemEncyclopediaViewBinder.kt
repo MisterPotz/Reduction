@@ -8,25 +8,28 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.setMargins
 import com.google.android.material.card.MaterialCardView
-import com.judemanutd.katexview.KatexView
 import com.reducetechnologies.reduction.R
 import com.reduction_technologies.database.databases_utils.CommonItem
+import io.github.kexanie.library.MathView
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import timber.log.Timber
 import java.io.IOException
 
-
-class CommonItemEncyclopediaViewBinder(val itemView : View) :
-    ViewBinder<CommonItem> {
+class CommonItemEncyclopediaViewBinder(val itemView : View) : ViewBinder<CommonItem> {
     val group : MaterialCardView = itemView.findViewById(R.id.itemCard)
     val text : TextView = itemView.findViewById(R.id.itemName)
     // used to obtain real size of text
     val probe: TextView = itemView.findViewById(R.id.probe)
     val textHeight = probe.height
-    val mathText : KatexView = itemView.findViewById(R.id.itemNameMath)
+    val mathText : MathView = itemView.findViewById(R.id.itemNameMath)
     var currentItem : CommonItem? = null
     val displayMetrics = text.context.resources.displayMetrics
+
+    init {
+        mathText.isVerticalScrollBarEnabled = false
+        mathText.isHorizontalScrollBarEnabled = false
+    }
 
     override fun bind(item: CommonItem) {
         currentItem = item
@@ -55,7 +58,7 @@ class CommonItemEncyclopediaViewBinder(val itemView : View) :
 
     fun scaleMathField(symbols: Int) : Int {
         // uses empyrical-based scale - can't think of more smart thing
-        return (160 * symbols.toFloat() / 44).toInt() + 30
+        return (350 * symbols.toFloat() / 44).toInt()
     }
 
     private fun obtainAttributeSetForFrame() : AttributeSet {

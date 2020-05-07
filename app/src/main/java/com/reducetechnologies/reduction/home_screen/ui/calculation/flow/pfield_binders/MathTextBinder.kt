@@ -3,25 +3,26 @@ package com.reducetechnologies.reduction.home_screen.ui.calculation.flow.pfield_
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.judemanutd.katexview.KatexView
 import com.reducetechnologies.command_infrastructure.MathTextSpec
 import com.reducetechnologies.command_infrastructure.PTypeSpecific
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PFieldBinder
-import com.reduction_technologies.database.databases_utils.prepareMathText
+import io.github.kexanie.library.MathView
 
 class MathTextBinder : PFieldBinder {
-    private lateinit var mathView : KatexView
+    private lateinit var mathView : MathView
     private var mathSpec : MathTextSpec? = null
 
     override fun bind(spec: PTypeSpecific) {
         mathSpec = spec as MathTextSpec
-        val text = prepareMathText(spec.text)
+        val text = spec.text
         mathView.setText(text)
     }
 
     override fun init(view: View) {
         mathView = view.findViewById(R.id.mathView)
+        mathView.isVerticalScrollBarEnabled = false
+        mathView.isHorizontalScrollBarEnabled = false
     }
 
     companion object : CompanionInflater {

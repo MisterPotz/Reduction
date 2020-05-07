@@ -147,5 +147,5 @@ dependencies {
     implementation libraries.glide
     kapt libraries.glideProcessor
 
-    implementation libraries.katexView
+    implementation libraries.mathView
 }
