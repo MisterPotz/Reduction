@@ -62,14 +62,21 @@ class EncyclopediaFragment : Fragment() {
             CategoriesSimpleAdapter<CommonItem, CategoryCommonItem>(
                 null,
                 CommonItemEncyclopediaViewInflater,
-                CommonItemEncyclopediaViewBinder
-            ) { commonItem ->
-                val action
-                        = EncyclopediaFragmentDirections.actionEncyclopediaFragmentToItemFragment(commonItem.about!!)
-                findNavController().navigate(action)
+                CommonItemViewBinderFactory,
+                { commonItem ->
+                    val action =
+                        EncyclopediaFragmentDirections.actionEncyclopediaFragmentToItemFragment(
+                            commonItem.about!!
+                        )
+                    findNavController().navigate(action)
+                }) {
+                if (it.mathTitle != null) {
+                    1
+                } else 0
             }
         recyclerView.adapter = categoryAdapter!!
         recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        recyclerView.setHasFixedSize(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

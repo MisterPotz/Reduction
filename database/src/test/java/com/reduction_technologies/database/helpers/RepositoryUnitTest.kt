@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.robolectric.RobolectricTestRunner
 import com.reduction_technologies.database.di.*
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
@@ -22,6 +23,7 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest= Config.NONE)
+@Ignore
 class RepositoryUnitTest {
     lateinit var databaseComponent: DatabaseComponent
 

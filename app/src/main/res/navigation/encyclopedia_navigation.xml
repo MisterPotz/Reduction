@@ -14,10 +14,15 @@
         <action
             android:id="@+id/action_encyclopediaFragment_to_itemFragment"
             app:destination="@id/itemFragment"
+            app:enterAnim="@anim/slide_left"
+            app:popEnterAnim="@anim/slide_right"
+            app:popExitAnim="@anim/slide_right"
             app:popUpTo="@+id/navigation_encyclopedia" />
         <action
             android:id="@+id/action_navigation_encyclopedia_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_left"
+            app:popExitAnim="@anim/slide_right" />
     </fragment>
 
 
@@ -28,7 +33,9 @@
         tools:layout="@layout/settings_full">
         <action
             android:id="@+id/action_settingsFragment_to_aboutFragment"
-            app:destination="@id/aboutFragment" />
+            app:destination="@id/aboutFragment"
+            app:enterAnim="@anim/slide_left"
+            app:popExitAnim="@anim/slide_right" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"

@@ -2,6 +2,10 @@ package com.reduction_technologies.database.databases_utils
 
 import android.content.ContentValues
 
+interface HasId {
+    fun getId() : Int
+}
+
 /**
  * Most common item that is contained in a row of tables: EncyclopediaItems and Favorites
  */
@@ -14,7 +18,7 @@ class CommonItem(
     var additional: String? = null,
     var textKey : String? = null, // for some items it may be more convenient to store with unique text key
     var mathTitle : String? = null // some items have math formulas in their titles - this field is to address that problem
-) {
+) : HasId {
 
     fun getContentValues(): ContentValues {
         return ContentValues().apply {
@@ -72,5 +76,9 @@ class CommonItem(
                     "$TEXT_KEY TEXT UNIQUE," +
                     "$MATH_TITLE TEXT"
         }
+    }
+
+    override fun getId(): Int {
+        return id!!
     }
 }

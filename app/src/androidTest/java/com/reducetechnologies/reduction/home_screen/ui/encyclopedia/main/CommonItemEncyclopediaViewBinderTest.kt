@@ -22,7 +22,7 @@ class CommonItemEncyclopediaViewBinderTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-        val parser = appContext.resources.getLayout(R.layout.closed_card_item)
+        val parser = appContext.resources.getLayout(R.layout.closed_card_item_text)
         var state = 0
         var attributes: AttributeSet? = null
         do {

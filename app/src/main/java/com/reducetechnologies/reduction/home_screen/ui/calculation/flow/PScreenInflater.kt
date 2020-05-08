@@ -1,6 +1,7 @@
 package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 
 import android.content.Context
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -18,7 +19,8 @@ import com.reducetechnologies.reduction.android.util.PScreenSimpleeInflater
 class PScreenInflater(
     val context: Context,
     val container: ViewGroup,
-    val windowManager: WindowManager
+    val windowManager: WindowManager,
+    val displayMetrics: DisplayMetrics
     // to use livedata
 
 ) {
@@ -36,7 +38,7 @@ class PScreenInflater(
         recycler.layoutManager = LinearLayoutManager(container.context)
         recycler.adapter = adapter!!*/
         currentPScreen = pScreen
-        PScreenSimpleeInflater.inflatPScreen(currentPScreen!!, container, windowManager, inflater, isInputable)
+        PScreenSimpleeInflater.inflatPScreen(currentPScreen!!, container, displayMetrics, windowManager, inflater, isInputable)
 
     }
 

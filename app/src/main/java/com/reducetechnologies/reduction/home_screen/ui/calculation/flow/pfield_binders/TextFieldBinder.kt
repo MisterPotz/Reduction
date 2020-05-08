@@ -10,6 +10,7 @@ import com.reducetechnologies.command_infrastructure.TextSpec
 import com.reducetechnologies.command_infrastructure.TextType
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PFieldBinder
+import timber.log.Timber
 
 class TextFieldBinder : PFieldBinder {
     private var text: TextView? = null
@@ -25,6 +26,7 @@ class TextFieldBinder : PFieldBinder {
             TextType.BODY -> R.style.Body2
             TextType.HEADLINE -> R.style.Headline6
         }
+        Timber.i("Text size of text: ${text!!.textSize}")
         TextViewCompat.setTextAppearance(text!!, id)
     }
 

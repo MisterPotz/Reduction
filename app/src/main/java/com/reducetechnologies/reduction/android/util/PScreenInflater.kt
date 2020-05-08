@@ -1,5 +1,6 @@
 package com.reducetechnologies.reduction.android.util
 
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -14,6 +15,7 @@ object PScreenSimpleeInflater {
     fun inflatPScreen(
         pScreen: PScreen,
         container: ViewGroup,
+        displayMetrics: DisplayMetrics,
         windowManager: WindowManager,
         inflater: LayoutInflater,
         inputable: Boolean
@@ -23,8 +25,10 @@ object PScreenSimpleeInflater {
         val recycler = view.findViewById<RecyclerView>(R.id.fieldsList)
         val title = view.findViewById<TextView>(R.id.pScreenTitle)
         title.text = pScreen.title
-        val adapter = PFieldAdapter(container.context, pScreen, windowManager, inputable)
+        val adapter =
+            PFieldAdapter(container.context, pScreen, displayMetrics, windowManager, inputable)
         recycler.layoutManager = LinearLayoutManager(container.context)
         recycler.adapter = adapter
+        recycler.setHasFixedSize(true)
     }
 }

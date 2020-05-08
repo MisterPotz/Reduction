@@ -11,9 +11,12 @@ import androidx.core.util.putAll
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.reduction_technologies.database.databases_utils.HasId
+import com.reduction_technologies.database.utils.Positionable
 import timber.log.Timber
 
 typealias ItemSelectedCallback<R> = (R) -> Unit
+typealias ItemSorter<R> = (R) -> Int
 
 interface Category<R> {
     fun categoryId() : Int
@@ -21,17 +24,20 @@ interface Category<R> {
     fun getItems(): List<R>
 }
 
+
+
 /**
  * [list] - all items, one item - one category
  * [viewInflaterFactory] - creates inflater for each item per category
  * [viewBinderFactory] - creates binders for each item
  * [onClickListener] - callback for clicking views
  */
-class CategoriesSimpleAdapter<R, T: Category<R>>(
+class CategoriesSimpleAdapter<R : HasId, T: Category<R>>(
     private var list: List<T>? = null,
     val viewInflaterFactory: ViewInflater.Factory,
     val viewBinderFactory: ViewBinder.Factory<R>,
-    val onClickListener : ItemSelectedCallback<R>
+    val onClickListener : ItemSelectedCallback<R>,
+    val itemSorter: ItemSorter<R>
 ) : RecyclerView.Adapter<CategoriesSimpleAdapter<R, T>.CategorySimpleHolder>() {
     private val savedPositions: SparseArray<Parcelable?> = SparseArray()
 
@@ -146,6 +152,7 @@ class CategoriesSimpleAdapter<R, T: Category<R>>(
                 recyclerView.adapter =
                     OneCategoryAdapter(
                         list,
+                        itemSorter,
                         viewInflaterFactory.createInflater(recyclerView.context),
                         viewBinderFactory, {
                             savePosition(this)
@@ -159,6 +166,7 @@ class CategoriesSimpleAdapter<R, T: Category<R>>(
             val restoredState = savedPositions[this@CategoriesSimpleAdapter.list!![position].categoryId()]
             if (recyclerView.layoutManager == null) {
                 recyclerView.layoutManager = layoutManager
+                recyclerView.setHasFixedSize(true)
             }
             restoredState?.let {
                 recyclerView.layoutManager!!.run {
@@ -168,14 +176,20 @@ class CategoriesSimpleAdapter<R, T: Category<R>>(
         }
     }
 
-    class OneCategoryAdapter<R>(
+    class OneCategoryAdapter<R : HasId>(
         private var list: List<R>? = null,
+        val itemSorter: ItemSorter<R>,
         val viewInflater: ViewInflater,
         val viewBinderFactory: ViewBinder.Factory<R>,
         val callbackOnSave: () -> Unit,
         val onClickListener: ItemSelectedCallback<R>
         ) :
         RecyclerView.Adapter<OneCategoryAdapter<R>.OneCategoryHolder>() {
+
+        init {
+            setHasStableIds(true)
+        }
+
         // TODO а как здесь реализовать изменения списка? как отреагирует внутренний ресайклер, когда изменится верхний?
         inner class OneCategoryHolder(itemView: View, val viewBinder: ViewBinder<R>) :
             RecyclerView.ViewHolder(itemView) {
@@ -206,9 +220,17 @@ class CategoriesSimpleAdapter<R, T: Category<R>>(
             return list?.size ?: 0
         }
 
+        override fun getItemViewType(position: Int): Int {
+            return itemSorter(list!![position])
+        }
+
+        override fun getItemId(position: Int): Long {
+            return list!![position].getId().toLong()
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OneCategoryHolder {
-            val view = viewInflater.inflate(parent)
-            val binder = viewBinderFactory.createViewBinder(view)
+            val view = viewInflater.inflate(parent, viewType)
+            val binder = viewBinderFactory.createViewBinder(view, viewType)
             return OneCategoryHolder(view, binder)
         }
 

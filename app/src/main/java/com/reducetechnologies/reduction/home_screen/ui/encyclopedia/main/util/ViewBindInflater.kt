@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 
 interface ViewInflater {
-    fun inflate(parent: ViewGroup): View
+    fun inflate(parent: ViewGroup, type: Int): View
     interface Factory {
         fun createInflater(context: Context) : ViewInflater
     }
@@ -15,6 +15,6 @@ interface ViewBinder<R> {
     fun bind(item: R)
     fun current() : R
     interface Factory<R> {
-        fun createViewBinder(view:View) : ViewBinder<R>
+        fun createViewBinder(view:View, type: Int) : ViewBinder<R>
     }
 }

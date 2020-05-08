@@ -115,8 +115,7 @@ internal class CalculationSdkImplTest {
         val wpScreen = calculationSdkImpl.init()
         (wpScreen.pScreen.fields[0].typeSpecificData as InputTextSpec).additional.answer = "0.4"
 
-        // check that currently stack is empty because waits for screen to be returned
-        assertTrue(!calculationSdkImpl.hasNextPScreen())
+        assertTrue(calculationSdkImpl.hasNextPScreen())
         calculationSdkImpl.validateCurrent(wpScreen.pScreen)
 
         assertTrue(calculationSdkImpl.hasNextPScreen())

@@ -1,6 +1,7 @@
 package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 
 import android.content.Context
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,11 +43,13 @@ class PFieldHolder(
 class PFieldAdapter(
     val context: Context,
     val pScreen: PScreen,
+    val displayMetrics: DisplayMetrics,
     val windowManager: WindowManager,
     val inputable: Boolean) :
     RecyclerView.Adapter<PFieldHolder>() {
     private var inflater: LayoutInflater? = null
     private var recyclerView: RecyclerView? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PFieldHolder {
         if (inflater == null) {
             inflater = LayoutInflater.from(parent.context)
@@ -84,7 +87,7 @@ class PFieldAdapter(
             PFieldType.PICTURE -> PictureBinder(context, windowManager).also { it.setCallback(this::callback) }
             PFieldType.INPUT_PICTURE -> InputPictureBinder(context, windowManager, inputable)
             PFieldType.INPUT_LIST -> InputListBinder(inputable)
-            PFieldType.MATH_TEXT -> MathTextBinder()
+            PFieldType.MATH_TEXT -> MathTextBinder(14, displayMetrics)
         }
     }
 
