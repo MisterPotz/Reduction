@@ -5,25 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.reduction.R
+import timber.log.Timber
+
+typealias DestinationSelectedCallback = (destinationId: Int) -> Unit
 
 class SettingsItemsAdapter(
+    private val list: List<ItemToDestination>,
     private val context: Context,
-    private val inflater: LayoutInflater,
-    private val navController: NavController
+    private val onItemSelected: DestinationSelectedCallback
 ) :
     RecyclerView.Adapter<SettingsItemsAdapter.SettingsItemHolder>() {
-    val items: List<String> =
-        ItemToDestinationProvider.items.map { context.resources.getString(it.title) }
 
+    val inflater = LayoutInflater.from(context)
     override fun getItemCount(): Int {
-        return items.size
+        Timber.i("Items amount ${list.size}")
+        return list.size
     }
 
     override fun onBindViewHolder(holder: SettingsItemHolder, position: Int) {
-        holder.text.text = items[position]
+        holder.text.text = context.getString(list[position].title)
         setupCallback(holder.itemView, position)
     }
 
@@ -39,7 +41,7 @@ class SettingsItemsAdapter(
     private fun setupCallback(view : View, position: Int) {
         view.setOnClickListener {
             ItemToDestinationProvider.items[position].actionId.let {
-                navController.navigate(it)
+                onItemSelected(it)
             }
         }
     }

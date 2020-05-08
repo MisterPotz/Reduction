@@ -22,7 +22,9 @@ class SettingsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        settingsItems.adapter = SettingsItemsAdapter(context!!, layoutInflater, findNavController())
+        settingsItems.adapter = SettingsItemsAdapter(ItemToDestinationProvider.items, context!!) {
+            findNavController().navigate(it)
+        }
         settingsItems.layoutManager = LinearLayoutManager(context!!)
         super.onViewCreated(view, savedInstanceState)
     }

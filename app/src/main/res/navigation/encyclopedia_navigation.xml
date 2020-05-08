@@ -15,7 +15,6 @@
             android:id="@+id/action_encyclopediaFragment_to_itemFragment"
             app:destination="@id/itemFragment"
             app:enterAnim="@anim/slide_left"
-            app:popEnterAnim="@anim/slide_right"
             app:popExitAnim="@anim/slide_right"
             app:popUpTo="@+id/navigation_encyclopedia" />
         <action
@@ -36,6 +35,11 @@
             app:destination="@id/aboutFragment"
             app:enterAnim="@anim/slide_left"
             app:popExitAnim="@anim/slide_right" />
+        <action
+            android:id="@+id/action_settingsFragment_to_testingAnimationFragment"
+            app:destination="@id/testingAnimationFragment"
+            app:enterAnim="@anim/slide_left"
+            app:popExitAnim="@anim/slide_right" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"
@@ -52,4 +56,9 @@
             android:name="itemPScreen"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/testingAnimationFragment"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.settings.TestingAnimationFragment"
+        android:label="fragment_testing_animation"
+        tools:layout="@layout/fragment_testing_animation" />
 </navigation>

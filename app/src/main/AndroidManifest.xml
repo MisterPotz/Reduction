@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.reducetechnologies.reduction">
 
+    <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".android.util.App">
+
         <activity android:name=".home_screen.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,5 +20,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

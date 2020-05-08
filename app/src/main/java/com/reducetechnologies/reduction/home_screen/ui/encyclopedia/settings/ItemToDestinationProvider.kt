@@ -15,6 +15,7 @@ data class ItemToDestination(
  */
 object ItemToDestinationProvider {
     val items : List<ItemToDestination> = listOf(
-        ItemToDestination(R.string.settings_about, R.id.action_settingsFragment_to_aboutFragment)
+        ItemToDestination(R.string.settings_about, R.id.action_settingsFragment_to_aboutFragment),
+        ItemToDestination(R.string.testing_animation, R.id.action_settingsFragment_to_testingAnimationFragment)
     )
 }

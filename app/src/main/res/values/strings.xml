@@ -45,4 +45,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tables">Таблицы</string>
     <string name="variables">Величины</string>
+    <string name="testing_animation">Тестирование анимации</string>
+    <string name="string_testing_animation">Тестирование анимации</string>
 </resources>
