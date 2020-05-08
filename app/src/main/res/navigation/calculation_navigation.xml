@@ -8,5 +8,15 @@
         android:id="@+id/calculationFragment"
         android:name="com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFragment"
         android:label="@string/title_calculation"
-        tool:layout="@layout/fragment_calculation"/>
+        tool:layout="@layout/fragment_calculation">
+        <action
+            android:id="@+id/action_calculationFragment_to_flowFragment"
+            app:destination="@id/flowFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/flowFragment"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.calculation.flow.FlowFragment"
+        android:label="@string/calculation"
+        tool:layout="@layout/split_control_card_layout"
+        />
 </navigation>

@@ -27,10 +27,12 @@ interface CalculationSdk {
     fun hasNextPScreen() : Boolean
 
     /**
-     * Defines if next screen is last (that mmay be needed for some extra logics in visualization)
+     * List of all previously validated and remembered pscreens
      */
-    fun isNextLast() : Boolean
+    fun getAllValidated() : List<WrappedPScreen>
 
     fun finalResults() : CalculationResults
+
+    fun currentPending() : WrappedPScreen?
 }
 

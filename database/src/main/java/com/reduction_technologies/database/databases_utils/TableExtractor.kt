@@ -13,11 +13,10 @@ import com.reducetechnologies.tables_utils.GOSTableContract.TIP_Tipre
 import com.reducetechnologies.tables_utils.TableExtractor
 import com.reducetechnologies.tables_utils.TableHolder
 import com.reducetechnologies.tables_utils.table_contracts.*
-import com.reduction_technologies.database.tables_utils.table_contracts.FatigueTable
-import com.reduction_technologies.database.tables_utils.table_contracts.G0Table
-import com.reduction_technologies.database.tables_utils.table_contracts.source_datatable.SourceDataTable
+import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
+import com.reducetechnologies.tables_utils.table_contracts.G0Table
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 
-// TODO сделать инъекция подготовленного для всего gson
 fun List<CommonItem>.extractTableHolder(): TableHolder {
     val fatigue = findByTitle(FATIGUE_CALCULATION_23, FatigueTable.prepareGson(), FatigueTable)
     val g_0 = findByTitle(G_0, G0Table.prepareGson(), G0Table)
@@ -47,7 +46,8 @@ private inline fun <T> List<CommonItem>.findByTitle(
     gson: Gson,
     tableExtractor: TableExtractor<T>
 ): T {
-    return find { it.title == string }!!.let {
+    // using unique textkey
+    return find { it.textKey == string }!!.let {
         tableExtractor.extractFromStringWithGson(
             it.additional!!,
             gson

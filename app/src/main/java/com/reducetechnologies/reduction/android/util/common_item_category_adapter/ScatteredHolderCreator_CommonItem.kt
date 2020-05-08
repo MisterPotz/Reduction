@@ -67,7 +67,7 @@ object ScatteredHolderCreator_CommonItem : ScatteredHolderCreator<CommonItem> {
     ): Specific_CommonItem {
         val items = (ids.indices).map {
             val frameParent = view.findViewById<FrameLayout>(ids[it])
-            inflater.inflate(R.layout.closed_card_item, frameParent, true)
+            inflater.inflate(R.layout.closed_card_item_text, frameParent, true)
             val card = frameParent.findViewById<CardView>(R.id.itemCard)
             val view = card.findViewById<TextView>(R.id.itemName)
 

@@ -45,7 +45,7 @@ fun BottomNavigationView.setupWithNavController(
     // Result. Mutable live data with the selected controlled
     val selectedNavController = MutableLiveData<NavController>()
 
-    var firstFragmentGraphId = 0
+    var firstFragmentGraphId = 1
 
     // First create a NavHostFragment for each NavGraph ID
     navGraphIds.forEachIndexed { index, navGraphId ->
@@ -62,7 +62,7 @@ fun BottomNavigationView.setupWithNavController(
         // Obtain its id
         val graphId = navHostFragment.navController.graph.id
 
-        if (index == 0) {
+        if (index == 1) {
             firstFragmentGraphId = graphId
         }
 
@@ -73,7 +73,7 @@ fun BottomNavigationView.setupWithNavController(
         if (this.selectedItemId == graphId) {
             // Update livedata with the selected graph
             selectedNavController.value = navHostFragment.navController
-            attachNavHostFragment(fragmentManager, navHostFragment, index == 0)
+            attachNavHostFragment(fragmentManager, navHostFragment, index == 1)
         } else {
             detachNavHostFragment(fragmentManager, navHostFragment)
         }
@@ -104,6 +104,7 @@ fun BottomNavigationView.setupWithNavController(
                     // to it, creating the fixed started destination.
                     fragmentManager.beginTransaction()
                         // to set animations, use setCustomAnimations
+                        .setCustomAnimations(R.anim.slide_up, R.anim.no_anim, R.anim.no_anim, R.anim.no_anim)
                         .attach(selectedFragment)
                         .setPrimaryNavigationFragment(selectedFragment)
                         .apply {
@@ -147,7 +148,7 @@ fun BottomNavigationView.setupWithNavController(
                 controller.navigate(controller.graph.id)
             }
         }
-    }
+}
     return selectedNavController
 }
 

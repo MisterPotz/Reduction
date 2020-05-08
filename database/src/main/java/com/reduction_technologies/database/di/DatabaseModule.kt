@@ -1,6 +1,7 @@
 package com.reduction_technologies.database.di
 
 import android.content.Context
+import com.reduction_technologies.database.helpers.AppLocale
 import com.reduction_technologies.database.helpers.ConstantDatabaseHelper
 import com.reduction_technologies.database.helpers.Repository
 import com.reduction_technologies.database.helpers.UserDatabaseHelper
@@ -9,7 +10,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class DatabaseModule(val context: Context) {
+class DatabaseModule(val context: Context, val locale: AppLocale) {
 
     private fun constantDatabaseHelper(): ConstantDatabaseHelper {
         return ConstantDatabaseHelper(context)
@@ -25,7 +26,13 @@ class DatabaseModule(val context: Context) {
     @Provides
     @ApplicationScope
     fun repository(): Repository {
-        return Repository(context(), constantDatabaseHelper(), userDatabaseHelper())
+        return Repository(context(), constantDatabaseHelper(), userDatabaseHelper(), locale)
+    }
+
+    @Provides
+    @ApplicationScope
+    fun locale() : AppLocale {
+        return locale
     }
 }
 

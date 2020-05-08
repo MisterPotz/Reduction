@@ -23,7 +23,7 @@ object SingletoneContextCounter {
  * Нужно что-то, чтобы хранило фрагменты и обеспечивало с ними безопасную работу.
  * [CoroutineScope] необходима, чтобы иметь высокоуровневые корутины на уровне активности
  */
-class MainActivity : AppCompatActivity(), CoroutineScope by MainScope(){
+class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     val debugTree = Timber.DebugTree()
     private var currentNavController: LiveData<NavController>? = null
 
@@ -53,12 +53,12 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope(){
         Timber.uproot(debug)
     }
 
-
     /**
      * Called on first creation and when restoring state.
      */
     private fun setupBottomNavigationBar() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+        bottomNavigationView.selectedItemId = R.id.encyclopedia_global_navigation
 
         // Setup the bottom navigation view with a list of navigation graphs
         val controller = bottomNavigationView.setupWithNavController(
@@ -72,6 +72,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope(){
         controller.observe(this, Observer { navController ->
             setupActionBarWithNavController(navController)
         })
+
+
         currentNavController = controller
     }
 
