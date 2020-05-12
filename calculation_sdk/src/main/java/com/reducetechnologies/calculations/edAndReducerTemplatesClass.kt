@@ -52,30 +52,43 @@ class AllReducersOptionsClass(val HRCTable: HRCTable,
         var options: MutableList<ReducerOptionTemplate> = mutableListOf()
         var URED: Float
         //Вход в циклы
-        for (ned in NEDOptions) {
-            var edScope = EDScope()
-            //Функция подбора электродвигателя из стандартного ряда
-            if (inputData.isED) {
-                EDMethodsClass(edDataTable).EDCalculate(
-                    EDMethodsClass.Arguments(
-                        PEDCalculated = pedCalculated,
-                        NEDFixed = ned
-                    ),
-                    edScope
-                )
+        //Если нужно рассчитывать электродвигатель, то входим в цикл с NEDOptions, иначе не входим
+        if (inputData.isED) {
+            for (ned in NEDOptions) {
+                val edScope = EDScope()
+                //Функция подбора электродвигателя из стандартного ряда
+                if (inputData.isED) {
+                    EDMethodsClass(edDataTable).EDCalculate(
+                        EDMethodsClass.Arguments(
+                            PEDCalculated = pedCalculated,
+                            NEDFixed = ned
+                        ),
+                        edScope
+                    )
+                }
+                URED = if (edScope.NED != null) {
+                    edScope.NED!! / (inputData.NT * inputData.U0)
+                } else inputData.UREMA //если не подбираем редуктор или его невозможно подобрать
+                if (URED > inputData.UREMA)//UREMA - должно вводиться пользователем, максимальное перед отношение
+                    continue
+                else {
+                    hrcEnum(inputData = inputData,
+                        pedCalculated = pedCalculated,
+                        URED = URED,
+                        options = options,
+                        edScope = edScope)
+                }
             }
-            URED = if (edScope.NED != null) {
-                edScope.NED!! / (inputData.NT * inputData.U0)
-            } else inputData.UREMA //если не подбираем редуктор или его невозможно подобрать
-            if (URED > inputData.UREMA)//UREMA - должно вводиться пользователем, максимальное перед отношение
-                continue
-            else {
-                hrcEnum(inputData = inputData,
-                    pedCalculated = pedCalculated,
-                    URED = URED,
-                    options = options,
-                    edScope = edScope)
-            }
+        }
+        //Это если нет электродвигателя
+        else {
+            val edScope: EDScope = EDScope()
+            URED = inputData.UREMA
+            hrcEnum(inputData = inputData,
+                pedCalculated = pedCalculated,
+                URED = URED,
+                options = options,
+                edScope = edScope)
         }
         return options
     }

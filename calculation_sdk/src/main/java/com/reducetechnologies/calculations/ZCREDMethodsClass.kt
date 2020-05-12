@@ -10,7 +10,9 @@ data class CreationData(
     val edScope: EDScope,
     val option: ReducerOptionTemplate,
     val zcredScope: ZCREDScope,
-    val gearWheelStepsArray: Array<OneGearWheelStep> = arrayOf()
+    val gearWheelStepsArray: Array<OneGearWheelStep> = arrayOf(),
+    var sorting: Float = 0f,
+    var sortingMass: Float = 0f
 )
 
 //Для одной ступени
@@ -112,19 +114,18 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                 else {
                     zcredScope.TVL3 = input.TT*input.OMEG/(input.NW)
                 }
-                val NV3: Float
                 if (EDScope!!.NED != null){
-                    NV3 = EDScope.NED!! / (u * input.U0)
+                    zcredScope.NV3 = EDScope.NED!! / (u * input.U0)
                 }
                 else {
-                    NV3 = input.NT
+                    zcredScope.NV3 = input.NT
                 }
                 val firstStep = OneGearWheelStep()//Здесь сохраняем скоупы тихоходной ступени
                 zucMethod.enterZUC(
                     ZUCMethodsClass.Arguments(
                         SIGN = input.SIGN[1],
                         IST = 1,
-                        N2 = NV3,
+                        N2 = zcredScope.NV3!!,
                         T2 = zcredScope.TVL3!! * input.OMEG / input.NW,
                         uStup = uT,
                         inputData = input,
@@ -158,7 +159,7 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                     ZUCMethodsClass.Arguments(
                         SIGN = input.SIGN[0],
                         IST = 0,
-                        N2 = NV3 * uT,
+                        N2 = zcredScope.NV3!! * uT,
                         T2 = zcredScope.TVL2!!,
                         AWTipre4 = firstStep.zuc1hScope.AW,
                         uStup = uB,
@@ -172,6 +173,8 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                         edScope = EDScope
                     )
                 )
+                zcredScope.NV2 = zcredScope.NV3!!*uT
+                zcredScope.NV1 = zcredScope.NV2!!*uB
                 zcredScope.TVL1 =
                     zcredScope.TVL2!! * input.NW / (secondStep.zuc1hScope.UCalculated * sqrt(input.KPD) * input.OMEG)//здесь возможно формула перепутана, NW and OMEG местами
                 val creationData = CreationData(
@@ -202,19 +205,18 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                 else {
                     zcredScope.TVL2 = input.TT*input.OMEG/(input.NW)
                 }
-                val NV2: Float
                 if (EDScope!!.NED != null){
-                    NV2 = EDScope.NED!! / (u * input.U0)
+                    zcredScope.NV2 = EDScope.NED!! / (u * input.U0)
                 }
                 else {
-                    NV2 = input.NT
+                    zcredScope.NV2 = input.NT
                 }
                 val onlyStep = OneGearWheelStep()//Здесь сохраняем скоупы тихоходной ступени
                 zucMethod.enterZUC(
                     ZUCMethodsClass.Arguments(
                         SIGN = input.SIGN[0],
                         IST = 0,
-                        N2 = NV2,
+                        N2 = zcredScope.NV2!!,
                         T2 = zcredScope.TVL2!! * input.OMEG / input.NW,
                         uStup = u,
                         inputData = input,
@@ -227,7 +229,8 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
                         edScope = EDScope
                     )
                 )
-                //zc2redScope.TVL1 = 0f вроде она у нас бесполезна, мы не печатаем внутри ничего
+                zcredScope.NV1 = zcredScope.NV2!!*u
+                //zc2redScope.TVL3 = 0f вроде она у нас бесполезна, мы не печатаем внутри ничего
                 zcredScope.TVL3 = 0f
                 zcredScope.TVL1 =
                     zcredScope.TVL2!! * input.NW / (onlyStep.zuc1hScope.UCalculated * sqrt(input.KPD) * input.OMEG)//здесь возможно формула перепутана, NW and OMEG местами
@@ -246,5 +249,8 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
 data class ZCREDScope(
     var TVL1: Float? = null,
     var TVL2: Float? = null,
-    var TVL3: Float? = null
+    var TVL3: Float? = null,
+    var NV1: Float? = null,
+    var NV2: Float? = null,
+    var NV3: Float? = null
 )
