@@ -36,11 +36,6 @@ internal class CalculationSdkImplTest {
                 )
             )
         )
-
-        override fun isNextLast(): Boolean {
-            return hasNext()
-        }
-
         override fun validate(pScreen: PScreen): WrappedPScreen? {
             var isGood = true
             // логика проверки
@@ -60,7 +55,8 @@ internal class CalculationSdkImplTest {
                 }
             }
             // текущий последней если стек уже пуст
-            return if (isGood) null else WrappedPScreen(pScreen, preparedStack.size == 0)
+            // TODO сделать правильный индекс
+            return if (isGood) null else WrappedPScreen(pScreen, preparedStack.size == 0, 0)
         }
     }
 
@@ -119,8 +115,7 @@ internal class CalculationSdkImplTest {
         val wpScreen = calculationSdkImpl.init()
         (wpScreen.pScreen.fields[0].typeSpecificData as InputTextSpec).additional.answer = "0.4"
 
-        // check that currently stack is empty because waits for screen to be returned
-        assertTrue(!calculationSdkImpl.hasNextPScreen())
+        assertTrue(calculationSdkImpl.hasNextPScreen())
         calculationSdkImpl.validateCurrent(wpScreen.pScreen)
 
         assertTrue(calculationSdkImpl.hasNextPScreen())

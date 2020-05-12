@@ -14,21 +14,25 @@ internal class CalculationSdkImpl(
     private val pScreenDelegate: PScreenSource
 ) : CalculationSdk {
     // queue, the last is extracted last, items appended to last element, the first element is returned first
-    private val queue = WatchingStorage<WrappedPScreen>()
+    private val queue = WatchingStorage<PScreen>()
+
+    // stores only saved wrapped
+    private val savedWrapped = mutableListOf<WrappedPScreen>()
 
     override fun init(): WrappedPScreen {
         checkDelegateHasNext()
         // append initial pscreen to queue
         queue.init(pScreenDelegate.next())
-        return queue.getCurrent()
+        return wrapPScreenCurrent(queue.getCurrent())
     }
 
     override fun validateCurrent(pscreen: PScreen): WrappedPScreen? {
-        if (queue.isCurrent(pscreen, this::comparedWrappedAndUnwrapped)) {
+        if (queue.isCurrent(pscreen)) {
             val isGood = pScreenDelegate.validate(pscreen)
             // using delegates method to understand if pscreen is good
             if (isGood == null) {
-                queue.commitCurrent(pscreen, this::comparedWrappedAndUnwrapped)
+                queue.commitCurrent(pscreen)
+                savedWrapped.add(wrapPScreenCurrent(pscreen))
                 return null
             } else {
                 // use delegate to return pscreen with error, replacing it as current in storage
@@ -47,24 +51,36 @@ internal class CalculationSdkImpl(
         queue.addToBack(next)
         // moving inner cursor to next item
         queue.currentToNext()
-        return queue.getCurrent()
+        return wrapPScreenCurrent(queue.getCurrent())
     }
 
     override fun hasNextPScreen(): Boolean {
-        // если сейчас еще не вернулся активный протоскрин - точно false
+/*        // если сейчас еще не вернулся активный протоскрин - точно false
         if (queue.isWaitingForCurrent()) {
             return false
-        }
+        }*/
         // trying to understand that delegate has next screen
         return pScreenDelegate.hasNext()
     }
 
-    override fun isNextLast(): Boolean {
-        return pScreenDelegate.isNextLast()
+    override fun getAllValidated(): List<WrappedPScreen> {
+        return savedWrapped
     }
 
     override fun finalResults(): CalculationResults {
         return StubResults()
+    }
+
+    override fun currentPending(): WrappedPScreen? {
+        return if (queue.isWaitingForCurrent()) {
+            wrapPScreenCurrent(queue.getCurrentSilently())
+        } else null
+    }
+
+    private fun wrapPScreenCurrent(pscreen: PScreen): WrappedPScreen {
+        // если текущий И последний в сторадже И у источника больше нет - тогда он последний в принципе
+        val currentIsLast = queue.isCurrentLast() && !pScreenDelegate.hasNext()
+        return WrappedPScreen(pscreen, currentIsLast, queue.currentIndex())
     }
 
     private fun checkDelegateHasNext(): Boolean {
@@ -73,13 +89,6 @@ internal class CalculationSdkImpl(
         } else {
             return true
         }
-    }
-
-    private fun comparedWrappedAndUnwrapped(
-        wrappedPScreen: WrappedPScreen,
-        pscreen: PScreen
-    ): Boolean {
-        return wrappedPScreen.pScreen == pscreen
     }
 }
 

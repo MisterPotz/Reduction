@@ -29,8 +29,22 @@
         android:text="@string/control_next"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+    </com.google.android.material.button.MaterialButton>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/controlEnter"
+        style="@style/ButtonOutlined"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/controlNext"
+        app:layout_constraintStart_toEndOf="@+id/controlPrev"
         app:layout_constraintTop_toTopOf="parent">
 
     </com.google.android.material.button.MaterialButton>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

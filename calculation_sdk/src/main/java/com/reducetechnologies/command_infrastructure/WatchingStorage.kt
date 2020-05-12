@@ -28,6 +28,18 @@ class WatchingStorage<T>() {
         }
     }
 
+    fun getNextFreeIndex() : Int {
+        return queue.lastIndex + 1
+    }
+
+    fun currentIndex() : Int {
+        return current
+    }
+
+    fun isCurrentLast() : Boolean {
+        return current == queue.size - 1
+    }
+
     /**
      * Setting current to be pending - it is given out
      */
@@ -108,6 +120,23 @@ class WatchingStorage<T>() {
             if (this) {
                 current += 1
             }
+        }
+    }
+
+    fun getCurrentSilently() : T {
+        return queue[current]
+    }
+
+    /**
+     * Returns all instances that was committed through validation already
+     */
+    fun getAllCommitted() : List<T> {
+        if (queue.isEmpty()) {
+            return listOf()
+        } else {
+            // TODO тест на это
+            val lastIndex = if (currentIsPending) current - 1 else current
+            return queue.subList(0, lastIndex + 1).toList()
         }
     }
 

@@ -1,10 +1,12 @@
 package com.reducetechnologies.command_infrastructure.p_screens
 
 import com.reducetechnologies.command_infrastructure.*
+import com.reduction_technologies.database.tables_utils.OneSidedDomain
+import com.reduction_technologies.database.tables_utils.TwoSidedDomain
 
 internal object InputPScreen {
     private val pScreen : PScreen = PScreen(
-        "Input Screen",
+        "Ввод данных",
         fields = InputPScreenFields.getFields()
     )
 
@@ -18,7 +20,7 @@ internal object InputPScreenFields {
     private val mainText = PField(
         pFieldType = PFieldType.TEXT,
         typeSpecificData = TextSpec(
-            text = "Введите все необходимые данные о подбираемом редукторе: "
+            text = "Введите все необходимые данные о подбираемом редукторе"
         ),
         fieldId = 1
     )
@@ -72,7 +74,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = null,
             additional = AdditionalInputText(
-                hint = "Введите нужный момент на тихоходном валу"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">", 0F),
+                    OneSidedDomain("<", 1000000F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -85,7 +90,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = null,
             additional = AdditionalInputText(
-                hint = "Введите нужный частоту на тихоходном валу"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">", 0F),
+                    OneSidedDomain("<", 1000000F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -98,20 +106,22 @@ internal object InputPScreenFields {
             type = InputTextType.INTEGER,
             default = "10000",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 10000 часов"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 10000F),
+                    OneSidedDomain("<", 1000000F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
         fieldId = 6
     )
     private val NRR = PField(
-        pFieldType = PFieldType.INPUT_TEXT,
-        typeSpecificData = InputTextSpec(
+        pFieldType = PFieldType.INPUT_LIST,
+        typeSpecificData = InputListSpec(
             title = "Номер типового режима нагружения передачи",
-            type = InputTextType.INTEGER,
             default = null,
-            additional = AdditionalInputText(
-                hint = "Введите значение от 1 до 5"
+            additional = AdditionalInputList(
+                options = List(5) { (it + 1).toString()}
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -124,7 +134,10 @@ internal object InputPScreenFields {
             type = InputTextType.INTEGER,
             default = "10000",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 10000 ед."
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 1F),
+                    OneSidedDomain("<", 1000000F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -138,7 +151,11 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = "1.0",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 1 (нет промежуточной передачи)"
+                hint = "1 - нет промежуточной передачи",
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 1F),
+                    OneSidedDomain("<", 1000F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -151,7 +168,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = null,
             additional = AdditionalInputText(
-                hint = "Передаточное отношение, которое Вы хотите получить"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 1.6F),
+                    OneSidedDomain("<", 64F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -160,7 +180,7 @@ internal object InputPScreenFields {
     private val optionalParameters = PField(
         pFieldType = PFieldType.TEXT,
         typeSpecificData = TextSpec(
-            text = "Параметры, которые имеют значение по умолчанию и могут не задаваться вовсе:"
+            text = "Необязательные параметры: ",additional = AdditionalText(TextType.HEADLINE)
         ),
         fieldId = 11
     )
@@ -171,7 +191,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = "20.0",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 20 градусов"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 14.5F),
+                    OneSidedDomain("<=", 45F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -184,7 +207,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = "0.97",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 0.97"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">", 0F),
+                    OneSidedDomain("<", 1F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -197,7 +223,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = "2.0",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 2.0"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 0F),
+                    OneSidedDomain("<", 1000000F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -210,7 +239,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = "1.0",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 1.0"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 0F),
+                    OneSidedDomain("<", 1000000F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -223,7 +255,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = "0.4",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 0.4"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 0F),
+                    OneSidedDomain("<", 1000000F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -236,7 +271,10 @@ internal object InputPScreenFields {
             type = InputTextType.FLOAT,
             default = "0.25",
             additional = AdditionalInputText(
-                hint = "Значение по умолчанию: 0.25"
+                domain = TwoSidedDomain(
+                    OneSidedDomain(">=", 0.25F),
+                    OneSidedDomain("<=", 0.4F)
+                )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),

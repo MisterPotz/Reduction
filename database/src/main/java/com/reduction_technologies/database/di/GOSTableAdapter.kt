@@ -3,8 +3,9 @@ package com.reduction_technologies.database.di
 import com.reducetechnologies.di.GOSTableComponentInterface
 import com.reducetechnologies.tables_utils.table_contracts.*
 import com.reducetechnologies.tables_utils.TableHolder
-import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
+import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
 import com.reducetechnologies.tables_utils.table_contracts.G0Table
+import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
 import javax.inject.Scope
 
 /**

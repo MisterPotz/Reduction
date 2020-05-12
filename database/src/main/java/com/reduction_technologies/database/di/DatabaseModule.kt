@@ -1,6 +1,7 @@
 package com.reduction_technologies.database.di
 
 import android.content.Context
+import com.reduction_technologies.database.helpers.AppLocale
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.reducetechnologies.di.CalculationModule
@@ -53,7 +54,13 @@ class DatabaseModule(val context: Context) {
     @Provides
     @ApplicationScope
     fun repository(): Repository {
-        return Repository(context(), constantDatabaseHelper(), userDatabaseHelper())
+        return Repository(context(), constantDatabaseHelper(), userDatabaseHelper(), locale)
+    }
+
+    @Provides
+    @ApplicationScope
+    fun locale() : AppLocale {
+        return locale
     }
 }
 

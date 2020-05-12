@@ -4,7 +4,7 @@ import com.reducetechnologies.command_infrastructure.*
 
 internal object StandbyPScreen {
     private val pScreen : PScreen = PScreen(
-        "Standby Screen",
+        "Процесс расчета",
         fields = StandbyPScreenFields.getFields()
     )
 

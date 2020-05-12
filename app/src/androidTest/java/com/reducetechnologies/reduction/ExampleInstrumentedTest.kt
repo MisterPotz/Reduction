@@ -20,4 +20,10 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.reducetechnologies.reduction", appContext.packageName)
     }
+
+    @Test
+    fun getAssetsDirectories() {
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+
+    }
 }

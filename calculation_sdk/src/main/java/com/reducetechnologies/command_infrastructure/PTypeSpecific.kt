@@ -1,5 +1,10 @@
 package com.reducetechnologies.command_infrastructure
 
+import com.reduction_technologies.database.tables_utils.DomainDefinable
+import com.reduction_technologies.database.tables_utils.DomainDefinableFloat
+import com.reduction_technologies.database.tables_utils.OneSidedDomain
+import com.reduction_technologies.database.tables_utils.TwoSidedDomain
+
 /**
  * Contains data that depends on [PFieldType]
  */
@@ -12,8 +17,13 @@ enum class InputTextType {
 
 /**
  * [hint] - can contain some additional data (like, this value is measured in kylonewtons, etc.)
+ * [domain] - defines verification logics (validation of user input)
  */
-data class AdditionalInputText(val encyclodpediaId: Int? = null, var answer: String? = null, var error: String? = null, val hint: String? = null)
+data class AdditionalInputText(val encyclodpediaId: Int? = null,
+                               var answer: String? = null,
+                               var error: String? = null,
+                               val hint: String? = null,
+                               val domain : TwoSidedDomain? = null)
 
 data class InputTextSpec(
     val title: String,
@@ -41,7 +51,7 @@ data class InputListSpec(
 ) : PTypeSpecific
 
 // TextField
-enum class TextType {
+enum class TextType{
     BODY, HEADLINE
 }
 
@@ -53,8 +63,8 @@ data class TextSpec(val text: String, val additional: AdditionalText = Additiona
 /**
  * [text] is formatted as per katex documentation
  */
-class AdditionalMathText()
-data class MathTextSpec(val text: String, val mathTextField: AdditionalMathText) : PTypeSpecific
+data class AdditionalMathText(val stub : Int = 0)
+data class MathTextSpec(var text: String, val mathTextField: AdditionalMathText = AdditionalMathText()) : PTypeSpecific
 
 // Picture
 enum class PictureSourceType {
@@ -64,5 +74,6 @@ enum class PictureSourceType {
 interface PictureSource
 data class PictureStringPath(val string: String) : PictureSource
 data class PictureDataTable(val id: Int) : PictureSource
+
 data class PictureSpec(val pictureSourceType: PictureSourceType, val source: PictureSource) :
     PTypeSpecific
