@@ -39,7 +39,7 @@
 //// extension for livedata
 //@ExtendWith(InstantExecutorExtension::class)
 //internal class CalculationSdkHelperTest {
-//    val wPscreen = WrappedPScreen(
+//    val wPscreen = WrappedPScreen(кщищ
 //        PScreen("test", listOf(PField(PFieldType.TEXT, TextSpec("text"), 0))),
 //        true
 //    )

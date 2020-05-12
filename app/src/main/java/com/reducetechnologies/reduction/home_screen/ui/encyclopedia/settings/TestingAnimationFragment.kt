@@ -1,9 +1,10 @@
 package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.settings
 
 import android.graphics.SurfaceTexture
+import android.opengl.GLES20.*
 import android.opengl.GLES30
-import android.opengl.GLES32
 import android.opengl.GLUtils
+import android.opengl.Matrix.*
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,22 +14,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.reducetechnologies.reduction.R
+import com.reducetechnologies.reduction.opengl.ColorShaderProgram
+import com.reducetechnologies.reduction.opengl.Mallet
+import com.reducetechnologies.reduction.opengl.MatrixHelper
+import com.reducetechnologies.reduction.opengl.ShaderHelper.checkCurrent
+import com.reducetechnologies.reduction.opengl.ShaderHelper.checkEglError
 import timber.log.Timber
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.*
 import javax.microedition.khronos.opengles.GL11
 
 class TestingAnimationFragment : Fragment() {
 
     private lateinit var mTextureView: TextureView
-    private lateinit var mVertices: FloatBuffer
-    private val mVerticesData = floatArrayOf(
-        -1.0f, -1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
-    )
+    private val projectionMatrix = FloatArray(16)
+
+    private val modelMatrix = FloatArray(16)
+    private var colorProgram: ColorShaderProgram? = null
+
+    private val testingMallet = Mallet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,54 +46,60 @@ class TestingAnimationFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mVertices = ByteBuffer.allocateDirect(mVerticesData.size * 4)
-            .order(ByteOrder.nativeOrder()).asFloatBuffer()
-        mVertices.put(mVerticesData).position(0)
-
         mTextureView = view.findViewById(R.id.textureView)
         mTextureView.surfaceTextureListener = GLSurfaceTextureListener()
     }
 
-    private inner class RenderThread(private val mSurface: SurfaceTexture) : Thread() {
+    private inner class RenderThread(
+        private val mSurface: SurfaceTexture,
+        val width: Int,
+        val height: Int
+    ) : Thread() {
         private var mEglDisplay: EGLDisplay? = null
         private var mEglSurface: EGLSurface? = null
         private var mEglContext: EGLContext? = null
-        private var mProgram = 0
         private var mEgl: EGL10? = null
         private var mGl: GL11? = null
+
         override fun run() {
             initGL()
-            val attribPosition = GLES30.glGetAttribLocation(
-                mProgram,
-                "position"
+            reinitModel(width, height)
+            colorProgram = ColorShaderProgram(
+                context!!,
+                R.raw.simple_vertex_shader,
+                R.raw.simple_fragment_shader
             )
-            checkGlError()
-            GLES30.glEnableVertexAttribArray(attribPosition)
-            checkGlError()
-            GLES30.glUseProgram(mProgram)
-            checkGlError()
+            checkCurrent(
+                egl = mEgl,
+                eglContext = mEglContext,
+                eglDisplay = mEglDisplay,
+                eglSurface = mEglSurface
+            )
+
+            colorProgram!!.initProgram()
+
+            checkEglError(mEgl!!)
             while (true) {
-                checkCurrent()
-                mVertices.position(0)
-                GLES30.glVertexAttribPointer(
-                    attribPosition, 3,
-                    GLES30.GL_FLOAT, false, 12, mVertices
+                checkCurrent(
+                    egl = mEgl,
+                    eglContext = mEglContext,
+                    eglDisplay = mEglDisplay,
+                    eglSurface = mEglSurface
                 )
-                checkGlError()
-                GLES30.glClearColor(0.0f, 0.0f, 0f, 1f)
-                checkGlError()
 
+//                glUniformMatrix4fv(uMatrixLocation, 1, false, projectionMatrix, 0);
                 // Draw background color
-                GLES32.glClear(GLES32.GL_COLOR_BUFFER_BIT or GLES32.GL_DEPTH_BUFFER_BIT)
+                GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT or GLES30.GL_DEPTH_BUFFER_BIT)
 
-                checkGlError()
-                GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3)
-                Log.d(TAG, "!!")
-                checkGlError()
+                colorProgram!!.useProgram()
+                colorProgram!!.setUniforms(projectionMatrix)
+                testingMallet.bindData(colorProgram!!)
+                testingMallet.draw()
+                checkEglError(mEgl!!)
                 if (!mEgl!!.eglSwapBuffers(mEglDisplay, mEglSurface)) {
                     Log.e(TAG, "cannot swap buffers!")
                 }
-                checkEglError()
+                checkEglError(mEgl!!)
                 try {
                     sleep(3000)
                 } catch (e: InterruptedException) {
@@ -99,121 +108,7 @@ class TestingAnimationFragment : Fragment() {
             }
         }
 
-        private fun checkCurrent() {
-            if (!mEglContext!!.equals(mEgl!!.eglGetCurrentContext())
-                || !mEglSurface!!.equals(
-                    mEgl!!
-                        .eglGetCurrentSurface(EGL10.EGL_DRAW)
-                )
-            ) {
-                checkEglError()
-                if (!mEgl!!.eglMakeCurrent(
-                        mEglDisplay, mEglSurface,
-                        mEglSurface, mEglContext
-                    )
-                ) {
-                    throw RuntimeException(
-                        "eglMakeCurrent failed "
-                                + GLUtils.getEGLErrorString(
-                            mEgl!!
-                                .eglGetError()
-                        )
-                    )
-                }
-                checkEglError()
-            }
-        }
-
-        private fun checkEglError() {
-            val error = mEgl!!.eglGetError()
-            if (error != EGL10.EGL_SUCCESS) {
-                Log.e(
-                    TAG,
-                    "EGL error = 0x" + Integer.toHexString(error)
-                )
-            }
-        }
-
-        private fun checkGlError() {
-            val error = GLES30.glGetError()
-            if (error != GLES30.GL_NO_ERROR) {
-                Log.e(
-                    TAG,
-                    "GL error = 0x" + Integer.toHexString(error)
-                )
-            }
-        }
-
-        private fun buildProgram(vertexSource: String, fragmentSource: String): Int {
-            val vertexShader = buildShader(
-                GLES30.GL_VERTEX_SHADER,
-                vertexSource
-            )
-            if (vertexShader == 0) {
-                return 0
-            }
-            val fragmentShader = buildShader(
-                GLES30.GL_FRAGMENT_SHADER, fragmentSource
-            )
-            if (fragmentShader == 0) {
-                return 0
-            }
-            val program = GLES30.glCreateProgram()
-            if (program == 0) {
-                return 0
-            }
-            GLES30.glAttachShader(program, vertexShader)
-            checkGlError()
-            GLES30.glAttachShader(program, fragmentShader)
-            checkGlError()
-            GLES30.glLinkProgram(program)
-            checkGlError()
-            val status = IntArray(1)
-            GLES30.glGetProgramiv(
-                program, GLES30.GL_LINK_STATUS, status,
-                0
-            )
-            checkGlError()
-            if (status[0] == 0) {
-                Log.e(TAG, GLES30.glGetProgramInfoLog(program))
-                GLES30.glDeleteProgram(program)
-                checkGlError()
-            }
-            return program
-        }
-
-        private fun buildShader(type: Int, shaderSource: String): Int {
-            val shader = GLES30.glCreateShader(type)
-            if (shader == 0) {
-                return 0
-            }
-            GLES30.glShaderSource(shader, shaderSource)
-            checkGlError()
-            GLES30.glCompileShader(shader)
-            checkGlError()
-            val status = IntArray(1)
-            GLES30.glGetShaderiv(
-                shader, GLES30.GL_COMPILE_STATUS, status,
-                0
-            )
-            if (status[0] == 0) {
-                Log.e(TAG, GLES30.glGetShaderInfoLog(shader))
-                GLES30.glDeleteShader(shader)
-                return 0
-            }
-            return shader
-        }
-
         private fun initGL() {
-            val vertexShaderSource = """attribute vec4 position;
-void main () {
-   gl_Position = position;
-   gl_PointSize = 40.0;
-}"""
-            val fragmentShaderSource = """precision mediump float;
-void main () {
-   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-}"""
             mEgl = EGLContext.getEGL() as EGL10
 
             mEglDisplay = mEgl!!.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY)
@@ -235,7 +130,7 @@ void main () {
             val configs: Array<EGLConfig?> = arrayOfNulls<EGLConfig>(1)
             val configSpec = intArrayOf(
                 EGL10.EGL_RENDERABLE_TYPE,
-                EGL_OPENGL_ES2_BIT ,
+                EGL_OPENGL_ES2_BIT,
                 EGL10.EGL_RED_SIZE, 8,
                 EGL10.EGL_GREEN_SIZE, 8,
                 EGL10.EGL_BLUE_SIZE, 8,
@@ -270,16 +165,15 @@ void main () {
                 mEglDisplay,
                 eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list
             )
-            checkEglError()
+            checkEglError(mEgl!!)
             mEglSurface = mEgl!!.eglCreateWindowSurface(
                 mEglDisplay, eglConfig, mSurface, null
             )
-            checkEglError()
+            checkEglError(mEgl!!)
             if (mEglSurface == null || mEglSurface === EGL10.EGL_NO_SURFACE) {
                 val error = mEgl!!.eglGetError()
                 if (error == EGL10.EGL_BAD_NATIVE_WINDOW) {
-                    Log.e(
-                        TAG,
+                    Timber.w(
                         "eglCreateWindowSurface returned EGL10.EGL_BAD_NATIVE_WINDOW"
                     )
                     return
@@ -299,32 +193,49 @@ void main () {
                             + GLUtils.getEGLErrorString(mEgl!!.eglGetError())
                 )
             }
-            checkEglError()
+            checkEglError(mEgl!!)
             mGl = mEglContext!!.getGL() as GL11
-            checkEglError()
-            mProgram = buildProgram(
-                vertexShaderSource,
-                fragmentShaderSource
-            )
+            checkEglError(mEgl!!)
         }
-        private  val EGL_OPENGL_ES2_BIT = 4
-        private  val EGL_CONTEXT_CLIENT_VERSION = 0x3098
-        private  val TAG = "RenderThread"
+
+        private val EGL_OPENGL_ES2_BIT = 4
+        private val EGL_CONTEXT_CLIENT_VERSION = 0x3098
+        private val TAG = "RenderThread"
+    }
+
+    fun reinitModel(width: Int, height: Int) {
+        glClearColor(0.1f, 0.1f, 0.1f, 1f);
+        glViewport(0, 0, width, height);
+        MatrixHelper.perspectiveM(
+            projectionMatrix, 45.0f, width.toFloat()
+                    / height.toFloat(), 1f, 10f
+        )
+        setIdentityM(modelMatrix, 0)
+
+        translateM(modelMatrix, 0, 0f, 0f, -2.5f)
+        //rotateM(modelMatrix, 0, -60f, 1f, 0f, 0f)
+
+        val temp = FloatArray(16)
+        multiplyMM(temp, 0, projectionMatrix, 0, modelMatrix, 0)
+        System.arraycopy(temp, 0, projectionMatrix, 0, temp.size)
     }
 
     private inner class GLSurfaceTextureListener : SurfaceTextureListener {
+
         override fun onSurfaceTextureAvailable(
             surface: SurfaceTexture,
             width: Int, height: Int
         ) {
             Timber.i("SurfaceTexture available")
-            RenderThread(surface).start()
+            RenderThread(surface, width, height).start()
         }
 
         override fun onSurfaceTextureSizeChanged(
             surface: SurfaceTexture,
             width: Int, height: Int
         ) {
+            Timber.i("In onSurfaceTextureSizeChanged")
+            reinitModel(width, height)
         }
 
         override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
