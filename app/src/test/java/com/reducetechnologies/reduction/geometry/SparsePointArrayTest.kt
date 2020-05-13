@@ -63,6 +63,35 @@ class SparsePointArrayTest {
         }
     }
 
+    @org.junit.Test
+    fun rotateScaleAndTranslate() {
+        val array = SparsePointArray(floatArrayOf(1f,1f,0f, 0f, 0f, 1f),3)
+        val matrix = MatrixBuilder().buildMatrix {
+            rotate(90f, 1f, 0f, 0f)
+            scale(2f, 2f,3f)
+            translate(10f,10f,10f)
+        }
+        array.commit(matrix)
+        Arrays.equals(floatArrayOf(12f,10f, 13f, 10f, 8f, 10f), array.vertices ).let {
+            assertTrue(it)
+        }
+    }
+
+    @org.junit.Test
+    fun translateRotateAndScale() {
+        val array = SparsePointArray(floatArrayOf(1f,0f,0f, 1f, 0f, 1f),3)
+        val matrix = MatrixBuilder().buildMatrix {
+            translate(10f,0f,0f)
+            rotate(90f, 1f, 0f, 0f)
+            scale(2f, 2f,3f)
+        }
+        array.commit(matrix)
+        array.vertices.roundForTest()
+        Arrays.equals(floatArrayOf(22f,0f, 0f, 22f, -2f, 0f), array.vertices ).let {
+            assertTrue(it)
+        }
+    }
+
     private fun FloatArray.roundForTest() {
         for (i in this.indices) {
             this[i] = round(this[i] * 10000f) / 10000f

@@ -5,6 +5,16 @@ import android.opengl.GLES30
 import androidx.annotation.RawRes
 import com.reducetechnologies.reduction.opengl.TextResourceReader.readTextFileFromResource
 
+interface ShadingProgramAtributes
+
+interface HasUniformMatrixPosition : ShadingProgramAtributes {
+    fun getUMatrixpositionhandle() : Int
+}
+
+interface HasAttributeVertexPosition : ShadingProgramAtributes {
+    fun getAVertexPosition() : Int
+}
+
 abstract class ShaderProgram protected constructor(
     private val context: Context?,
     @RawRes

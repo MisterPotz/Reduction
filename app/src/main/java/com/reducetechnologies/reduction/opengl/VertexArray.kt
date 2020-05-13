@@ -1,6 +1,6 @@
 package com.reducetechnologies.reduction.opengl
 
-import android.opengl.GLES20
+import android.opengl.GLES30
 import com.reducetechnologies.reduction.opengl.Constants.BYTES_PER_FLOAT
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -19,11 +19,11 @@ class VertexArray(vertexData: FloatArray) {
         componentCount: Int, stride: Int
     ) {
         floatBuffer.position(dataOffset)
-        GLES20.glVertexAttribPointer(
-            attributeLocation, componentCount, GLES20.GL_FLOAT,
+        GLES30.glVertexAttribPointer(
+            attributeLocation, componentCount, GLES30.GL_FLOAT,
             false, stride, floatBuffer
         )
-        GLES20.glEnableVertexAttribArray(attributeLocation)
+        GLES30.glEnableVertexAttribArray(attributeLocation)
         floatBuffer.position(0)
     }
 }

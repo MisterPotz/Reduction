@@ -8,7 +8,7 @@ import timber.log.Timber
 
 class ColorShaderProgram(context: Context, @RawRes vertexShader: Int,
 @RawRes fragmentShader: Int):
-    ShaderProgram(context, vertexShader, fragmentShader) {
+    ShaderProgram(context, vertexShader, fragmentShader), HasAttributeVertexPosition {
     private var positionHandle : Int = 0
     private var colorHandle : Int = 0
     private var matrixHandle : Int = 0
@@ -32,4 +32,8 @@ class ColorShaderProgram(context: Context, @RawRes vertexShader: Int,
     fun getColorHandle() = colorHandle
 
     fun getMatrixHandle() = matrixHandle
+
+    override fun getAVertexPosition(): Int {
+        return getPositionHandle()
+    }
 }

@@ -14,7 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.reducetechnologies.reduction.R
+import com.reducetechnologies.reduction.geometry.Circle
+import com.reducetechnologies.reduction.geometry.Point
 import com.reducetechnologies.reduction.opengl.ColorShaderProgram
+import com.reducetechnologies.reduction.opengl.DrawableGLObjBuilder
 import com.reducetechnologies.reduction.opengl.Mallet
 import com.reducetechnologies.reduction.opengl.MatrixHelper
 import com.reducetechnologies.reduction.opengl.ShaderHelper.checkCurrent
@@ -31,7 +34,12 @@ class TestingAnimationFragment : Fragment() {
     private val modelMatrix = FloatArray(16)
     private var colorProgram: ColorShaderProgram? = null
 
+    private val testObj = DrawableGLObjBuilder().buildPositionableObj {
+        addCircle(Point(-0.2f,-0.2f,0f), Point(0f,0f,0f), Circle(Point(0f,0f,0f), radius = 0.2f))
+    }
+
     private val testingMallet = Mallet()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,8 +101,9 @@ class TestingAnimationFragment : Fragment() {
 
                 colorProgram!!.useProgram()
                 colorProgram!!.setUniforms(projectionMatrix)
-                testingMallet.bindData(colorProgram!!)
-                testingMallet.draw()
+//                testingMallet.bindData(colorProgram!!)
+//                testingMallet.draw()
+                testObj.bindAndDraw(colorProgram!!)
                 checkEglError(mEgl!!)
                 if (!mEgl!!.eglSwapBuffers(mEglDisplay, mEglSurface)) {
                     Log.e(TAG, "cannot swap buffers!")

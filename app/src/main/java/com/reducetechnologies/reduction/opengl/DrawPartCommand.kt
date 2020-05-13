@@ -5,7 +5,7 @@ package com.reducetechnologies.reduction.opengl
  */
 typealias DrawFromTo = (DrawPrimitive) -> Unit
 
-data class DrawPrimitive(val start : Int, val stopExclusive: Int, private val command: DrawFromTo) {
+data class DrawPrimitive(val offset : Int, val components: Int, private val command: DrawFromTo) {
     /**
      * Internally passes [this] to command.
      */
