@@ -17,7 +17,7 @@ import kotlinx.coroutines.*
 import javax.inject.Provider
 
 @Module(subcomponents = [CalculationsComponent::class])
-class DatabaseModule(val context: Context) {
+class DatabaseModule(val context: Context, val locale: AppLocale) {
 
     private fun constantDatabaseHelper(): ConstantDatabaseHelper {
         return ConstantDatabaseHelper(context)

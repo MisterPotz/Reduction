@@ -117,6 +117,15 @@ internal class PScreenSourceDelegate() : PScreenSource() {
     }
 
     override fun validate(pScreen: PScreen): WrappedPScreen? {
+        /**
+         * Сначала проверка, что содержит поля с вводом
+         */
+        if (pScreen.fields.any { it.pFieldType.needsInput }) {
+            //Проверяем, если это InputPScreen
+            if (pScreen.title.toLowerCase() == "inputdata") {
+
+            }
+        }
         // логика проверки
         // если все норм возвратит нулл
         return null

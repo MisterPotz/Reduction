@@ -6,7 +6,7 @@ import com.reduction_technologies.database.tables_utils.TwoSidedDomain
 
 internal object InputPScreen {
     private val pScreen : PScreen = PScreen(
-        "Ввод данных",
+        "InputData",
         fields = InputPScreenFields.getFields()
     )
 

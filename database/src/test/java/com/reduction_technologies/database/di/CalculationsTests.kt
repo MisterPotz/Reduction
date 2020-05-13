@@ -1,5 +1,6 @@
 package com.reduction_technologies.database.di
 
+import com.reduction_technologies.database.helpers.AppLocale
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
@@ -514,10 +515,10 @@ internal class CalculationsModuleTest {
     fun setUp() {
         val context =
             ApplicationProvider.getApplicationContext<Context>()
-
+        val locale: AppLocale = AppLocale.RU
         // Сначала в любом случае сначала получаем databaseComponent - он имеет методы для получения calculationModule и билдера calculationComponent
         databaseComponent = DaggerDatabaseComponent.builder()
-            .databaseModule(DatabaseModule(context))
+            .databaseModule(DatabaseModule(context, locale))
             .build()
         // псведо-асинхронно получаем calculationModule
         val calculationModule = runBlocking { databaseComponent.calculationModule().await() }
