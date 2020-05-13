@@ -93,8 +93,9 @@ internal class ConstantDatabaseHelper(val context: Context) :
         return RCursorAdapterBuilder(this, tableName, columns)
     }
 
-    fun getTables(): TableHolder {
-        val cursor = getCommonCursorBuilder(mainTable.name, mainTable.columns.toTypedArray())
+    fun getTables(locale: AppLocale): TableHolder {
+        val localizedTable= considerLocaleForTableName(locale)
+        val cursor = getCommonCursorBuilder(localizedTable, mainTable.columns.toTypedArray())
             .buildQuery {
                 When(
                     Query.Clause(
