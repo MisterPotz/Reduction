@@ -36,7 +36,7 @@ internal class CalculationSdkImplTest {
                 )
             )
         )
-        override fun validate(pScreen: PScreen): WrappedPScreen? {
+        override fun validate(pScreen: PScreen): PScreen? {
             var isGood = true
             // логика проверки
             for (i in pScreen.fields) {
@@ -56,7 +56,7 @@ internal class CalculationSdkImplTest {
             }
             // текущий последней если стек уже пуст
             // TODO сделать правильный индекс
-            return if (isGood) null else WrappedPScreen(pScreen, preparedStack.size == 0, 0)
+            return if (isGood) null else pScreen
         }
     }
 
