@@ -115,7 +115,7 @@ internal class PScreenSourceDelegate : PScreenSource() {
         }
     }
 
-    override fun validate(pScreen: PScreen): WrappedPScreen? {
+    override fun validate(pScreen: PScreen): PScreen? {
         // логика проверки
         // если все норм возвратит нулл
         return null

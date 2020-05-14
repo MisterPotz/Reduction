@@ -36,7 +36,7 @@ internal class CalculationSdkImpl(
                 return null
             } else {
                 // use delegate to return pscreen with error, replacing it as current in storage
-                return isGood
+                return wrapPScreenCurrent(isGood)
             }
         } else {
             // if it is not current, client is using this api wrong way
