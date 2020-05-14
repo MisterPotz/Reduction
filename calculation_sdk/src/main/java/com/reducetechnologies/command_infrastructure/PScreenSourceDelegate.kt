@@ -8,7 +8,7 @@ import com.reducetechnologies.di.CalculationsComponent
 internal class PScreenSourceDelegate() : PScreenSource() {
     // simple stack that is consumed. Being build with some other classes (or with calculation on flow)
     override protected val preparedStack: MutableList<PScreen> = mutableListOf(
-        InputPScreen.getPScreen(),
+        InputPScreen().getPScreen(),
         StandbyPScreen.getPScreen()
     )
 
@@ -117,8 +117,41 @@ internal class PScreenSourceDelegate() : PScreenSource() {
     }
 
     override fun validate(pScreen: PScreen): WrappedPScreen? {
+        /**
+         * Сначала проверка, что содержит поля с вводом
+         */
+        if (pScreen.fields.any { it.pFieldType.needsInput }) {
+            //Проверяем, если это InputPScreen
+            if (pScreen.title.toLowerCase() == "inputdata") {
+                val nextInputPScreen = InputPScreen(pScreen)
+                //Проверяем одноступенчатые на непревышение максимального передаточного отношения
+                checkOneStepU(pScreen = pScreen, nextInputPScreen = nextInputPScreen)
+
+            }
+        }
         // логика проверки
         // если все норм возвратит нулл
         return null
+    }
+
+    /**
+     * Проверяем одноступенчатые на непревышение максимального передаточного отношения
+     * Здесь опасное место, [as] приводит к типу небезопасно и может выскочить ошибка,
+     * но скорее всего нет, потому что всё завязано на fieldID, которые жёстко закреплены
+     * Ещё может быть ошибка, если будет введён какой-то текст и он не сможет
+     * преобразоваться к Float, но это маловероятно, у фронта стоит для этого
+     * ограничение, которое по идее текст ввести не даст
+     */
+    private fun checkOneStepU(pScreen: PScreen, nextInputPScreen: InputPScreen) {
+        if (((pScreen.fields.find { it.fieldId == 2 }!!.typeSpecificData as InputPictureSpec)
+                .additional.answer in 0..3) && (pScreen.fields.find { it.fieldId == 10 }!!
+                .typeSpecificData as InputTextSpec).additional.answer!!.toFloat() > 8) {
+            nextInputPScreen.changeField(ID = 10, min = 1.6f, max = 8f,
+                newHint = "Передаточное отношение одноступенчатого редуктора не может " +
+                        "быть больше 8.")
+            nextInputPScreen.changeField(ID = 2, newDefault =
+            (pScreen.fields.find { it.fieldId == 2 }!!.typeSpecificData as InputPictureSpec)
+                .additional.answer)
+        }
     }
 }

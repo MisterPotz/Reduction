@@ -4,17 +4,33 @@ import com.reducetechnologies.command_infrastructure.*
 import com.reduction_technologies.database.tables_utils.OneSidedDomain
 import com.reduction_technologies.database.tables_utils.TwoSidedDomain
 
-internal object InputPScreen {
-    private val pScreen : PScreen = PScreen(
-        "Ввод данных",
-        fields = InputPScreenFields.getFields()
-    )
+internal class InputPScreen {
+    private val pScreen : PScreen
+    private val inputPScreenFields: InputPScreenFields
+    constructor() {
+        inputPScreenFields = InputPScreenFields()
+        this.pScreen = PScreen(
+            "InputData",
+            fields = inputPScreenFields.getStandartFields()
+        )
+    }
+    constructor(inputPScreen: PScreen) {
+        inputPScreenFields = InputPScreenFields(inputPScreen.fields as MutableList<PField>)
+        this.pScreen = PScreen(
+            title = inputPScreen.title,
+            fields = inputPScreenFields.getFields()
+        )
+    }
+
+    fun changeField(ID: Int, min: Float? = null, max: Float? = null, newDefault: Int? = null, newHint: String? = null) {
+        inputPScreenFields.changeField(ID = ID, min = min, max = max, newDefault = newDefault, newHint = newHint)
+    }
 
     fun getPScreen() : PScreen {
         return pScreen
     }
 }
-internal object InputPScreenFields {
+internal class InputPScreenFields() {
     private lateinit var fields: MutableList<PField>
 
     private val mainText = PField(
@@ -281,13 +297,93 @@ internal object InputPScreenFields {
         fieldId = 17
     )
 
+    //Вторичный конструктор
+    constructor(fields: MutableList<PField>) : this() {
+        this.fields = fields
+    }
+
     private fun setFields(){
         fields = mutableListOf(
             mainText, gearSchemes, isED, TT, NT, LH, NRR, KOL, U0, UREMA, optionalParameters, ALF,
             KPD, HL, HA, HG, C
         )
     }
-    fun getFields() : List<PField> {
+
+    private fun changeGearSchemesField(newDefault: Int): PField {
+        return PField(
+            pFieldType = PFieldType.INPUT_PICTURE,
+            typeSpecificData = InputPictureSpec(
+                title = "Схемы редукторов:",
+                default = newDefault,//ну или 1, самый первый короче просто
+                additional = AdditionalInputImage(
+                    imagePaths = listOf(
+                        "input_schemes/1.jpg",
+                        "input_schemes/2.jpg",
+                        "input_schemes/3.jpg",
+                        "input_schemes/4.jpg",
+                        "input_schemes/5.jpg",
+                        "input_schemes/6.jpg",
+                        "input_schemes/7.jpg",
+                        "input_schemes/8.jpg",
+                        "input_schemes/9.jpg",
+                        "input_schemes/10.jpg",
+                        "input_schemes/11.jpg",
+                        "input_schemes/12.jpg",
+                        "input_schemes/13.jpg",
+                        "input_schemes/14.jpg"
+                    )
+                    //задать потом encyclopediaId; answer как я понимаю не нужен
+                )
+            ),
+            fieldId = 2
+        )
+    }
+
+    private fun changeUField(min: Float, max: Float, newHint: String): PField {
+        return PField(
+            pFieldType = PFieldType.INPUT_TEXT,
+            typeSpecificData = InputTextSpec(
+                title = "Желаемое максимальное передаточное отношение редуктора",
+                type = InputTextType.FLOAT,
+                default = null,
+                additional = AdditionalInputText(
+                    hint = newHint,
+                    domain = TwoSidedDomain(
+                        OneSidedDomain(">=", min),
+                        OneSidedDomain("<", max)
+                    )
+                )
+                //задать потом encyclopediaId; answer как я понимаю не нужен
+            ),
+            fieldId = 10
+        )
+    }
+    /**
+     * Используется для изменения значений полей
+     */
+    fun changeField(ID: Int, min: Float? = null, max: Float? = null, newDefault: Int? = null, newHint: String? = null){
+        val pField: PField? =
+        fields.find {
+            it.fieldId == ID
+        }
+        when (pField!!.fieldId) {
+            2 -> fields[pField.fieldId-1] = changeGearSchemesField(newDefault = newDefault!!)
+            10 -> fields[pField.fieldId-1] = changeUField(min = min!!, max = max!!, newHint = newHint!!)
+        }
+        //fields[pField.fieldId-1] = PField()
+    }
+
+    /**
+     * Используется, если мы уже применяли вторичный конструктор и изменяли поля
+     */
+    fun getFields() : MutableList<PField>{
+        return fields
+    }
+
+    /**
+     * Используется только для получения самого стандартного экрана
+     */
+    fun getStandartFields() : MutableList<PField> {
         setFields()
         return fields
     }
