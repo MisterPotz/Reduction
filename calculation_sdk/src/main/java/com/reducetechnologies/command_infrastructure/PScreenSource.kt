@@ -15,5 +15,5 @@ abstract class PScreenSource : Iterator<PScreen> {
         return toRet
     }
 
-    abstract fun validate(pScreen: PScreen) : WrappedPScreen?
+    abstract fun validate(pScreen: PScreen) : PScreen?
 }

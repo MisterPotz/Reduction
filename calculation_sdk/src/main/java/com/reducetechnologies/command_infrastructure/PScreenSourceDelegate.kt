@@ -116,7 +116,7 @@ internal class PScreenSourceDelegate() : PScreenSource() {
         }
     }
 
-    override fun validate(pScreen: PScreen): WrappedPScreen? {
+    override fun validate(pScreen: PScreen): PScreen? {
         /**
          * Сначала проверка, что содержит поля с вводом
          */

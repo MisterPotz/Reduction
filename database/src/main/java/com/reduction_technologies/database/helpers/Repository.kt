@@ -45,7 +45,7 @@ class Repository @Inject internal constructor(
 
         // enforcing structured concurrency
         CoroutineScope(coroutineContext + Dispatchers.IO).launch {
-            val tables = constantDatabaseHelper.getTables()
+            val tables = constantDatabaseHelper.getTables(locale)
             liveData.postValue(tables)
         }
 

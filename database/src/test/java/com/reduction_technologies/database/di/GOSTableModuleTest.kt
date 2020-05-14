@@ -52,7 +52,7 @@ internal class GOSTableModuleTest {
     }
 
     val mockedConstantDatabase = mockk<ConstantDatabaseHelper>() {
-        every { getTables() } answers {
+        every { getTables(AppLocale.RU) } answers {
             tableHolder
         }
     }
