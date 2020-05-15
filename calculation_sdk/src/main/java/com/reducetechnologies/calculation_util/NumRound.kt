@@ -2,6 +2,7 @@ package com.reducetechnologies.calculation_util
 
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.math.PI
 
 internal object NumRound {
     fun round(value: Float, places: Int): Float {
@@ -13,5 +14,13 @@ internal object NumRound {
 
     fun roundThree(value: Float): Float {
         return round(value, 3)
+    }
+
+    fun angleToGrad(angle: Float): Float {
+        return angle*180/ PI.toFloat()
+    }
+
+    fun angleToRad(angle: Float): Float {
+        return angle* PI.toFloat()/180
     }
 }

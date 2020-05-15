@@ -39,7 +39,7 @@ class CalculationsEntity constructor(private val inputData: InputData,
         //Заполняем сортировочные поля для последующей сортировки
         sortingUtils.fillingSortingFields()
         //Инициализируем outputDataList
-        reducerDataList = initializeOutputDataList()
+        reducerDataList = initializeReducerDataList()
         //Инициализируем списки отсортированных данных
         differentSortionsOfReducerData = initializeSortedLists()
         //Инициализация outputData
@@ -234,7 +234,7 @@ class CalculationsEntity constructor(private val inputData: InputData,
     /**
      * Для инициализации [reducerDataList]
      */
-    private fun initializeOutputDataList(): ArrayList<ReducerData> {
+    private fun initializeReducerDataList(): ArrayList<ReducerData> {
         val reducerDataList: ArrayList<ReducerData> = arrayListOf()
         properCreationData.forEachIndexed {index, it ->
             val commonData: CommonData = initializeCommonData(
@@ -488,7 +488,8 @@ data class OneStepData(
                     допускаемые                                         $SGFD
                 при максимальной нагрузке:
                     расчётные                                           $SGFM
-                    допускаемые                                         $SGFMD    
+                    допускаемые                                         $SGFMD
+                        
         """.trimIndent()
     }
 }

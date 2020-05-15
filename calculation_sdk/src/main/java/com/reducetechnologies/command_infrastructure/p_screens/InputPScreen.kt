@@ -36,7 +36,8 @@ internal class InputPScreenFields() {
     private val mainText = PField(
         pFieldType = PFieldType.TEXT,
         typeSpecificData = TextSpec(
-            text = "Введите все необходимые данные о подбираемом редукторе"
+            text = "Введите все необходимые данные о подбираемом редукторе",
+            additional = AdditionalText(TextType.HEADLINE)
         ),
         fieldId = 1
     )
@@ -62,6 +63,7 @@ internal class InputPScreenFields() {
                     "input_schemes/13.jpg",
                     "input_schemes/14.jpg"
                 )
+                //answer = 3//Это только для теста, потом убрать
                 //задать потом encyclopediaId; answer как я понимаю не нужен
             )
         ),
@@ -70,7 +72,7 @@ internal class InputPScreenFields() {
     private val isED = PField(
         pFieldType = PFieldType.INPUT_LIST,
         typeSpecificData = InputListSpec(
-            title = "Будет ли подбираться редуктор?",
+            title = "Будет ли подбираться электродвигатель?",
             default = null,
             additional = AdditionalInputList(
                 options = listOf(
@@ -86,7 +88,7 @@ internal class InputPScreenFields() {
     private val TT = PField(
         pFieldType = PFieldType.INPUT_TEXT,
         typeSpecificData = InputTextSpec(
-            title = "Вращающий момент на тихоходном валу",
+            title = "Вращающий момент на тихоходном валу, Н*м",
             type = InputTextType.FLOAT,
             default = null,
             additional = AdditionalInputText(
@@ -102,7 +104,7 @@ internal class InputPScreenFields() {
     private val NT = PField(
         pFieldType = PFieldType.INPUT_TEXT,
         typeSpecificData = InputTextSpec(
-            title = "Частота вращения тихоходного вала",
+            title = "Частота вращения тихоходного вала, об/мин",
             type = InputTextType.FLOAT,
             default = null,
             additional = AdditionalInputText(
@@ -118,7 +120,7 @@ internal class InputPScreenFields() {
     private val LH = PField(
         pFieldType = PFieldType.INPUT_TEXT,
         typeSpecificData = InputTextSpec(
-            title = "Суммарное время работы (ресурс)",
+            title = "Суммарное время работы (ресурс), часы",
             type = InputTextType.INTEGER,
             default = "10000",
             additional = AdditionalInputText(
@@ -146,7 +148,7 @@ internal class InputPScreenFields() {
     private val KOL = PField(
         pFieldType = PFieldType.INPUT_TEXT,
         typeSpecificData = InputTextSpec(
-            title = "Серийность (в год)",
+            title = "Серийность (в год), штук",
             type = InputTextType.INTEGER,
             default = "10000",
             additional = AdditionalInputText(
@@ -188,6 +190,7 @@ internal class InputPScreenFields() {
                     OneSidedDomain(">=", 1.6F),
                     OneSidedDomain("<", 64F)
                 )
+                //answer = "9"//Это только для теста, потом убрать
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -241,7 +244,7 @@ internal class InputPScreenFields() {
             additional = AdditionalInputText(
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 0F),
-                    OneSidedDomain("<", 1000000F)
+                    OneSidedDomain("<=", 2F)
                 )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
@@ -256,8 +259,8 @@ internal class InputPScreenFields() {
             default = "1.0",
             additional = AdditionalInputText(
                 domain = TwoSidedDomain(
-                    OneSidedDomain(">=", 0F),
-                    OneSidedDomain("<", 1000000F)
+                    OneSidedDomain(">=", 1F),
+                    OneSidedDomain("<=", 1.1F)
                 )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
@@ -269,11 +272,11 @@ internal class InputPScreenFields() {
         typeSpecificData = InputTextSpec(
             title = "Коэффициент высоты модификации головки зуба",
             type = InputTextType.FLOAT,
-            default = "0.4",
+            default = "0",
             additional = AdditionalInputText(
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 0F),
-                    OneSidedDomain("<", 1000000F)
+                    OneSidedDomain("<=", 0.45F)
                 )
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен

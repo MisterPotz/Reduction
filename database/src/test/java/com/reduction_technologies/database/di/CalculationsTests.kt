@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import com.reducetechnologies.calculations.*
+import com.reducetechnologies.calculations_entity.CalculationsEntity
 import com.reducetechnologies.calculations_entity.MasreMethod
 import com.reducetechnologies.calculations_entity.MasreScope
 import com.reducetechnologies.di.CalculationsComponent
@@ -1445,6 +1446,13 @@ internal class CalculationsModuleTest {
             println(creationData.zcredScope.toString())
             println(newMasreDataList[index].toString())
         }
+
+        val calcEnt: CalculationsEntity = CalculationsEntity(
+            inputData = inputO,
+            calculationsComponent = calculationComponent
+        )
+        println(calcEnt.outputData.reducerDataList.size)
+        println(calcEnt.outputData.SortingLists["weight"])
     }
 
 

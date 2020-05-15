@@ -25,6 +25,7 @@ class ZUC2HMethodsClass() {
             DW[1] = DW[0]*args.zuc1hScope.UCalculated
             args.dopnScope.V = PI.toFloat()*DW[1]*args.N2/60000
             if (ST > 0 && args.zuc1hScope.BET > 0f) {
+                ST = (10.1f - 0.12f*args.dopnScope.V).toInt()//Это я поставил, нужно протестить, потому что в учебнике нет
                 KHALF = (0.0026f*ST - 0.013f)*args.dopnScope.V + 0.027f*ST + 0.84f
                 //Уход в calculatePSIBD
                 calculatePSIBD(args, zuc2hScope)
