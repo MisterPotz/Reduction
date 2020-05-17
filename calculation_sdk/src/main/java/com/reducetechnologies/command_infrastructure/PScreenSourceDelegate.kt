@@ -3,7 +3,7 @@ package com.reducetechnologies.command_infrastructure
 import com.reducetechnologies.calculation_util.NumRound
 import com.reducetechnologies.calculations.InputData
 import com.reducetechnologies.calculations_entity.CalculationsEntity
-import com.reducetechnologies.calculations_entity.OutputData
+import com.reducetechnologies.calculations_entity.ReducerData
 import com.reducetechnologies.command_infrastructure.p_screens.InputPScreen
 import com.reducetechnologies.command_infrastructure.p_screens.OutputPScreen
 import com.reducetechnologies.command_infrastructure.p_screens.StandbyPScreen
@@ -67,14 +67,14 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
                     //Создаём инпут из полученных данных
                     val inputData: InputData = prepareInputData(pScreen)
                     //Получаем outputData
-                    val outputData: OutputData =
+                    val reducerData: ArrayList<ReducerData> =
                         CalculationsEntity(
                             inputData = inputData,
                             calculationsComponent = calculationsComponent
-                        ).outputData
+                        ).reducerDataList
                     //Создаём OutputPScreen и встраиваем его в очередь
                     val outputPScreen: OutputPScreen =
-                        OutputPScreen(outputData = outputData)
+                        OutputPScreen(reducerData = reducerData)
                     preparedStack.add(outputPScreen.getPScreen())
                 }
             }

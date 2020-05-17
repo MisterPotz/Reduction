@@ -14,9 +14,7 @@ class CalculationsEntity constructor(private val inputData: InputData,
     private val creationDataList: List<CreationData>
     private var masreScopeList: ArrayList<MasreScope>
     private val properCreationData: ArrayList<CreationData>
-    private val reducerDataList: ArrayList<ReducerData>
-    private val differentSortionsOfReducerData: HashMap<String, ArrayList<ReducerData>>
-    val outputData: OutputData
+    val reducerDataList: ArrayList<ReducerData>
 
     private val sortingUtils: SortingUtils
     private val numRound: NumRound
@@ -40,13 +38,6 @@ class CalculationsEntity constructor(private val inputData: InputData,
         sortingUtils.fillingSortingFields()
         //Инициализируем outputDataList
         reducerDataList = initializeReducerDataList()
-        //Инициализируем списки отсортированных данных
-        differentSortionsOfReducerData = initializeSortedLists()
-        //Инициализация outputData
-        outputData = OutputData(
-            reducerDataList = reducerDataList,
-            SortingLists = differentSortionsOfReducerData
-        )
     }
 
     /**
@@ -275,40 +266,45 @@ class CalculationsEntity constructor(private val inputData: InputData,
     }
 
     /**
-     * Для инициализации [differentSortionsOfReducerData]
+     * Статические сортировки
      */
-    private fun initializeSortedLists(): HashMap<String, ArrayList<ReducerData>> {
-        val differentSortionsOfReducerData: HashMap<String, ArrayList<ReducerData>> = hashMapOf()
+    companion object Sorting {
         //Отсортированный по весу
-        val byWeight: ArrayList<ReducerData> = ArrayList(reducerDataList.sortedBy {
-            it.commonData.mechanismsMass
-        })
-        differentSortionsOfReducerData["weight"] = byWeight
+        fun sortByWeight(reducerDataList: ArrayList<ReducerData>): ArrayList<ReducerData> {
+            return ArrayList(reducerDataList.sortedBy {
+                it.commonData.mechanismsMass
+            })
+        }
         //Отсортированный по объёму редуктора
-        val byVolume: ArrayList<ReducerData> = ArrayList(reducerDataList.sortedBy {
-            it.sortingData.reducerVolume
-        })
-        differentSortionsOfReducerData["volume"] = byVolume
+        fun sortByVolume(reducerDataList: ArrayList<ReducerData>): ArrayList<ReducerData> {
+            return ArrayList(reducerDataList.sortedBy {
+                it.sortingData.reducerVolume
+            })
+        }
         //Отсортированный по сумме межосевых расстояний
-        val bySumAW: ArrayList<ReducerData> = ArrayList(reducerDataList.sortedBy {
-            it.sortingData.sumAW
-        })
-        differentSortionsOfReducerData["AW"] = bySumAW
+        fun sortBySumAW(reducerDataList: ArrayList<ReducerData>): ArrayList<ReducerData> {
+            return ArrayList(reducerDataList.sortedBy {
+                it.sortingData.sumAW
+            })
+        }
         //Отсортированный по HRC
-        val byMinSumHRC: ArrayList<ReducerData> = ArrayList(reducerDataList.sortedBy {
-            it.sortingData.minSumHRC
-        })
-        differentSortionsOfReducerData["HRC"] = byMinSumHRC
+        fun sortByMinSumHRC(reducerDataList: ArrayList<ReducerData>): ArrayList<ReducerData> {
+            return ArrayList(reducerDataList.sortedBy {
+                it.sortingData.minSumHRC
+            })
+        }
         //Отсортированный по разнице (SGD - SG)
-        val byMinDiffSG: ArrayList<ReducerData> = ArrayList(reducerDataList.sortedBy {
-            it.sortingData.minDiffSG
-        })
-        differentSortionsOfReducerData["DifferenceSG"] = byMinDiffSG
-        val byUDescending: ArrayList<ReducerData> = ArrayList(reducerDataList.sortedByDescending {
-            it.commonData.U
-        })
-        differentSortionsOfReducerData["U"] = byUDescending
-        return differentSortionsOfReducerData
+        fun sortByDiffSG(reducerDataList: ArrayList<ReducerData>): ArrayList<ReducerData> {
+            return ArrayList(reducerDataList.sortedBy {
+                it.sortingData.minDiffSG
+            })
+        }
+        //Отсортированный по передаточному отношению (descending)
+        fun sortByUDescending(reducerDataList: ArrayList<ReducerData>): ArrayList<ReducerData> {
+            return ArrayList(reducerDataList.sortedByDescending {
+                it.commonData.U
+            })
+        }
     }
 }
 
@@ -321,11 +317,11 @@ class CalculationsEntity constructor(private val inputData: InputData,
  * P.S. если ты будешь брать данные для построения, то я тебе рекомендую это делать из
  * отсортированного по массе списка ([SortingLists[weight]]), потому что он по моему мнению
  * предоставляет самый адекватный порядок предоставления результатов
- */
+ *//*
 data class OutputData(
     val reducerDataList: ArrayList<ReducerData>,
     val SortingLists: HashMap<String, ArrayList<ReducerData>>
-)
+)*/
 
 /**
  * Через [ReducerData.toString] можно отправлять данные как на показ пользователю, так
