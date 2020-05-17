@@ -1,17 +1,17 @@
 package com.reducetechnologies.command_infrastructure.p_screens
 
-import com.reducetechnologies.calculations_entity.OutputData
+import com.reducetechnologies.calculations_entity.ReducerData
 import com.reducetechnologies.command_infrastructure.*
 
 internal class OutputPScreen {
     private val pScreen: PScreen
     private val outputPScreenFields: OutputPScreenFields
-    private val outputData: OutputData
+    private val reducerData: ArrayList<ReducerData>
 
-    constructor(outputData: OutputData) {
-        this.outputData = outputData
-        outputPScreenFields = OutputPScreenFields( this.outputData.SortingLists["weight"]!!.mapIndexed { index, reducerData ->
-           reducerData.toString()
+    constructor(reducerData: ArrayList<ReducerData>) {
+        this.reducerData = reducerData
+        outputPScreenFields = OutputPScreenFields( this.reducerData.mapIndexed { index, it ->
+           it.toString()
         })
         pScreen = PScreen(
             title = "OutputData",
