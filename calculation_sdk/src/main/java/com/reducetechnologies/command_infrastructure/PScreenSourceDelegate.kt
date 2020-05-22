@@ -57,10 +57,9 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
                     isBad = true
                     changePlanetarTwoStepU(pScreen = pScreen, nextInputPScreen = nextInputPScreen)
                 }
-                //Если где-то что-то не прошло, встраиваем в очередь (или всё же просто возвращаем?)
                 //новый PScreen
                 if (isBad) {
-                    preparedStack.add(nextInputPScreen.getPScreen())
+                    // preparedStack.add(nextInputPScreen.getPScreen())
                     // Хорошо бы еще возникшие ошибки указывать
                     return nextInputPScreen.getPScreen()
                 } else {
