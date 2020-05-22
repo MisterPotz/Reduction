@@ -8,4 +8,5 @@ package com.reducetechnologies.command_infrastructure
 data class PScreen(
     val title: String,
     val fields: List<PField>){
+
 }

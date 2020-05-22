@@ -1,6 +1,5 @@
 package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util
 
-import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.Category
 import com.reduction_technologies.database.databases_utils.CommonItem
 
 class CategoryCommonItem(

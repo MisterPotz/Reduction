@@ -27,7 +27,6 @@ class EncyclopediaFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private var categoryAdapter: CategoriesSimpleAdapter<CommonItem, CategoryCommonItem>? = null
-    private val parseGson by lazy { PField.makeGson() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +64,7 @@ class EncyclopediaFragment : Fragment() {
                 CommonItemViewBinderFactory,
                 { commonItem ->
                     val action =
-                        EncyclopediaFragmentDirections.actionEncyclopediaFragmentToItemFragment(
+                        EncyclopediaFragmentDirections.actionNavigationEncyclopediaToItemActivity(
                             commonItem.about!!
                         )
                     findNavController().navigate(action)

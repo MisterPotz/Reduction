@@ -65,6 +65,6 @@ internal class GOSTableModuleTest {
         val tables = runBlocking {
             repository.getTables()
         }
-        assertEquals(-120, tables.value!!.fatigue.rows[0].load)
+        assertEquals(-120, tables.fatigue.rows[0].load)
     }
 }

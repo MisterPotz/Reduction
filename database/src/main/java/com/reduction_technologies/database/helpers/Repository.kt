@@ -6,6 +6,9 @@ import com.reducetechnologies.tables_utils.TableHolder
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
 import kotlinx.coroutines.*
+import timber.log.Timber
+import java.lang.Exception
+import java.lang.RuntimeException
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
@@ -39,29 +42,34 @@ class Repository @Inject internal constructor(
     private val storageDelegate = LiveDataClassStorage<LiveDataType>()
 
     // get all tables from the database asynchonously, suspend - for structured concurrency
-    suspend fun getTables(): LiveData<TableHolder> {
-        val liveData =
-            storageDelegate.registerOrReturn<TableHolder>(LiveDataType.TABLES)
-
-        // enforcing structured concurrency
-        CoroutineScope(coroutineContext + Dispatchers.IO).launch {
-            val tables = constantDatabaseHelper.getTables(locale)
-            liveData.postValue(tables)
-        }
-
-        return liveData
+    fun getTables(): TableHolder {
+        val tables = constantDatabaseHelper.getTables(locale)
+        return tables
     }
 
     // get all encyclopedia items from the database asynchonously, suspend - for structured concurrency
     suspend fun getEncyclopediaItems(): LiveData<List<CommonItem>> {
-        // TODO localise here everything
+        if (storageDelegate.checkContains(LiveDataType.ALL_ENCYCLOPEDIA)) {
+            return storageDelegate.registerOrReturn<List<CommonItem>>(LiveDataType.ALL_ENCYCLOPEDIA)
+        }
+        return updateEncyclopediaItems()
+    }
+
+    private suspend fun updateEncyclopediaItems() : LiveData<List<CommonItem>> {
         val liveData =
             storageDelegate.registerOrReturn<List<CommonItem>>(LiveDataType.ALL_ENCYCLOPEDIA)
 
         // enforcing structured concurrency
-        CoroutineScope(coroutineContext + Dispatchers.IO).launch {
-            val allItems = constantDatabaseHelper.getAllItems(locale)
-            liveData.postValue(allItems)
+        val job = CoroutineScope(coroutineContext + Dispatchers.IO).launch {
+            withTimeout(10000) {
+                val allItems = constantDatabaseHelper.getAllItems(locale)
+                liveData.postValue(allItems)
+            }
+        }
+        job.invokeOnCompletion { cause: Throwable? ->
+            if (cause != null) {
+                throw cause
+            }
         }
         return liveData
     }

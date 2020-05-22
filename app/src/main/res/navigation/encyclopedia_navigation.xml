@@ -9,20 +9,15 @@
         android:id="@+id/navigation_encyclopedia"
         android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.EncyclopediaFragment"
         android:label="@string/title_encyclopedia"
-        tools:layout="@layout/fragment_encyclopedia_main"
-        >
-        <action
-            android:id="@+id/action_encyclopediaFragment_to_itemFragment"
-            app:destination="@id/itemFragment"
-            app:enterAnim="@anim/slide_left"
-            app:popEnterAnim="@anim/slide_right"
-            app:popExitAnim="@anim/slide_right"
-            app:popUpTo="@+id/navigation_encyclopedia" />
+        tools:layout="@layout/fragment_encyclopedia_main">
         <action
             android:id="@+id/action_navigation_encyclopedia_to_settingsFragment"
             app:destination="@id/settingsFragment"
             app:enterAnim="@anim/slide_left"
             app:popExitAnim="@anim/slide_right" />
+        <action
+            android:id="@+id/action_navigation_encyclopedia_to_itemActivity"
+            app:destination="@id/itemActivity" />
     </fragment>
 
 
@@ -41,15 +36,24 @@
         android:id="@+id/aboutFragment"
         android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.settings.about.AboutFragment"
         android:label="@string/settings_about"
-        tools:layout="@layout/about"/>
-
-    <fragment
-        android:id="@+id/itemFragment"
-        android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.item.ItemFragment"
-        android:label="fragment_item"
-        tools:layout="@layout/fragment_item" >
+        tools:layout="@layout/about" />
+    <activity
+        android:id="@+id/itemActivity"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.item.ItemActivity"
+        android:label="activity_item"
+        tools:layout="@layout/activity_item">
         <argument
             android:name="itemPScreen"
             app:argType="string" />
-    </fragment>
+    </activity>
+
+    <!--    <activity-->
+    <!--        android:id="@+id/itemActivity"-->
+    <!--        android:name="com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.item.ItemFragment"-->
+    <!--        android:label="fragment_item"-->
+    <!--        tools:layout="@layout/fragment_item" >-->
+    <!--        <argument-->
+    <!--            android:name="itemPScreen"-->
+    <!--            app:argType="string" />-->
+    <!--    </activity>-->
 </navigation>

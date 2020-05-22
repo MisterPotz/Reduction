@@ -35,8 +35,10 @@ internal class CalculationSdkImpl(
                 savedWrapped.add(wrapPScreenCurrent(pscreen))
                 return null
             } else {
+                // set returned pscreen as current
+                queue.replaceCurrentWith(isGood)
                 // use delegate to return pscreen with error, replacing it as current in storage
-                return wrapPScreenCurrent(isGood)
+                return wrapPScreenCurrent(queue.getCurrent())
             }
         } else {
             // if it is not current, client is using this api wrong way

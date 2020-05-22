@@ -1,14 +1,10 @@
 package com.reducetechnologies.command_infrastructure
 
-class CalculationSdkBuilder() {
-    /**
-     * variables with necessary parameters
-     */
+import com.reducetechnologies.di.CalculationsComponent
 
-    interface Options { }
-
-    fun buildSdk(options : Options?) : CalculationSdk {
+class CalculationSdkBuilder(val calculationsComponent: CalculationsComponent) {
+    fun buildSdk() : CalculationSdk {
         // some logics
-        return CalculationSdkImpl(PScreenSourceDelegate())
+        return CalculationSdkImpl(PScreenSourceDelegate(calculationsComponent = calculationsComponent))
     }
 }

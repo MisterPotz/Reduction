@@ -1,12 +1,10 @@
 package com.reducetechnologies.reduction.di
 
-import com.reducetechnologies.di.CalculationSdkComponent
+import com.reduction_technologies.database.di.CalculationSetup
 import com.reduction_technologies.database.di.DatabaseModule
-import com.reduction_technologies.database.helpers.AppLocale
 import dagger.Module
 
-@Module(includes = [DatabaseModule::class], subcomponents = [CalculationSdkComponent::class])
+@Module(includes = [DatabaseModule::class, CalculationSetup::class])
 class AppModule(){
-
 
 }

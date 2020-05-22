@@ -41,7 +41,7 @@ class LiveDataClassStorage<T>{
         throw IllegalStateException("Cannot find the type")
     }
 
-    private fun checkContains(type: T) : Boolean {
+    fun checkContains(type: T) : Boolean {
         return classHashMap.containsKey(type)
     }
 }

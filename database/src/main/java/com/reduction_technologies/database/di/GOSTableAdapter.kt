@@ -3,17 +3,7 @@ package com.reduction_technologies.database.di
 import com.reducetechnologies.di.GOSTableComponentInterface
 import com.reducetechnologies.tables_utils.table_contracts.*
 import com.reducetechnologies.tables_utils.TableHolder
-import com.reducetechnologies.tables_utils.table_contracts.FatigueTable
-import com.reducetechnologies.tables_utils.table_contracts.G0Table
 import com.reducetechnologies.tables_utils.table_contracts.source_datatable.SourceDataTable
-import javax.inject.Scope
-
-/**
- * Сингльтон на уровне вычислений
- */
-@Scope
-@Retention(AnnotationRetention.RUNTIME)
-annotation class CalculationScope
 
 /**
  * Из-за перехода на новый способ добытия табличек, получение их каждоый отдельно через метод
@@ -40,3 +30,4 @@ class GOSTableAdapter(val tableHolder: TableHolder) : GOSTableComponentInterface
 
     override fun getTIP_TipreTable(): Tip_TipreTable = tableHolder.TIP_Tipre
 }
+
