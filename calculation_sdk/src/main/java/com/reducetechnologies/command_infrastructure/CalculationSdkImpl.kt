@@ -70,7 +70,11 @@ internal class CalculationSdkImpl(
     }
 
     override fun finalResults(): CalculationResults {
-        return StubResults()
+        return pScreenDelegate.getResult()
+    }
+
+    override fun isFinished(): Boolean {
+        return pScreenDelegate.isFinished()
     }
 
     override fun currentPending(): WrappedPScreen? {

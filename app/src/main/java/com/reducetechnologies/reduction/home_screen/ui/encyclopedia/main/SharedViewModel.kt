@@ -17,6 +17,8 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Provider
 import androidx.lifecycle.viewModelScope
+import com.reducetechnologies.command_infrastructure.CalculationResults
+import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFinishCallback
 import timber.log.Timber
 
 @ApplicationScope
@@ -71,15 +73,30 @@ class SharedViewModel @Inject constructor(
         return sortedByTagItems
     }
 
-    fun startCalculation(): Boolean {
+    /**
+     * UI may need to picture some graphic events that happen after calculation is finished
+     */
+    fun startCalculation(onCalculationFinished : CalculationFinishCallback): Boolean {
         // already calculating
         if (calcSdkHelper.isActive) {
             return false
         }
-        calcSdkHelper.startCalculation()
+        calcSdkHelper.startCalculation(
+            object : CalculationFinishCallback {
+                override fun invoke(calculationResults: CalculationResults) {
+                    // here storing results in db with timestamps
+                    Timber.i("Dispatching results to store in db and invoking ui callback")
+                    onCalculationFinished(calculationResults)
+                }
+            }
+        )
         // TODO в будущем, когда будут результаты, pScreenSwitcher надо будет обращать в нулл, иначе будет баг и краш
         pScreenSwitcher = PScreenSwitcher(calcSdkHelper)
         return true
+    }
+
+    fun finishCurrentCalculation() {
+        pScreenSwitcher = null
     }
 
     fun isCalculationActive(): Boolean {

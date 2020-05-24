@@ -8,10 +8,13 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
 import com.reduction_technologies.database.di.ApplicationScope
+import kotlinx.coroutines.*
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -32,11 +35,37 @@ class FlowFragment() : Fragment() {
 
     private fun setupEnterButton() {
         controlEnter.setOnClickListener {
-            if (pScreenInflater.getFilled() != null) {
-                pScreenSwitcher.enter()
-                updateScreen()
-            } else {
-                Toast.makeText(context, getString(R.string.enter_data), Toast.LENGTH_SHORT).show()
+            try {
+                if (pScreenInflater.getFilled() != null) {
+                    Timber.i("Waiting for validation")
+                    try {
+                        val handler = CoroutineExceptionHandler { context, exception ->
+                            Timber.e("CoroutineExceptionHandler  got in $context ${exception}")
+                        }
+                        lifecycleScope.launch(CoroutineName("FlowFragmentCoroutine")) {
+                            CoroutineScope(SupervisorJob(coroutineContext[Job]))
+                                .launch(context = handler) {
+                                    supervisorScope {
+                                        Timber.i("in coroutine $coroutineContext")
+                                        val validated = pScreenSwitcher.enter()
+
+                                        Timber.i("validated enter: $validated")
+                                        updateScreen()
+                                    }
+
+                                }
+
+                        }
+                    } catch (e: Throwable) {
+                        print(e)
+                        Timber.e("Got error $e")
+                    }
+                } else {
+                    Toast.makeText(context, getString(R.string.enter_data), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } catch (e: Throwable) {
+                Timber.i("Caught exception: ${e.printStackTrace()}")
             }
         }
     }
@@ -50,14 +79,21 @@ class FlowFragment() : Fragment() {
 
     private fun setupNextButton() {
         controlNext.setOnClickListener {
-            pScreenSwitcher.next()
-            updateScreen()
+            Timber.i("Waiting next")
+            lifecycleScope.launch {
+                val validated = pScreenSwitcher.next()
+                Timber.i("Got next")
+                updateScreen()
+            }
         }
     }
 
     private fun updateScreen() {
         fetchAllButtons()
-        pScreenInflater.showPScreen(pScreenSwitcher.current().pScreen, !pScreenSwitcher.currentWasValidatedSuccessfully)
+        pScreenInflater.showPScreen(
+            pScreenSwitcher.current().pScreen,
+            !pScreenSwitcher.currentWasValidatedSuccessfully
+        )
     }
 
     override fun onCreateView(
@@ -89,7 +125,12 @@ class FlowFragment() : Fragment() {
         (activity!!.application as App).appComponent.inject(this)
         // obtaining model delegate, responsible for switching screens
         pScreenSwitcher = viewModel.screenSwitcher()!!
-        pScreenInflater = PScreenInflater(context!!,cardContainer, activity!!.windowManager, resources.displayMetrics)
+        pScreenInflater = PScreenInflater(
+            context!!,
+            cardContainer,
+            activity!!.windowManager,
+            resources.displayMetrics
+        )
         updateScreen()
 
     }

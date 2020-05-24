@@ -9,7 +9,6 @@ import android.view.WindowManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.pfield_binders.*
-import timber.log.Timber
 
 interface PFieldBinder {
     fun bind(spec: PTypeSpecific)
@@ -68,7 +67,6 @@ class PFieldAdapter(
     }
 
     override fun onBindViewHolder(holder: PFieldHolder, position: Int) {
-        Timber.i("Binding higher order items $position")
         holder.onBind(pScreen.fields[position].typeSpecificData)
     }
 

@@ -3,13 +3,16 @@ package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 import com.reducetechnologies.command_infrastructure.WrappedPScreen
 import com.reducetechnologies.command_infrastructure.needsInput
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.lang.IllegalStateException
 
 /**
  * Хранит в себе все врапы, которые были, включая новые пришедшие
  */
-class PScreenSwitcher(val helper: CalculationSdkHelper) {
+class PScreenSwitcher(
+    val helper: CalculationSdkHelper) {
     // fetching all already made wrapped screens
     private var status = helper.getCurrentStatus()
 
@@ -65,7 +68,7 @@ class PScreenSwitcher(val helper: CalculationSdkHelper) {
         status = helper.getCurrentStatus()
     }
 
-    fun next(): WrappedPScreen {
+    suspend fun next(): WrappedPScreen {
         if (!(haveNext())) {
             throw IllegalStateException("Cant return next as it is not yet available")
         }
@@ -73,7 +76,9 @@ class PScreenSwitcher(val helper: CalculationSdkHelper) {
             // каждый пскрин должен быть провалидирован, даже если не было ввода
             // поскольку для скринов, где ввод не требуется, кнопка ввода заблокирована, валидация проходит при next
             if (!needsInput()) {
-                helper.validate(current().pScreen)
+                withContext(Dispatchers.Default) {
+                    helper.validate(current().pScreen)
+                }
             }
             Timber.i("getting next from helper")
             helper.next()
@@ -96,8 +101,10 @@ class PScreenSwitcher(val helper: CalculationSdkHelper) {
     /**
      * true if enter successful
      */
-    fun enter(): Boolean {
-        helper.validate(current().pScreen)
+    suspend fun enter(): Boolean {
+        withContext(Dispatchers.Default) {
+            helper.validate(current().pScreen)
+        }
         fetchUpdates()
         currentWasValidatedSuccessfully = status.currentPending == null
         return currentWasValidatedSuccessfully

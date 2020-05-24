@@ -4,8 +4,11 @@ import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.di.CalculationModule
 import com.reducetechnologies.di.DaggerCalculationsComponent
 import com.reduction_technologies.database.di.GOSTableStorage
+import kotlinx.coroutines.*
 import java.lang.IllegalStateException
 import javax.inject.Provider
+
+typealias CalculationFinishCallback = (CalculationResults) -> Unit
 
 /**
  * Переинициализирует calculation sdk при начале расчета. В остальном делегирует задачи calculation sdk
@@ -13,18 +16,20 @@ import javax.inject.Provider
  */
 class CalculationSdkHelper(
     private val tableProvider: Provider<GOSTableStorage>
-    ) {
+)  {
     var isActive = false
         private set
-    var onSessionStopped: ((CalculationResults) -> Unit)? = null
+    private var onSessionStopped: ((CalculationResults) -> Unit)? = null
 
+    // backend entry point
     private var calculationSdk: CalculationSdk? = null
 
     private fun reinitCalculationSdk() {
         val calculationModule = CalculationModule(tableProvider.get().obtain())
-        val component = DaggerCalculationsComponent.builder().calculationModule(calculationModule).build()
+        val component =
+            DaggerCalculationsComponent.builder().calculationModule(calculationModule).build()
         calculationSdk = CalculationSdkBuilder(component).buildSdk()
-}
+    }
 
     private fun reinit() {
         isActive = true
@@ -32,49 +37,60 @@ class CalculationSdkHelper(
     }
 
     private fun finish() {
-        onSessionStopped?.invoke(object : CalculationResults {})
-        isActive = false
-        calculationSdk = null
+        onSessionStopped?.invoke(calculationSdk!!.finalResults())
+        finishSilently()
     }
 
-    // returns the live data for out direction
-    fun startCalculation(): CurrentPScreenStatus {
+    private fun finishSilently() {
+        onSessionStopped = null
+        isActive = false
+        calculationSdk = null
+        onSessionStopped = null
+    }
+
+    // calls given callback when calculation is finished
+    fun startCalculation(onSessionStopped: ((CalculationResults) -> Unit)): CurrentPScreenStatus {
         if (isActive) {
             throw IllegalStateException("isActive, can't reinit")
         }
+        this.onSessionStopped = onSessionStopped
         reinit()
         val first = calculationSdk!!.init()
         return CurrentPScreenStatus(calculationSdk!!.getAllValidated(), first)
     }
 
-    fun validate(pScreen: PScreen): CurrentPScreenStatus {
-        val currentValidated = calculationSdk!!.validateCurrent(pScreen)
-        val validated = calculationSdk!!.getAllValidated()
-        return CurrentPScreenStatus(validated, currentValidated)
+    suspend fun validate(pScreen: PScreen): CurrentPScreenStatus {
+        return withContext(Dispatchers.Default) {
+            val currentValidated = calculationSdk!!.validateCurrent(pScreen)
+            val validated = calculationSdk!!.getAllValidated()
+            CurrentPScreenStatus(validated, currentValidated)
+        }
     }
 
-    fun hasNext() : Boolean {
+    fun hasNext(): Boolean {
         return calculationSdk!!.hasNextPScreen()
     }
 
     /**
      * Когда карточка последняя - этот метод уже не должен вызываться, только финиш
      */
-    fun next() : CurrentPScreenStatus {
-        val next = calculationSdk!!.getNextPScreen()
-        return CurrentPScreenStatus(calculationSdk!!.getAllValidated(), next)
+    suspend fun next(): CurrentPScreenStatus {
+        // as calculating screens currently is CPU limited, default dispatcher is used
+        return withContext(Dispatchers.Default) {
+            val next = calculationSdk!!.getNextPScreen()
+            // pull callbacks on finish
+            if (calculationSdk!!.isFinished()) {
+                finish()
+            }
+            CurrentPScreenStatus(calculationSdk!!.getAllValidated(), next)
+        }
     }
 
-    fun finishCalculation() {
-        finish()
-    }
-
-    fun finalResults() : CalculationResults {
-        return calculationSdk!!.finalResults()
-    }
-
-    fun getCurrentStatus() : CurrentPScreenStatus {
-        return CurrentPScreenStatus(calculationSdk!!.getAllValidated(), calculationSdk!!.currentPending())
+    fun getCurrentStatus(): CurrentPScreenStatus {
+        return CurrentPScreenStatus(
+            calculationSdk!!.getAllValidated(),
+            calculationSdk!!.currentPending()
+        )
     }
 }
 

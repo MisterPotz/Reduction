@@ -9,6 +9,7 @@ import com.reducetechnologies.command_infrastructure.p_screens.OutputPScreen
 import com.reducetechnologies.command_infrastructure.p_screens.StandbyPScreen
 import com.reducetechnologies.di.CalculationsComponent
 import com.reducetechnologies.specificationsAndRequests.Specifications
+import java.lang.IllegalStateException
 import kotlin.math.PI
 
 // contains calculation classes
@@ -26,6 +27,7 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
         }
     }
 
+    var reducerDataList : ArrayList<ReducerData>? = null
     override fun validate(pScreen: PScreen): PScreen? {
         /**
          * Сначала проверка, что содержит поля с вводом
@@ -75,11 +77,23 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
                     val outputPScreen: OutputPScreen =
                         OutputPScreen(reducerData = reducerData)
                     preparedStack.add(outputPScreen.getPScreen())
+                    isOngoing = false
                 }
             }
         }
         // если все норм возвратит нулл
         return null
+    }
+
+    override fun getResult(): CalculationResults {
+        if (reducerDataList == null) {
+            throw IllegalStateException("Results are not ready, improper source usage")
+        }
+        return CalculationResultsContainer(reducerDataList!!)
+    }
+
+    override fun isFinished(): Boolean {
+        return preparedStack.isEmpty()
     }
 
     /**
