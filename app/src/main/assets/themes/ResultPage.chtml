@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        table {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            padding: 16px;
+        }
+
+        td,
+        th {
+            border: 1px solid #ddd;
+            padding: 16px;
+        }
+
+        td {
+            width: 50%;
+        }
+
+        th.th3 {
+            width: 33%;
+        }
+
+        td.td3 {
+            width: 33%
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        td.subvalue {
+            text-align: right;
+        }
+
+        p.main_text {
+            text-align: center;
+        }
+
+        p.headline {
+            background-color: #4CAF50;
+            text-align: center;
+            font-size: large;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <p class="headline">Результаты расчета</p>
+    <p class="main_text">Характеристика механизма</p>
+
+    {% include #common_data %}
+
+    <p class="main_text">Характеристика тихоходной ступени</p>
+    {$firstStage}
+    <p class="main_text">Характеристика быстроходной ступени</p>
+    {$secondStage}
+</body>
+
+{#common_data}
+<table>
+    <tr>
+        <td>Передаточное отношение механизма</td>
+        <td>{$U}</td>
+    </tr>
+    <tr>
+        <td>Вращающий момент на быстроходном валу, Н*м</td>
+        <td>{$THighSpeedStep}</td>
+    </tr>
+    <tr>
+        <td class="subvalue">тихоходном валу, Н*м</td>
+        <td>{$TLowSpeedStep}</td>
+    </tr>
+    <tr>
+        <td>Частота вращения быстроходного валу, об/мин</td>
+        <td>{$NHighSpeedStep}</td>
+    </tr>
+    <tr>
+        <td class="subvalue">тихоходного вала, об/мин</td>
+        <td>{$NLowSpeedStep}</td>
+    </tr>
+    <tr>
+        <td>Масса механизма, кг</td>
+        <td>{$mechanismsMass}</td>
+    </tr>
+    <tr>
+        <td class="subvalue">колёс, кг</td>
+        <td>{$wheelsMass}</td>
+    </tr>
+
+    <tr>
+        <td>Степень точности</td>
+        <td>{$degreeOfAccuracy}</td>
+    </tr>
+
+</table>
+{#}

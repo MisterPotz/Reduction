@@ -1,0 +1,155 @@
+<table>
+        <tbody>
+            <tr>
+                <th colspan="2">Данные для одной ступени</th>
+            </tr>
+            <tr>
+                <td>Передаточное число</td>
+                <td>{$uStep}</td>
+            </tr>
+            <tr>
+                <td>Коэффициент ширины венца</td>
+                <td>{$PSIBA}</td>
+            </tr>
+            <tr>
+                <td>Межосевое расстояние, мм</td>
+                <td>{$AW}</td>
+            </tr>
+            <tr>
+                <td>Угол зацепляения, градусы</td>
+                <td>{$ALF}</td>
+            </tr>
+            <tr>
+                <td>Угол наклона зубьев, градусы</td>
+                <td>{$BET}</td>
+            </tr>
+            <tr>
+                <td>Модуль зацепления (нормальный), мм</td>
+                <td>{$M}</td>
+            </tr>
+            <tr>
+                <td>Силы в зацеплении, Н:</td>
+            </tr>
+            <tr>
+                <td class="subvalue">окружная</td>
+                <td>{$FT}</td>
+            </tr>
+            <tr>
+                <td class="subvalue">радиальная</td>
+                <td>{$FR}</td>
+            </tr>
+            <tr>
+                <td class="subvalue">осевая</td>
+                <td>{$FA}</td>
+            </tr>
+            <tr>
+                <td>Контактные напряжения, МПа:</td>
+            </tr>
+            <tr>
+                <td class="subvalue">при номинальной нагрузке</td>
+            </tr>
+            <tr>
+                <td class="subvalue">расчётные</td>
+                <td>{$SGH}</td>
+            </tr>
+            <tr>
+                <td class="subvalue">допускаемые</td>
+                <td>{$SGHD}</td>
+            </tr>
+            <tr>
+                <td class="subvalue">при максимальной нагрузке</td>
+            </tr>
+            <tr>
+                <td class="subvalue">расчётные</td>
+                <td>{$SGHM}</td>
+            </tr>
+            <tr>
+                <td class="subvalue">допускаемые</td>
+                <td>{$SGHMD}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table>
+        <tr>
+            <th class="th3">Параметры зубчатых колёс ступени</th>
+            <th class="th3">Шестерня</th>
+            <th class="th3">Колесо</th>
+        </tr>
+        <tr>
+            <td class="td3">Число зубьев</td>
+            <td class="td3">{$Z|get(0)}</td>
+            <td class="td3">{$Z|get(1)}</td>
+        </tr>
+        <tr>
+            <td class="td3">Коэффициент смещения исходного контура</td>
+            <td class="td3">{$X|get(0)}</td>
+            <td class="td3">{$X|get(1)}</td>
+        </tr>
+        <tr>
+            <th class="th3">
+                Диаметры, мм:
+            </th> 
+        </tr>
+        <tr>
+            <td class="subvalue td3">Делительный</td>
+            <td class="td3">{$D|get(0)}</td>
+            <td class="td3">{$D|get(1)}</td>
+        </tr>
+        <tr>
+            <td class="subvalue td3">Начальный</td>
+            <td class="td3">{$DW|get(0)}</td>
+            <td class="td3">{$DW|get(1)}</td>
+        </tr>
+        <tr>
+            <td class="subvalue td3">Вершин</td>
+            <td class="td3">{$DA|get(0)}</td>
+            <td class="td3">{$DA|get(1)}</td>
+        </tr>
+        <tr>
+            <td class="subvalue td3">Впадин</td>
+            <td class="td3">{$DF|get(0)}</td>
+            <td class="td3">{$DF|get(1)}</td>
+        </tr>
+        <tr>
+            <td class="td3">Ширина зубчатого венца</td>
+            <td class="td3">{$BW|get(0)}</td>
+            <td class="td3">{$BW|get(1)}</td>
+        </tr>
+        <tr>
+            <td class="td3">Твёрдость поверхности зубьев, HRC</td>
+            <td class="td3">{$HRC|get(0)}</td>
+            <td class="td3">{$HRC|get(1)}</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th>
+                Напряжения изгиба, МПа:
+            </th> 
+            <td></td>
+        </tr>
+        <tr>
+            <td class="subvalue">при номинальной нагрузке</td>
+        </tr>
+        <tr>
+            <td class="subvalue">расчетные</td>
+            <td>{$SGF}</td>
+        </tr>
+        <tr>
+            <td class="subvalue">допускаемые</td>
+            <td>{$SGFD}</td>
+        </tr>
+        <tr>
+            <td class="subvalue">при максимальной нагрузке</td>
+        </tr>
+        <tr>
+            <td class="subvalue">расчетные</td>
+            <td>{$SGFM}</td>
+        </tr>
+        <tr>
+            <td class="subvalue">допускаемые</td>
+            <td>{$SGFMD}</td>
+        </tr>
+    </table>
