@@ -15,12 +15,12 @@ internal class OutputPScreen {
         )
     }
 
-    fun getPScreen() : PScreen {
+    fun getPScreen(): PScreen {
         return pScreen
     }
 
     companion object {
-        protected fun getFields() : List<PField> {
+        protected fun getFields(): List<PField> {
             return listOf(
                 PField(
                     pFieldType = PFieldType.TEXT,
@@ -32,41 +32,61 @@ internal class OutputPScreen {
                 ),
                 PField(
                     pFieldType = PFieldType.LINK,
-                    typeSpecificData = LinkSpec(text = "Лучший результат",where = DestinationResult),
+                    typeSpecificData = LinkSpec(
+                        text = "Быстрый результат",
+                        where = DestinationResult
+                    ),
                     fieldId = 1
                 ),
                 PField(
                     pFieldType = PFieldType.LINK,
-                    typeSpecificData = LinkSpec(text = "Сортированные по весу",where = DestinationSortedResultList(Sorted.WEIGHT)),
+                    typeSpecificData = LinkSpec(
+                        text = "Сортированные по весу",
+                        where = DestinationSortedResultList(Sorted.WEIGHT)
+                    ),
                     fieldId = 2
                 ),
                 PField(
                     pFieldType = PFieldType.LINK,
-                    typeSpecificData = LinkSpec(text = "Сортмрованные по объему",where = DestinationSortedResultList(Sorted.VOLUME)),
+                    typeSpecificData = LinkSpec(
+                        text = "Сортмрованные по объему",
+                        where = DestinationSortedResultList(Sorted.VOLUME)
+                    ),
                     fieldId = 3
                 ),
                 PField(
                     pFieldType = PFieldType.LINK,
-                    typeSpecificData = LinkSpec(text = "Сортированные по убыванию точности передаточного отношения", where = DestinationSortedResultList(Sorted.U_DESC)),
+                    typeSpecificData = LinkSpec(
+                        text = "Сортированные по убыванию точности передаточного отношения",
+                        where = DestinationSortedResultList(Sorted.U_DESC)
+                    ),
                     fieldId = 4
                 ),
                 PField(
                     pFieldType = PFieldType.LINK,
-                    typeSpecificData = LinkSpec(text = "Сортированные по межосевому расстоянию",where =  DestinationSortedResultList(Sorted.SUM_AW)),
+                    typeSpecificData = LinkSpec(
+                        text = "Сортированные по межосевому расстоянию",
+                        where = DestinationSortedResultList(Sorted.SUM_AW)
+                    ),
                     fieldId = 5
                 ),
                 PField(
                     pFieldType = PFieldType.LINK,
-                    typeSpecificData = LinkSpec(text = "Сортированные по твердости",where =  DestinationSortedResultList(Sorted.SUM_HRC)),
+                    typeSpecificData = LinkSpec(
+                        text = "Сортированные по твердости",
+                        where = DestinationSortedResultList(Sorted.SUM_HRC)
+                    ),
                     fieldId = 6
                 ),
                 PField(
                     pFieldType = PFieldType.LINK,
-                    typeSpecificData = LinkSpec(text = "Сортированные по разнице SGD-SG",where =  DestinationSortedResultList(Sorted.DIFF_SGD_SG)),
+                    typeSpecificData = LinkSpec(
+                        text = "Сортированные по разнице SGD-SG",
+                        where = DestinationSortedResultList(Sorted.DIFF_SGD_SG)
+                    ),
                     fieldId = 7
                 )
             )
         }
-
     }
 }
