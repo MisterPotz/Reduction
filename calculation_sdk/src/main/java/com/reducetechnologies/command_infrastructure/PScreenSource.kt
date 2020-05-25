@@ -2,9 +2,9 @@ package com.reducetechnologies.command_infrastructure
 
 abstract class PScreenSource : Iterator<PScreen> {
     protected abstract val preparedStack: MutableList<PScreen>
-
+    protected var isOngoing = true
     override fun hasNext(): Boolean {
-        return preparedStack.isNotEmpty()
+        return preparedStack.isNotEmpty() || isOngoing
     }
 
     override fun next(): PScreen {
@@ -16,4 +16,8 @@ abstract class PScreenSource : Iterator<PScreen> {
     }
 
     abstract fun validate(pScreen: PScreen) : PScreen?
+
+    abstract fun getResult() : CalculationResults
+
+    abstract fun isFinished() : Boolean
 }

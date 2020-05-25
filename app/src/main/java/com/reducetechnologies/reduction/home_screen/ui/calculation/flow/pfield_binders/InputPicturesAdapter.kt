@@ -16,7 +16,6 @@ import com.google.android.material.card.MaterialCardView
 import com.reducetechnologies.command_infrastructure.InputPictureSpec
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.FileStringUtils
-import timber.log.Timber
 
 class InputPicturesAdapter(val context: Context,
                            val preparedPaths: List<String>,
@@ -58,7 +57,6 @@ class InputPicturesAdapter(val context: Context,
     }
 
     override fun onBindViewHolder(holder: InputPictureHolder, position: Int) {
-        Timber.i("Binding view holder : $position")
         holder.onBind(preparedPaths[position], position)
     }
 
@@ -81,7 +79,6 @@ class InputPicturesAdapter(val context: Context,
 
         init {
             card.setOnClickListener {
-                Timber.i("Selected card of $positionOfHolder")
                 currentlySelected = positionOfHolder
                 reselectAll()
             }
@@ -104,7 +101,6 @@ class InputPicturesAdapter(val context: Context,
         fun reselectAll() {
             for (i in preparedPaths.indices) {
                 recyclerView?.findViewHolderForAdapterPosition(i)?.let {
-                    Timber.i("Reselecting item $i")
                     (it as InputPictureHolder).reselect()
                 }
             }
@@ -112,10 +108,8 @@ class InputPicturesAdapter(val context: Context,
 
         fun reselect() {
             currentlySelected?.let {
-                Timber.i("In reselection of $positionOfHolder, positionOfHolder == currentlySelected ${positionOfHolder == it}")
                 card.isChecked = positionOfHolder == it
             } ?: run { card.isChecked = false }
-            Timber.i("Holder $positionOfHolder is checkable ${card.isCheckable} and is checked ${card.isChecked}")
         }
 
         private fun fetchPicture(preparedPath: String, width: Int, height: Int) {

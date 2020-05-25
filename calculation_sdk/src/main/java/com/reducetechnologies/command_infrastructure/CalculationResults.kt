@@ -1,6 +1,9 @@
 package com.reducetechnologies.command_infrastructure
 
-interface CalculationResults {
-}
+import com.reducetechnologies.calculations_entity.ReducerData
 
-internal class StubResults : CalculationResults
+sealed class CalculationResults
+
+data class CalculationResultsContainer(val reducersDataList: ArrayList<ReducerData>) : CalculationResults()
+
+object Error : CalculationResults()

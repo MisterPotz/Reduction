@@ -28,9 +28,6 @@ dependencies {
     implementation libraries.kotlinLogger
     testImplementation libraries.kotlinLogger
 
-    implementation libraries.kotlinCoroutines
-    testImplementation libraries.kotlinCoroutines
-
     // Необходимо для работы логгера kotlinLogger
     implementation libraries.forKotlinLogger
     testImplementation libraries.forKotlinLogger

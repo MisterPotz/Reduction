@@ -37,7 +37,7 @@ class ItemActivity : AppCompatActivity() {
 //            (it.typeSpecificData as MathTextSpec).text
 //            (it.typeSpecificData as MathTextSpec).text = addBackslashes((it.typeSpecificData as MathTextSpec).text)
 //        }
-        PScreenSimpleeInflater.inflatPScreen(pscreen, container, resources.displayMetrics, windowManager, layoutInflater, false)
+        PScreenSimpleeInflater.inflatPScreen(pscreen, container, resources.displayMetrics, windowManager, layoutInflater, false, null)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -9,3 +9,13 @@ fun PScreen.needsInput() : Boolean {
         left || right.needsInput()
     }
 }
+
+fun PField.hasLink() : Boolean {
+    return this.pFieldType == PFieldType.LINK
+}
+
+fun PScreen.hasLinks() : Boolean {
+    return fields.fold(false) {left, right ->
+        left || right.hasLink()
+    }
+}

@@ -107,6 +107,8 @@ data class PField(
                     asSpecific<TextSpec>()
                 PFieldType.PICTURE ->
                     asSpecific<PictureSpec>()
+                PFieldType.LINK ->
+                    asSpecific<LinkSpec>()
             }
         }
 
@@ -125,6 +127,8 @@ data class PField(
                     add(dataName, typeSpecificData.toJsonTreee<TextSpec>())
                 PFieldType.PICTURE ->
                     add(dataName, typeSpecificData.toJsonTreee<PictureSpec>())
+                PFieldType.LINK ->
+                    add(dataName, typeSpecificData.toJsonTreee<LinkSpec>())
             }
         }
 

@@ -1,9 +1,13 @@
 package com.reducetechnologies.command_infrastructure
 
+import com.sun.org.apache.xpath.internal.operations.Bool
+
 /**
  * Probably must have some initial options
  * Later must have calculationComponent as input.
  * Instructions for each functions declare the behavior of this calculation sdk
+ *
+ * This serves as a backend api
  */
 interface CalculationSdk {
     /**
@@ -32,6 +36,8 @@ interface CalculationSdk {
     fun getAllValidated() : List<WrappedPScreen>
 
     fun finalResults() : CalculationResults
+
+    fun isFinished() : Boolean
 
     fun currentPending() : WrappedPScreen?
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.reducetechnologies.command_infrastructure.CalculationResults
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_calculation.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class CalculationFragment : Fragment() {
+class CalculationFragment : Fragment(), CalculationFinishCallback {
     @Inject
     @ApplicationScope
     lateinit var viewModel : SharedViewModel
@@ -54,7 +55,7 @@ class CalculationFragment : Fragment() {
     private fun registerCalculationButton() {
         calcButton.setOnClickListener {
             val action = CalculationFragmentDirections.actionCalculationFragmentToFlowFragment()
-            viewModel.startCalculation()
+            viewModel.startCalculation(this)
             findNavController().navigate(action)
         }
     }
@@ -90,5 +91,9 @@ class CalculationFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.i("in onDestroy: current fragment amount: ${SingletoneContextCounter.fragments}")
+    }
+
+    override fun invoke(calculationResults : CalculationResults) {
+        Timber.i("Got calculation results")
     }
 }

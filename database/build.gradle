@@ -80,9 +80,6 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation libraries.kotlinCoroutines
-    testImplementation libraries.kotlinCoroutines
-
     implementation libraries.liveDataExt
 
     implementation libraries.gson

@@ -118,8 +118,8 @@ dependencies {
     testImplementation 'androidx.test.ext:junit:' + rootProject.extJUnitVersion
     testImplementation 'androidx.test.ext:junit-ktx:' + rootProject.extJUnitVersion
 
-    implementation libraries.kotlinCoroutines
-    testImplementation libraries.kotlinCoroutines
+ /*   implementation libraries.kotlinCoroutines
+    testImplementation libraries.kotlinCoroutines*/
 
     implementation project(':database')
     testImplementation project(":database")

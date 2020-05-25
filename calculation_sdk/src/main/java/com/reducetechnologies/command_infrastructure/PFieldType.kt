@@ -7,7 +7,8 @@ enum class PFieldType(val needsInput : Boolean) {
 
     MATH_TEXT(false),
     TEXT(false),
-    PICTURE(false)
+    PICTURE(false),
+    LINK(false)
 }
 
 fun Int.toPFieldType() : PFieldType {
