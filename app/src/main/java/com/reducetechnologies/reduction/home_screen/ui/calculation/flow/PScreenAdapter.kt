@@ -9,6 +9,7 @@ import android.view.WindowManager
 import androidx.recyclerview.widget.RecyclerView
 import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.pfield_binders.*
+import java.lang.IllegalStateException
 
 interface PFieldBinder {
     fun bind(spec: PTypeSpecific)
@@ -48,6 +49,7 @@ class PFieldAdapter(
     RecyclerView.Adapter<PFieldHolder>() {
     private var inflater: LayoutInflater? = null
     private var recyclerView: RecyclerView? = null
+    private var links : HashMap<Destination, LinkCalledCallback>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PFieldHolder {
         if (inflater == null) {
@@ -67,6 +69,11 @@ class PFieldAdapter(
     }
 
     override fun onBindViewHolder(holder: PFieldHolder, position: Int) {
+        // setting up a link if it contains any links
+        if (pScreen.fields[position].pFieldType == PFieldType.LINK) {
+            findCallbackForLink(pScreen.fields[position].typeSpecificData)
+        }
+        // binding
         holder.onBind(pScreen.fields[position].typeSpecificData)
     }
 
@@ -78,14 +85,29 @@ class PFieldAdapter(
         this.recyclerView = recyclerView
     }
 
+    fun setupLinks(links: HashMap<Destination, LinkCalledCallback>?) {
+        this.links = links
+    }
+
+    private fun findCallbackForLink(spec: PTypeSpecific) {
+        if (spec !is LinkSpec) {
+            throw IllegalStateException("Is not destination, cannot setyp")
+        }
+        spec.linkCalledCallback = links!![spec.where]
+    }
+
     private fun getPFieldBinder(type: PFieldType): PFieldBinder {
         return when (type) {
             PFieldType.TEXT -> TextFieldBinder()
             PFieldType.INPUT_TEXT -> InputTextBinder(inputable)
-            PFieldType.PICTURE -> PictureBinder(context, windowManager).also { it.setCallback(this::callback) }
+            PFieldType.PICTURE -> PictureBinder(
+                context,
+                windowManager
+            ).also { it.setCallback(this::callback) }
             PFieldType.INPUT_PICTURE -> InputPictureBinder(context, windowManager, inputable)
             PFieldType.INPUT_LIST -> InputListBinder(inputable)
             PFieldType.MATH_TEXT -> MathTextBinder(14, displayMetrics)
+            PFieldType.LINK -> LinkSpecBinder()
         }
     }
 
@@ -97,6 +119,7 @@ class PFieldAdapter(
             PFieldType.INPUT_PICTURE -> InputPictureBinder.inflate(inflater!!, root)
             PFieldType.INPUT_LIST -> InputListBinder.inflate(inflater!!, root)
             PFieldType.MATH_TEXT -> MathTextBinder.inflate(inflater!!, root)
+            PFieldType.LINK -> LinkSpecBinder.inflate(inflater!!, root)
         }
     }
 

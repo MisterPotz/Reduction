@@ -9,12 +9,15 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
 import com.reduction_technologies.database.di.ApplicationScope
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.io.PrintWriter
+import java.io.StringWriter
 import javax.inject.Inject
 
 /**
@@ -33,39 +36,43 @@ class FlowFragment() : Fragment() {
     private lateinit var buttonStateDelegate: ButtonStateDelegate
     private lateinit var pScreenInflater: PScreenInflater
 
+    private val handler by lazy {
+        CoroutineExceptionHandler { context, exception ->
+            val outError = StringWriter()
+
+            exception.printStackTrace(PrintWriter(outError))
+            val errorString: String = outError.toString()
+
+            Timber.e("Error: $context, \n${errorString}")
+        }
+    }
+
+    private fun CoroutineScope.launchSupervisor(
+        block: suspend CoroutineScope.() -> Unit
+    ): Job {
+        return CoroutineScope(SupervisorJob(coroutineContext[Job])).launch(
+            context = handler,
+            block = block
+        )
+    }
+
     private fun setupEnterButton() {
         controlEnter.setOnClickListener {
-            try {
-                if (pScreenInflater.getFilled() != null) {
-                    Timber.i("Waiting for validation")
-                    try {
-                        val handler = CoroutineExceptionHandler { context, exception ->
-                            Timber.e("CoroutineExceptionHandler  got in $context ${exception}")
-                        }
-                        lifecycleScope.launch(CoroutineName("FlowFragmentCoroutine")) {
-                            CoroutineScope(SupervisorJob(coroutineContext[Job]))
-                                .launch(context = handler) {
-                                    supervisorScope {
-                                        Timber.i("in coroutine $coroutineContext")
-                                        val validated = pScreenSwitcher.enter()
+            if (pScreenInflater.getFilled() != null) {
+                Timber.i("Waiting for validation")
 
-                                        Timber.i("validated enter: $validated")
-                                        updateScreen()
-                                    }
+                lifecycleScope.launchSupervisor {
+                    Timber.i("in coroutine $coroutineContext")
+                    val validated = pScreenSwitcher.enter()
 
-                                }
-
-                        }
-                    } catch (e: Throwable) {
-                        print(e)
-                        Timber.e("Got error $e")
+                    Timber.i("validated enter: $validated")
+                    withContext(Dispatchers.Main) {
+                        updateScreen()
                     }
-                } else {
-                    Toast.makeText(context, getString(R.string.enter_data), Toast.LENGTH_SHORT)
-                        .show()
                 }
-            } catch (e: Throwable) {
-                Timber.i("Caught exception: ${e.printStackTrace()}")
+            } else {
+                Toast.makeText(context, getString(R.string.enter_data), Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -80,19 +87,66 @@ class FlowFragment() : Fragment() {
     private fun setupNextButton() {
         controlNext.setOnClickListener {
             Timber.i("Waiting next")
-            lifecycleScope.launch {
+            lifecycleScope.launchSupervisor {
                 val validated = pScreenSwitcher.next()
                 Timber.i("Got next")
-                updateScreen()
+                withContext(Dispatchers.Main) {
+                    updateScreen()
+                }
             }
         }
     }
 
+    /**
+     * By current contract, if pfield has non-encyclopedia links, it must be final to allow link
+     */
     private fun updateScreen() {
         fetchAllButtons()
-        pScreenInflater.showPScreen(
-            pScreenSwitcher.current().pScreen,
-            !pScreenSwitcher.currentWasValidatedSuccessfully
+        val currentPScreen = pScreenSwitcher.current()
+        if (currentPScreen.pScreen.hasLinks() && currentPScreen.isLast) {
+            pScreenInflater.showPScreen(
+                currentPScreen.pScreen,
+                !pScreenSwitcher.currentWasValidatedSuccessfully,
+                // by the time this code is executed, callback must already be ready
+                getLinkCallbacks()
+            )
+        } else if (!currentPScreen.pScreen.hasLinks()) {
+            pScreenInflater.showPScreen(
+                pScreenSwitcher.current().pScreen,
+                !pScreenSwitcher.currentWasValidatedSuccessfully,
+                null
+            )
+        } else {
+            throw IllegalStateException("Mutable links are not allowed in not" +
+                    "last screen")
+        }
+    }
+
+    private fun getLinkCallbacks() : HashMap<Destination, LinkCalledCallback>{
+        val results = viewModel.sortedResults!!
+        Timber.i("Got results")
+        return hashMapOf(
+            DestinationResult to {
+                Timber.i("Must open best result")
+            },
+            DestinationSortedResultList(Sorted.WEIGHT) to {
+                Timber.i("Opening list of weight sorted")
+            },
+            DestinationSortedResultList(Sorted.DIFF_SGD_SG) to {
+                Timber.i("Opening diff sgd - sg sorted")
+            },
+            DestinationSortedResultList(Sorted.VOLUME) to {
+                Timber.i("Opening volume sorted")
+            },
+            DestinationSortedResultList(Sorted.SUM_AW) to {
+                Timber.i("Opening sum aw sorted")
+            },
+            DestinationSortedResultList(Sorted.SUM_HRC) to {
+                Timber.i("Opening sum hrc ")
+            },
+            DestinationSortedResultList(Sorted.U_DESC) to {
+                Timber.i("Opening u desc")
+            }
         )
     }
 
@@ -132,7 +186,6 @@ class FlowFragment() : Fragment() {
             resources.displayMetrics
         )
         updateScreen()
-
     }
 
     private fun fetchPrevStatus() {
@@ -144,6 +197,7 @@ class FlowFragment() : Fragment() {
     }
 
     private fun fetchHasNext() {
+        Timber.i("haveNextL: ${pScreenSwitcher.haveNext()}")
         buttonStateDelegate.hasNext(pScreenSwitcher.haveNext())
     }
 

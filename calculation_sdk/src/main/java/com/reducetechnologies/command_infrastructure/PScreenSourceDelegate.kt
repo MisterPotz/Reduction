@@ -9,7 +9,10 @@ import com.reducetechnologies.command_infrastructure.p_screens.OutputPScreen
 import com.reducetechnologies.command_infrastructure.p_screens.StandbyPScreen
 import com.reducetechnologies.di.CalculationsComponent
 import com.reducetechnologies.specificationsAndRequests.Specifications
+import mu.KotlinLogging
 import java.lang.IllegalStateException
+import java.util.logging.Logger
+import javax.management.timer.TimerMBean
 import kotlin.math.PI
 
 // contains calculation classes
@@ -39,23 +42,17 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
                 var isBad: Boolean = false
                 //Проверяем соответствие передаточных отношений областям определений
                 //Одноступенчатый
-                if (
-                    checkOneStepU(pScreen)
-                        ) {
+                if (checkOneStepU(pScreen)) {
                     isBad = true
                     changeOneStepU(pScreen = pScreen, nextInputPScreen = nextInputPScreen)
                 }
                 //Двухступенчатый
-                else if (
-                    checkTwoStepU(pScreen)
-                        ) {
+                else if (checkTwoStepU(pScreen)) {
                     isBad = true
                     changeTwoStepU(pScreen = pScreen, nextInputPScreen = nextInputPScreen)
                 }
                 //Планетарный
-                else if (
-                    checkPlanetarTwoStepU(pScreen)
-                        ) {
+                else if (checkPlanetarTwoStepU(pScreen)) {
                     isBad = true
                     changePlanetarTwoStepU(pScreen = pScreen, nextInputPScreen = nextInputPScreen)
                 }
@@ -76,6 +73,10 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
                     //Создаём OutputPScreen и встраиваем его в очередь
                     val outputPScreen: OutputPScreen =
                         OutputPScreen(reducerData = reducerData)
+                    KotlinLogging.logger("PScreenSourceDelegate").info {
+                        "Setting last pScreen"
+                    }
+                    this.reducerDataList = reducerData
                     preparedStack.add(outputPScreen.getPScreen())
                     isOngoing = false
                 }
@@ -124,7 +125,7 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
         //LH
         val LH = (pScreen.fields.find { it.fieldId == 6 }!!.typeSpecificData as InputTextSpec)
             .additional.answer!!.toInt()
-        val NRR = (pScreen.fields.find { it.fieldId == 7 }!!.typeSpecificData as InputTextSpec)
+        val NRR = (pScreen.fields.find { it.fieldId == 7 }!!.typeSpecificData as InputListSpec)
             .additional.answer!!.toInt()
         val KOL = (pScreen.fields.find { it.fieldId == 8 }!!.typeSpecificData as InputTextSpec)
             .additional.answer!!.toInt()

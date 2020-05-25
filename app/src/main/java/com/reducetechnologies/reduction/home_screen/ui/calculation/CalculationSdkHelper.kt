@@ -37,15 +37,14 @@ class CalculationSdkHelper(
     }
 
     private fun finish() {
-        onSessionStopped?.invoke(calculationSdk!!.finalResults())
-        finishSilently()
-    }
-
-    private fun finishSilently() {
         onSessionStopped = null
         isActive = false
         calculationSdk = null
         onSessionStopped = null
+    }
+
+    private fun pullCallbacks() {
+        onSessionStopped?.invoke(calculationSdk!!.finalResults())
     }
 
     // calls given callback when calculation is finished
@@ -80,9 +79,10 @@ class CalculationSdkHelper(
             val next = calculationSdk!!.getNextPScreen()
             // pull callbacks on finish
             if (calculationSdk!!.isFinished()) {
-                finish()
+                pullCallbacks()
             }
-            CurrentPScreenStatus(calculationSdk!!.getAllValidated(), next)
+            val status = CurrentPScreenStatus(calculationSdk!!.getAllValidated(), next)
+            status
         }
     }
 

@@ -4,6 +4,7 @@ import com.reduction_technologies.database.tables_utils.DomainDefinable
 import com.reduction_technologies.database.tables_utils.DomainDefinableFloat
 import com.reduction_technologies.database.tables_utils.OneSidedDomain
 import com.reduction_technologies.database.tables_utils.TwoSidedDomain
+import sun.security.krb5.internal.crypto.Des
 
 /**
  * Contains data that depends on [PFieldType]
@@ -44,19 +45,10 @@ data class InputPictureSpec(
 // InputList
 data class AdditionalInputList(val options: List<String>, val encyclodpediaId: Int? = null, var answer: Int? = null, val hint: String? = null)
 
-//Сделал пока, просто чтобы выдать лист результатов
-
-data class AdditionalTextList(val options: List<String>, val encyclodpediaId: Int? = null, val hint: String? = null)
-
 data class InputListSpec(
     val title: String,
     val default: Int?,
     val additional: AdditionalInputList
-) : PTypeSpecific
-
-data class TextListSpec(
-    val title: String,
-    val additionalTextList: AdditionalTextList
 ) : PTypeSpecific
 
 // TextField
@@ -86,3 +78,12 @@ data class PictureDataTable(val id: Int) : PictureSource
 
 data class PictureSpec(val pictureSourceType: PictureSourceType, val source: PictureSource) :
     PTypeSpecific
+
+// Element to link user to some other page
+sealed class Destination
+typealias LinkCalledCallback = () -> Unit
+enum class Sorted { WEIGHT, VOLUME, SUM_AW, SUM_HRC, DIFF_SGD_SG, U_DESC}
+data class DestinationSortedResultList(val sorted: Sorted) : Destination()
+object DestinationResult : Destination()
+
+data class LinkSpec(val text: String, val where : Destination, var linkCalledCallback: LinkCalledCallback? = null) : PTypeSpecific

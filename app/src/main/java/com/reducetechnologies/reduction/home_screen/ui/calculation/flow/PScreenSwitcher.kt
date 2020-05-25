@@ -1,5 +1,6 @@
 package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 
+import androidx.core.os.trace
 import com.reducetechnologies.command_infrastructure.WrappedPScreen
 import com.reducetechnologies.command_infrastructure.needsInput
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
@@ -82,6 +83,7 @@ class PScreenSwitcher(
             }
             Timber.i("getting next from helper")
             helper.next()
+
             fetchUpdates()
         }
         current += 1
@@ -106,6 +108,7 @@ class PScreenSwitcher(
             helper.validate(current().pScreen)
         }
         fetchUpdates()
+        Timber.i("Current is pending: ${status.currentPending}")
         currentWasValidatedSuccessfully = status.currentPending == null
         return currentWasValidatedSuccessfully
     }
