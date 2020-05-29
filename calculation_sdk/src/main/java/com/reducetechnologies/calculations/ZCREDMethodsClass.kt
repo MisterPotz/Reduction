@@ -246,6 +246,12 @@ class ZCREDMethodsClass @Inject constructor(private val zucMethod: ZUCMethodsCla
         return creationDataList
     }
 }
+
+/**
+ * [TVL1], [TVL2], [TVL3] - вращающие моменты на валах (1 - входной, 3 - выходной (для односутпенчатых
+ * выходной выл - 2))
+ * [NV1], [NV2], [NV3] - частоты вращения валов 1, 2, 3
+ */
 data class ZCREDScope(
     var TVL1: Float? = null,
     var TVL2: Float? = null,
