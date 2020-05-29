@@ -1519,8 +1519,6 @@ internal class CalculationsModuleTest {
             inputData = inputO,
             calculationsComponent = calculationComponent
         )
-        println(calcEnt.outputData.reducerDataList.size)
-        println(calcEnt.outputData.SortingLists["weight"])
     }
 
 

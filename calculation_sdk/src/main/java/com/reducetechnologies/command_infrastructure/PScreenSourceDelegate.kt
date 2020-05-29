@@ -94,7 +94,7 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
     }
 
     override fun isFinished(): Boolean {
-        return preparedStack.isEmpty()
+        return !isOngoing
     }
 
     /**

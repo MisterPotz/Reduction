@@ -1,9 +1,6 @@
 <table>
         <tbody>
             <tr>
-                <th colspan="2">Данные для одной ступени</th>
-            </tr>
-            <tr>
                 <td>Передаточное число</td>
                 <td>{$uStep}</td>
             </tr>

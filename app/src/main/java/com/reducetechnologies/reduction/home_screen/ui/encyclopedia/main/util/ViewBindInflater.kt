@@ -12,7 +12,7 @@ interface ViewInflater {
 }
 
 interface ViewBinder<R> {
-    fun bind(item: R)
+    fun bind(item: R, callback: ItemSelectedCallback<R>? = null)
     fun current() : R
     interface Factory<R> {
         fun createViewBinder(view:View, type: Int) : ViewBinder<R>

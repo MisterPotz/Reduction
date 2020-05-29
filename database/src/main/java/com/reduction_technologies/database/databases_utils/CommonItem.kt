@@ -70,11 +70,12 @@ class CommonItem(
             return "CREATE TABLE ${tableName} (" +
                     "$_ID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE," +
                     "$TITLE TEXT NOT NULL," +
-                    "$TAG TEXT NOT NULL" +
+                    "$TAG TEXT NOT NULL," +
                     "$ABOUT TEXT, " +
-                    "$ADDITIONAL TEXT), " +
+                    "$ADDITIONAL TEXT, " +
                     "$TEXT_KEY TEXT UNIQUE," +
-                    "$MATH_TITLE TEXT"
+                    "$MATH_TITLE TEXT " +
+                    ");"
         }
     }
 

@@ -40,7 +40,7 @@
             padding-top: 12px;
             padding-bottom: 12px;
             text-align: center;
-            background-color: #4CAF50;
+            background-color: #1976d2;
             color: white;
         }
 
@@ -53,7 +53,7 @@
         }
 
         p.headline {
-            background-color: #4CAF50;
+            background-color: #1976d2;
             text-align: center;
             font-size: large;
             color: white;
@@ -62,14 +62,32 @@
 </head>
 
 <body>
-    <p class="headline">Результаты расчета</p>
-    <p class="main_text">Характеристика механизма</p>
+    <table>
+        <tr>
+            <th colspan="2">
+                Характеристика механизма
+            </th>
+        </tr>
+    </table>
 
     {% include #common_data %}
 
-    <p class="main_text">Характеристика тихоходной ступени</p>
+    <table>
+        <tr>
+            <th colspan="2">
+                Характеристика тихоходной ступени
+            </th>
+        </tr>
+    </table>
     {$firstStage}
-    <p class="main_text">Характеристика быстроходной ступени</p>
+
+    <table>
+        <tr>
+            <th colspan="2">
+                Характеристика быстроходной ступени
+            </th>
+        </tr>
+    </table>
     {$secondStage}
 </body>
 

@@ -52,13 +52,16 @@ enum class DatabaseType(
                     Columns.TITLE,
                     Columns.TAG,
                     Columns.ABOUT,
-                    Columns.ADDITIONAL
+                    Columns.ADDITIONAL,
+                    Columns.TEXT_KEY,
+                    Columns.MATH_TITLE
                 ),
                 tags = listOf(
                     Tags.TABLE,
                     Tags.VARIABLE,
                     Tags.TERMIN,
-                    Tags.TEST
+                    Tags.TEST,
+                    Tags.RESULT
                 )
             )
         )
@@ -122,5 +125,6 @@ enum class Tags(override val item: String) :
     TABLE("table"),
     VARIABLE("variable"),
     TERMIN("termin"),
-    TEST("test")
+    TEST("test"),
+    RESULT("result")
 }

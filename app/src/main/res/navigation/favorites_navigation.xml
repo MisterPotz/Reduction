@@ -7,26 +7,21 @@
 
     <fragment
         android:id="@+id/favorites"
-        android:name="com.reducetechnologies.reduction.home_screen.ui.favorites.main.FavoritesMain"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.favorites.FavoritesMain"
         android:label="@string/title_favorites"
         tools:layout="@layout/favorites_main_fragment">
         <action
-            android:id="@+id/action_navigation_favorites_to_navigation_favorites_settings"
-            app:destination="@id/navigation_favorites_settings"
-            app:launchSingleTop="true"
-            app:popUpTo="@+id/favorites">
-        </action>
+            android:id="@+id/action_favorites_to_resultsActivity2"
+            app:destination="@id/resultsActivity" />
     </fragment>
-
-    <fragment
-        android:id="@+id/navigation_favorites_settings"
-        android:name="com.reducetechnologies.reduction.home_screen.ui.favorites.settings.SettingsFragment"
-        android:label="settings"
-        tools:layout="@layout/settings_fragment">
+    <activity
+        android:id="@+id/resultsActivity"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.common.ResultsActivity"
+        android:label="activity_results"
+        tools:layout="@layout/activity_results" >
         <argument
-            android:name="myArg"
-            app:argType="string"
-            android:defaultValue="no input given" />
-    </fragment>
+            android:name="reducersData"
+            app:argType="string" />
+    </activity>
 
 </navigation>

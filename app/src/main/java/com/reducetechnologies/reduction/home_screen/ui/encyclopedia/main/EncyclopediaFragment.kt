@@ -4,13 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.*
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.reducetechnologies.command_infrastructure.PField
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.home_screen.SingletoneContextCounter
@@ -49,12 +47,6 @@ class EncyclopediaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity!!.application as App).appComponent.inject(this)
-
-        val textView: TextView = view.findViewById(R.id.text_home)
-
-        viewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
 
         recyclerView = view.findViewById(R.id.categories_list)
         categoryAdapter =
@@ -136,6 +128,9 @@ class EncyclopediaFragment : Fragment() {
                 )
             }
             categoryAdapter!!.setList(list)
+        })
+        viewModel.getFavorites().observe(viewLifecycleOwner, Observer {
+            Timber.i("Have favorite items DB, size: ${it.size}")
         })
         Timber.i("in onStart: current fragment amount: ${SingletoneContextCounter.fragments}")
     }

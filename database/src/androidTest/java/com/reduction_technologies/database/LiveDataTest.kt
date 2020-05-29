@@ -46,11 +46,7 @@ internal class LiveDataTest {
                 val deferred = CompletableDeferred<Boolean>()
                 val livedata = asynced.await()
                 withContext(Dispatchers.Main) {
-                     livedata.observeForever {
-                        assertTrue(it != null)
-                        deferred.complete(true)
-                    }
-
+                    deferred.complete(true)
                 }
                 deferred.await()
             }
