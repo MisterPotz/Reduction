@@ -9,9 +9,14 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+/**
+ * [N2] - частота вращения 2ого (условно тихоходного) вала
+ * [u] - передаточное отношение ступени
+ * [ZETR] - коэффициент, учитывающий шероховатость сопряжённых поверхностей
+ */
 class DOPN_MethodsClass(val tableSGTT: SGTTTable, val tablekHeFe: FatigueTable) {
     data class Arguments(
-        var N2: Float,//так, в книжке написано, что сюда нужно передавать частоту колеса(?)
+        var N2: Float,
         var u: Float,//здесь могут быть uT, uB
 
         var ZETR: Float = 0.95f,
@@ -179,6 +184,10 @@ class DOPN_MethodsClass(val tableSGTT: SGTTTable, val tablekHeFe: FatigueTable) 
             }
             SGHD = min(wheelsSGHD[0], wheelsSGHD[1])//Всё верно, здесь именно min
             return
+            /**
+             * С помощью [SelectionTree] - возникли проблемы, но это более наглядный и удобный
+             * if для большой вложенности
+             */
             /*SelectionTree.rootSelection {
                 for (i in 0..1) {
                     var NH0: Float = 340 * (args.option.HRC[i].pow(3.15f)) + 8_000_000f
@@ -347,6 +356,17 @@ class DOPN_MethodsClass(val tableSGTT: SGTTTable, val tablekHeFe: FatigueTable) 
     }
 }
 
+/**
+ * [V] - окружная скорость колёс
+ * [M] - модуль
+ * [SGHD] - допускаемое напряжение при расчёте на сопротивление усталовсти при контактных напряжениях
+ * [SGHMD] - допускаемые контактные напряжения при действии максимальных нагрузок
+ * [wheelsSGHD] - массив из допускаемых контактных напряжений (0 - шестерни, 1 - колеса - для всех)
+ * [wheelsSGHMD] - массив из допускаемых контактных напряжений при действии максимальных нагрузок
+ * [wheelsSGFD] - массив из допускаемых напряжений изгиба
+ * [wheelsSGFMD] - массив из допускаемых напряжений изгиба при действии максимальных нагрузок
+ * [wheelsKFC] - масиив коэффициентов, учитывающих двустороннее приложение нагрузки
+ */
 data class DOPNScope(
     var V: Float = 3f,
     var M: Float = 3f,
@@ -356,5 +376,5 @@ data class DOPNScope(
     var wheelsSGHMD: Array<Int> = Array(2){-1},
     var wheelsSGFD: Array<Int> = Array(2){-1},
     var wheelsSGFMD: Array<Int> = Array(2){-1},
-    var wheelsKFC: Array<Float> = Array(2){1f}//Посмотри ещё и реализуй логику их выбора из учебника, нужно ещё их в таблицу забить
+    var wheelsKFC: Array<Float> = Array(2){1f}
 )

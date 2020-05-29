@@ -1252,12 +1252,12 @@ internal class CalculationsModuleTest {
         //Это Мишин Вариант
         val inputO = setInput(
             isED = false,
-            TT = 412.286f,
-            NT = 47.739f,
-            LH = 10000,
-            NRR = 2,
-            KOL = 10000,
-            UREMA = 19.9f,
+            TT = 600f,
+            NT = 100f,
+            LH = 15000,
+            NRR = 3,
+            KOL = 15000,
+            UREMA = 25f,
             ind = 8,
             isChevrone = true,
             isInner = false,
@@ -1291,343 +1291,348 @@ internal class CalculationsModuleTest {
             println(element.zcredScope.toString())
         }
         //More or less correctly
-        weedOutAndSorting(inputO, creationDataList)
-    }
-
-    @org.junit.Test
-    fun test_zcred_method_one_staged_9_scheme() {
-        testScheme(
-            isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
-            LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
-            ind = 9,
-            isChevrone = false,
-            isInner = false,
-            ISTCol = 2,
-            PAR = false
-        )
-        //More or less correctly
-        //Даже соосность соблюдается
-    }
-
-    @org.junit.Test
-    fun test_zcred_method_one_staged_10_scheme() {
-        testScheme(
-            isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
-            LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
-            ind = 10,
-            isChevrone = false,
-            isInner = false,
-            ISTCol = 2,
-            PAR = false
-        )
-        //More or less correctly
-        //Даже соосность соблюдается
-        //Даже критерий некратности зубьев вроде соблюдается
-        //Чекнуть насч
-    }
-
-    @org.junit.Test
-    fun test_zcred_method_one_staged_11_scheme() {
-        testScheme(
-            isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
-            LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
-            ind = 11,
-            isChevrone = false,
-            isInner = false,
-            ISTCol = 2,
-            PAR = true
-        )
-        //More or less correctly
-        //Даже соосность соблюдается
-        //Даже критерий некратности зубьев вроде соблюдается
-        //Чекнуть насчёт максимальных и минимальных передаточных отношений
-    }
-
-    @org.junit.Test
-    fun test_zcred_method_one_staged_12_scheme() {
-        testScheme(
-            isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
-            LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
-            ind = 12,
-            isChevrone = false,
-            isInner = false,
-            ISTCol = 2,
-            PAR = false
-        )
-        //Со знаками разобрался, не совсем понятно, что там с интерференцией
-    }
-
-    @org.junit.Test
-    fun test_zcred_method_one_staged_13_scheme() {
-        testScheme(
-            isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
-            LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
-            ind = 13,
-            isChevrone = false,
-            isInner = false,
-            ISTCol = 2,
-            PAR = false
-        )
-        //С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
-    }
-
-
-    //Вот здесь в этот тест включено почти всё, на нём хорошо тестить
-
-    @org.junit.Test
-    fun test_masre_method_on_5_scheme() {
-        val inputO = setInput(
-            isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
-            LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
-            ind = 5,
-            isChevrone = false,
-            isInner = false,
-            ISTCol = 2,
-            PAR = false
-        )
-        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
-        val someOptions: List<ReducerOptionTemplate> =
-            listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
-        /*reducerOptions.forEach {
-            println(it.u)
-        }*/
-        val creationDataList = ZCREDMethod.enterZCRED(
-            input = inputO,
-            options = reducerOptions
-        )
-        creationDataList.forEachIndexed { index, element ->
-            println(index)
-            element.gearWheelStepsArray.forEach {
-                var toPrint = it.dopnScope.toString()
-                println(toPrint)
-                toPrint = it.zuc1hScope.toString()
-                println(toPrint)
-                toPrint = it.zucepScope.toString()
-                println(toPrint)
-                toPrint = it.zuc2hScope.toString()
-                println(toPrint)
-                toPrint = it.zucfScope.toString()
-                println(toPrint)
-            }
-            println(element.zcredScope.toString())
-        }
-        //С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
-        //Проверка masreMethod
-        masreMethod = MasreMethod(inputO, creationDataList)
-        var masreScope: ArrayList<MasreScope> = masreMethod.enterLoopMasre()
-        masreScope.forEachIndexed { index, masreScope ->
-            println(index)
-            println(masreScope)
-        }
-        //С двуступенчатыми вроде работает корректно
-        //Производим отсев вариантов
-        val properCreationDataArrList: ArrayList<CreationData> =
-            weedOutCreationDataList(inputO, creationDataList, masreScope)
-        properCreationDataArrList.forEachIndexed { index, creationData ->
-            println(index)
-            creationData.gearWheelStepsArray.forEach {
-                var toPrint = it.dopnScope.toString()
-                println(toPrint)
-                toPrint = it.zuc1hScope.toString()
-                println(toPrint)
-                toPrint = it.zucepScope.toString()
-                println(toPrint)
-                toPrint = it.zuc2hScope.toString()
-                println(toPrint)
-                toPrint = it.zucfScope.toString()
-                println(toPrint)
-            }
-            println(creationData.zcredScope.toString())
-        }
-        val newMasreDataList: ArrayList<MasreScope> =
-            weedOutMasreDataList(inputO, creationDataList, masreScope)
-        properCreationDataArrList.forEachIndexed { index, creationData ->
-            val ind: Float =
-                (diffSGH(inputO, creationData).pow(2) + diffSGHM(inputO, creationData).pow(2) +
-                        diffSGF(inputO, creationData).pow(2) + diffSGFM(
-                    inputO,
-                    creationData
-                ).pow(2) +
-                        diffUCalc(inputO, creationData).pow(2) + minHRC(
-                    inputO,
-                    creationData
-                ).pow(2) +
-                        minAW(inputO, creationData).pow(2) - Ep(inputO, creationData).pow(2) +
-                        minSize(masreScope = newMasreDataList[index]).pow(2) + newMasreDataList[index].MARE!!.pow(
-                    2
-                )
-                        ).pow(1 / 2f)
-            properCreationDataArrList[index].sorting = ind
-            newMasreDataList[index].sorting = ind
-        }
-        newMasreDataList.forEachIndexed { index, masreScope ->
-            println(index)
-            println(masreScope.sorting)
-        }
-        properCreationDataArrList.sortBy { it.sorting }
-        newMasreDataList.sortBy { it.sorting }
-        println("Вот отсюда начинаются сортированные списки: ")
-        properCreationDataArrList.forEachIndexed { index, creationData ->
-            println(index)
-            creationData.gearWheelStepsArray.forEach {
-                var toPrint = it.dopnScope.toString()
-                println(toPrint)
-                toPrint = it.zuc1hScope.toString()
-                println(toPrint)
-                toPrint = it.zucepScope.toString()
-                println(toPrint)
-                toPrint = it.zuc2hScope.toString()
-                println(toPrint)
-                toPrint = it.zucfScope.toString()
-                println(toPrint)
-            }
-            println(creationData.zcredScope.toString())
-            println(newMasreDataList[index].toString())
-        }
-
         val calcEnt: CalculationsEntity = CalculationsEntity(
             inputData = inputO,
             calculationsComponent = calculationComponent
         )
-        println(calcEnt.outputData.reducerDataList.size)
-        println(calcEnt.outputData.SortingLists["weight"])
-    }
+        println(calcEnt.reducerDataList.size)
+        println(CalculationsEntity.sortByMinSumHRC(calcEnt.reducerDataList))
+}
+
+@org.junit.Test
+fun test_zcred_method_one_staged_9_scheme() {
+testScheme(
+    isED = false,
+    TT = 774.3f,
+    NT = 44.4f,
+    LH = 10000,
+    NRR = 1,
+    KOL = 1000,
+    UREMA = 35f,
+    ind = 9,
+    isChevrone = false,
+    isInner = false,
+    ISTCol = 2,
+    PAR = false
+)
+//More or less correctly
+//Даже соосность соблюдается
+}
+
+@org.junit.Test
+fun test_zcred_method_one_staged_10_scheme() {
+testScheme(
+    isED = false,
+    TT = 774.3f,
+    NT = 44.4f,
+    LH = 10000,
+    NRR = 1,
+    KOL = 1000,
+    UREMA = 35f,
+    ind = 10,
+    isChevrone = false,
+    isInner = false,
+    ISTCol = 2,
+    PAR = false
+)
+//More or less correctly
+//Даже соосность соблюдается
+//Даже критерий некратности зубьев вроде соблюдается
+//Чекнуть насч
+}
+
+@org.junit.Test
+fun test_zcred_method_one_staged_11_scheme() {
+testScheme(
+    isED = false,
+    TT = 774.3f,
+    NT = 44.4f,
+    LH = 10000,
+    NRR = 1,
+    KOL = 1000,
+    UREMA = 35f,
+    ind = 11,
+    isChevrone = false,
+    isInner = false,
+    ISTCol = 2,
+    PAR = true
+)
+//More or less correctly
+//Даже соосность соблюдается
+//Даже критерий некратности зубьев вроде соблюдается
+//Чекнуть насчёт максимальных и минимальных передаточных отношений
+}
+
+@org.junit.Test
+fun test_zcred_method_one_staged_12_scheme() {
+testScheme(
+    isED = false,
+    TT = 774.3f,
+    NT = 44.4f,
+    LH = 10000,
+    NRR = 1,
+    KOL = 1000,
+    UREMA = 35f,
+    ind = 12,
+    isChevrone = false,
+    isInner = false,
+    ISTCol = 2,
+    PAR = false
+)
+//Со знаками разобрался, не совсем понятно, что там с интерференцией
+}
+
+@org.junit.Test
+fun test_zcred_method_one_staged_13_scheme() {
+testScheme(
+    isED = false,
+    TT = 774.3f,
+    NT = 44.4f,
+    LH = 10000,
+    NRR = 1,
+    KOL = 1000,
+    UREMA = 35f,
+    ind = 13,
+    isChevrone = false,
+    isInner = false,
+    ISTCol = 2,
+    PAR = false
+)
+//С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
+}
 
 
-    @org.junit.Test
-    fun test_masre_method_on_9_scheme() {
-        val inputO = setInput(
-            isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
-            LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
-            ind = 9,
-            isChevrone = false,
-            isInner = false,
-            ISTCol = 2,
-            PAR = false
-        )
-        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
-        val someOptions: List<ReducerOptionTemplate> =
-            listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
-        /*reducerOptions.forEach {
-            println(it.u)
-        }*/
-        val creationDataList = ZCREDMethod.enterZCRED(
-            input = inputO,
-            options = reducerOptions
-        )
-        creationDataList.forEachIndexed { index, element ->
-            println(index)
-            element.gearWheelStepsArray.forEach {
-                var toPrint = it.dopnScope.toString()
-                println(toPrint)
-                toPrint = it.zuc1hScope.toString()
-                println(toPrint)
-                toPrint = it.zucepScope.toString()
-                println(toPrint)
-                toPrint = it.zuc2hScope.toString()
-                println(toPrint)
-                toPrint = it.zucfScope.toString()
-                println(toPrint)
-            }
-            println(element.zcredScope.toString())
-        }
-        //С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
-        //Проверка masreMethod
-        masreMethod = MasreMethod(inputO, creationDataList)
-        var masreScope: ArrayList<MasreScope> = masreMethod.enterLoopMasre()
-        masreScope.forEachIndexed { index, masreScope ->
-            println(index)
-            println(masreScope)
-        }
-        //С 4 типом работает вроде бы нормально
-    }
+//Вот здесь в этот тест включено почти всё, на нём хорошо тестить
 
-    @org.junit.Test
-    fun test_masre_method_on_8_scheme() {
-        val inputO = setInput(
-            isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
-            LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
-            ind = 8,
-            isChevrone = true,
-            isInner = false,
-            ISTCol = 2,
-            PAR = false
-        )
-        val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
-        val someOptions: List<ReducerOptionTemplate> =
-            listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
-        /*reducerOptions.forEach {
-            println(it.u)
-        }*/
-        val creationDataList = ZCREDMethod.enterZCRED(
-            input = inputO,
-            options = reducerOptions
-        )
-        creationDataList.forEachIndexed { index, element ->
-            println(index)
-            element.gearWheelStepsArray.forEach {
-                var toPrint = it.dopnScope.toString()
-                println(toPrint)
-                toPrint = it.zuc1hScope.toString()
-                println(toPrint)
-                toPrint = it.zucepScope.toString()
-                println(toPrint)
-                toPrint = it.zuc2hScope.toString()
-                println(toPrint)
-                toPrint = it.zucfScope.toString()
-                println(toPrint)
-            }
-            println(element.zcredScope.toString())
-        }
-        //С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
-        //Проверка masreMethod
-        masreMethod = MasreMethod(inputO, creationDataList)
-        var masreScope: ArrayList<MasreScope> = masreMethod.enterLoopMasre()
-        masreScope.forEachIndexed { index, masreScope ->
-            println(index)
-            println(masreScope)
-        }
-        //С 7 типом вроде бы тоже работает нормально
+@org.junit.Test
+fun test_masre_method_on_5_scheme() {
+val inputO = setInput(
+    isED = false,
+    TT = 774.3f,
+    NT = 44.4f,
+    LH = 10000,
+    NRR = 1,
+    KOL = 1000,
+    UREMA = 35f,
+    ind = 5,
+    isChevrone = false,
+    isInner = false,
+    ISTCol = 2,
+    PAR = false
+)
+val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
+val someOptions: List<ReducerOptionTemplate> =
+    listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+/*reducerOptions.forEach {
+    println(it.u)
+}*/
+val creationDataList = ZCREDMethod.enterZCRED(
+    input = inputO,
+    options = reducerOptions
+)
+creationDataList.forEachIndexed { index, element ->
+    println(index)
+    element.gearWheelStepsArray.forEach {
+        var toPrint = it.dopnScope.toString()
+        println(toPrint)
+        toPrint = it.zuc1hScope.toString()
+        println(toPrint)
+        toPrint = it.zucepScope.toString()
+        println(toPrint)
+        toPrint = it.zuc2hScope.toString()
+        println(toPrint)
+        toPrint = it.zucfScope.toString()
+        println(toPrint)
     }
+    println(element.zcredScope.toString())
+}
+//С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
+//Проверка masreMethod
+masreMethod = MasreMethod(inputO, creationDataList)
+var masreScope: ArrayList<MasreScope> = masreMethod.enterLoopMasre()
+masreScope.forEachIndexed { index, masreScope ->
+    println(index)
+    println(masreScope)
+}
+//С двуступенчатыми вроде работает корректно
+//Производим отсев вариантов
+val properCreationDataArrList: ArrayList<CreationData> =
+    weedOutCreationDataList(inputO, creationDataList, masreScope)
+properCreationDataArrList.forEachIndexed { index, creationData ->
+    println(index)
+    creationData.gearWheelStepsArray.forEach {
+        var toPrint = it.dopnScope.toString()
+        println(toPrint)
+        toPrint = it.zuc1hScope.toString()
+        println(toPrint)
+        toPrint = it.zucepScope.toString()
+        println(toPrint)
+        toPrint = it.zuc2hScope.toString()
+        println(toPrint)
+        toPrint = it.zucfScope.toString()
+        println(toPrint)
+    }
+    println(creationData.zcredScope.toString())
+}
+val newMasreDataList: ArrayList<MasreScope> =
+    weedOutMasreDataList(inputO, creationDataList, masreScope)
+properCreationDataArrList.forEachIndexed { index, creationData ->
+    val ind: Float =
+        (diffSGH(inputO, creationData).pow(2) + diffSGHM(inputO, creationData).pow(2) +
+                diffSGF(inputO, creationData).pow(2) + diffSGFM(
+            inputO,
+            creationData
+        ).pow(2) +
+                diffUCalc(inputO, creationData).pow(2) + minHRC(
+            inputO,
+            creationData
+        ).pow(2) +
+                minAW(inputO, creationData).pow(2) - Ep(inputO, creationData).pow(2) +
+                minSize(masreScope = newMasreDataList[index]).pow(2) + newMasreDataList[index].MARE!!.pow(
+            2
+        )
+                ).pow(1 / 2f)
+    properCreationDataArrList[index].sorting = ind
+    newMasreDataList[index].sorting = ind
+}
+newMasreDataList.forEachIndexed { index, masreScope ->
+    println(index)
+    println(masreScope.sorting)
+}
+properCreationDataArrList.sortBy { it.sorting }
+newMasreDataList.sortBy { it.sorting }
+println("Вот отсюда начинаются сортированные списки: ")
+properCreationDataArrList.forEachIndexed { index, creationData ->
+    println(index)
+    creationData.gearWheelStepsArray.forEach {
+        var toPrint = it.dopnScope.toString()
+        println(toPrint)
+        toPrint = it.zuc1hScope.toString()
+        println(toPrint)
+        toPrint = it.zucepScope.toString()
+        println(toPrint)
+        toPrint = it.zuc2hScope.toString()
+        println(toPrint)
+        toPrint = it.zucfScope.toString()
+        println(toPrint)
+    }
+    println(creationData.zcredScope.toString())
+    println(newMasreDataList[index].toString())
+}
+
+val calcEnt: CalculationsEntity = CalculationsEntity(
+    inputData = inputO,
+    calculationsComponent = calculationComponent
+)
+/*println(calcEnt.reducerDataList.size)
+println(calcEnt.outputData.SortingLists["weight"])*/
+}
+
+
+@org.junit.Test
+fun test_masre_method_on_9_scheme() {
+val inputO = setInput(
+    isED = false,
+    TT = 774.3f,
+    NT = 44.4f,
+    LH = 10000,
+    NRR = 1,
+    KOL = 1000,
+    UREMA = 35f,
+    ind = 9,
+    isChevrone = false,
+    isInner = false,
+    ISTCol = 2,
+    PAR = false
+)
+val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
+val someOptions: List<ReducerOptionTemplate> =
+    listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+/*reducerOptions.forEach {
+    println(it.u)
+}*/
+val creationDataList = ZCREDMethod.enterZCRED(
+    input = inputO,
+    options = reducerOptions
+)
+creationDataList.forEachIndexed { index, element ->
+    println(index)
+    element.gearWheelStepsArray.forEach {
+        var toPrint = it.dopnScope.toString()
+        println(toPrint)
+        toPrint = it.zuc1hScope.toString()
+        println(toPrint)
+        toPrint = it.zucepScope.toString()
+        println(toPrint)
+        toPrint = it.zuc2hScope.toString()
+        println(toPrint)
+        toPrint = it.zucfScope.toString()
+        println(toPrint)
+    }
+    println(element.zcredScope.toString())
+}
+//С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
+//Проверка masreMethod
+masreMethod = MasreMethod(inputO, creationDataList)
+var masreScope: ArrayList<MasreScope> = masreMethod.enterLoopMasre()
+masreScope.forEachIndexed { index, masreScope ->
+    println(index)
+    println(masreScope)
+}
+//С 4 типом работает вроде бы нормально
+}
+
+@org.junit.Test
+fun test_masre_method_on_8_scheme() {
+val inputO = setInput(
+    isED = false,
+    TT = 774.3f,
+    NT = 44.4f,
+    LH = 10000,
+    NRR = 1,
+    KOL = 1000,
+    UREMA = 35f,
+    ind = 8,
+    isChevrone = true,
+    isInner = false,
+    ISTCol = 2,
+    PAR = false
+)
+val reducerOptions = allReducersMethod.tryToCalculateOptions(inputO)
+val someOptions: List<ReducerOptionTemplate> =
+    listOf(reducerOptions[0], reducerOptions[1], reducerOptions[2], reducerOptions[3])
+/*reducerOptions.forEach {
+    println(it.u)
+}*/
+val creationDataList = ZCREDMethod.enterZCRED(
+    input = inputO,
+    options = reducerOptions
+)
+creationDataList.forEachIndexed { index, element ->
+    println(index)
+    element.gearWheelStepsArray.forEach {
+        var toPrint = it.dopnScope.toString()
+        println(toPrint)
+        toPrint = it.zuc1hScope.toString()
+        println(toPrint)
+        toPrint = it.zucepScope.toString()
+        println(toPrint)
+        toPrint = it.zuc2hScope.toString()
+        println(toPrint)
+        toPrint = it.zucfScope.toString()
+        println(toPrint)
+    }
+    println(element.zcredScope.toString())
+}
+//С интерференцией стало понятно, что если PAR == true and SIGN < 0, то он пишет, что происходит интерференция, что по идее не так
+//Проверка masreMethod
+masreMethod = MasreMethod(inputO, creationDataList)
+var masreScope: ArrayList<MasreScope> = masreMethod.enterLoopMasre()
+masreScope.forEachIndexed { index, masreScope ->
+    println(index)
+    println(masreScope)
+}
+//С 7 типом вроде бы тоже работает нормально
+}
 
 }
