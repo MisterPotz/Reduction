@@ -47,6 +47,10 @@ class CalculationSdkHelper(
         onSessionStopped?.invoke(calculationSdk!!.finalResults())
     }
 
+    private fun cleanCallbacks() {
+        onSessionStopped = null
+    }
+
     // calls given callback when calculation is finished
     fun startCalculation(onSessionStopped: ((CalculationResults) -> Unit)): CurrentPScreenStatus {
         if (isActive) {
@@ -80,6 +84,7 @@ class CalculationSdkHelper(
             // pull callbacks on finish
             if (calculationSdk!!.isFinished()) {
                 pullCallbacks()
+                cleanCallbacks()
             }
             val status = CurrentPScreenStatus(calculationSdk!!.getAllValidated(), next)
             status

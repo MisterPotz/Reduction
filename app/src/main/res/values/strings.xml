@@ -46,4 +46,6 @@
     <string name="tables">Таблицы</string>
     <string name="variables">Величины</string>
     <string name="view_result_here">View result here</string>
+    <string name="results">Результаты</string>
+    <string name="see_result">"Результат %1$d"</string>
 </resources>

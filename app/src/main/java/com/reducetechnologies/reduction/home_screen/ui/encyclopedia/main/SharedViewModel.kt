@@ -17,13 +17,16 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Provider
 import androidx.lifecycle.viewModelScope
+import com.google.gson.GsonBuilder
 import com.reducetechnologies.calculations_entity.CalculationsEntity
 import com.reducetechnologies.command_infrastructure.CalculationResults
 import com.reducetechnologies.command_infrastructure.CalculationResultsContainer
 import com.reducetechnologies.reduction.android.util.SortedCalculationResults
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFinishCallback
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.toCommonItem
 import timber.log.Timber
 import java.lang.IllegalStateException
+import java.sql.Time
 
 @ApplicationScope
 class SharedViewModel @Inject constructor(
@@ -33,12 +36,14 @@ class SharedViewModel @Inject constructor(
     private val appLocale: AppLocale
 ) : ViewModel() {
 
+    private val gson by lazy { GsonBuilder().create() }
+
     val text: LiveData<String> = MutableLiveData<String>().apply {
         value = "Энциклопедия"
     }
 
     var sortedResults: SortedCalculationResults? = null
-    private set
+        private set
 
     val commonItemUtils = CommonItemUtils()
 
@@ -53,6 +58,12 @@ class SharedViewModel @Inject constructor(
     private val _allEncyclopdiaItems: LiveData<List<CommonItem>> by lazy {
         runBlocking {
             repository.getEncyclopediaItems()
+        }
+    }
+
+    private val _favorites: LiveData<List<CommonItem>> by lazy {
+        runBlocking {
+            repository.getFavorites()
         }
     }
 
@@ -73,11 +84,23 @@ class SharedViewModel @Inject constructor(
         }
     }
 
+    private fun fetchFavorites() {
+        viewModelScope.launch {
+            repository.getFavorites()
+        }
+    }
+
     fun getAllSortedItems(): LiveData<Map<CategoryTag, List<CommonItem>>> {
         viewModelScope.launch {
             repository.getEncyclopediaItems()
         }
         return sortedByTagItems
+    }
+
+
+    fun getFavorites(): LiveData<List<CommonItem>> {
+        fetchFavorites()
+        return _favorites
     }
 
     /**
@@ -91,7 +114,10 @@ class SharedViewModel @Inject constructor(
         calcSdkHelper.startCalculation(
             object : CalculationFinishCallback {
                 override fun invoke(calculationResults: CalculationResults) {
+                    Timber.i("Got results in ViewModel")
                     // here storing results in db with timestamps and sorting results
+                    pushCalculationToRepository(calculationResults)
+                    // TODO обрабратывать пустые результаты!
                     sortedResults = makeSortedResults(calculationResults)
                     Timber.i("Dispatching results to store in db and invoking ui callback")
                     onCalculationFinished(calculationResults)
@@ -101,6 +127,20 @@ class SharedViewModel @Inject constructor(
         // TODO в будущем, когда будут результаты, pScreenSwitcher надо будет обращать в нулл, иначе будет баг и краш
         pScreenSwitcher = PScreenSwitcher(calcSdkHelper)
         return true
+    }
+
+    private fun pushCalculationToRepository(results: CalculationResults) {
+        if (results !is CalculationResultsContainer) return
+        if (results.reducersDataList.isEmpty()) return
+        val currentSize = _favorites.value?.size ?: 0
+        val commonItem = results.toCommonItem(
+            "Result ${currentSize + 1}",
+            gson
+        )
+        viewModelScope.launch {
+            Timber.i("Dispatching calculation results to favorite")
+            repository.addFavoriteItem(commonItem)
+        }
     }
 
     fun finishCurrentCalculation() {

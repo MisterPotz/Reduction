@@ -11,7 +11,7 @@ import com.google.gson.reflect.TypeToken
 class SerializationTest {
     data class SimplePlain(val string: String, val avs: Int)
 
-    data class Complicated(val simplePlain: List<SimplePlain>, val val2 : String)
+    data class Complicated(val simplePlain: ArrayList<SimplePlain>, val val2 : String)
 
     @Test
     fun gsonSerialization() {
@@ -27,7 +27,7 @@ class SerializationTest {
     @Test
     fun complicatedSerialization() {
         val json = """{"simplePlain":[{"string":"some string","avs":5},{"string":"other","avs":-10}],"val2":"string"}"""
-        val obj = Complicated(listOf(SimplePlain("some string", 5),SimplePlain("other", -10)), "string")
+        val obj = Complicated(arrayListOf(SimplePlain("some string", 5),SimplePlain("other", -10)), "string")
         val gson = GsonBuilder().create()
 
         assertEquals(obj, gson.fromJson(json, Complicated::class.java))

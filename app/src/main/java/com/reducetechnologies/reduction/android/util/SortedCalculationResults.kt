@@ -11,3 +11,5 @@ data class SortedCalculationResults(
     val uDesc : ArrayList<ReducerData>,
     val hrcMin : ArrayList<ReducerData>
 )
+
+data class ResultListContainer(val list: ArrayList<ReducerData>)

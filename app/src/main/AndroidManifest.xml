@@ -10,7 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".home_screen.ui.encyclopedia.main.item.ItemActivity"></activity>
+        <activity android:name=".home_screen.ui.calculation.flow.results.ResultList"></activity>
+        <activity android:name=".home_screen.ui.common.ResultsActivity" />
+        <activity android:name=".home_screen.ui.encyclopedia.main.item.ItemActivity" />
         <activity android:name=".home_screen.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -58,6 +58,14 @@ internal class CalculationSdkImplTest {
             // TODO сделать правильный индекс
             return if (isGood) null else pScreen
         }
+
+        override fun getResult(): CalculationResults {
+            TODO("Not yet implemented")
+        }
+
+        override fun isFinished(): Boolean {
+            TODO("Not yet implemented")
+        }
     }
 
     @Test

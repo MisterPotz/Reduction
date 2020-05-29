@@ -9,9 +9,14 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.google.gson.GsonBuilder
+import com.reducetechnologies.calculations_entity.ReducerData
 import com.reducetechnologies.command_infrastructure.*
+import com.reducetechnologies.command_infrastructure.PField.Companion.gson
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
+import com.reducetechnologies.reduction.android.util.ResultListContainer
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
 import com.reduction_technologies.database.di.ApplicationScope
 import kotlinx.coroutines.*
@@ -117,35 +122,59 @@ class FlowFragment() : Fragment() {
                 null
             )
         } else {
-            throw IllegalStateException("Mutable links are not allowed in not" +
-                    "last screen")
+            throw IllegalStateException(
+                "Mutable links are not allowed in not" +
+                        "last screen"
+            )
         }
     }
 
-    private fun getLinkCallbacks() : HashMap<Destination, LinkCalledCallback>{
+    @Suppress("UNCHECKED_CAST")
+    private fun navigateToResult(single: Boolean, argument: Any) {
+        val gson = GsonBuilder().create()
+        val action =
+            if (single) {
+                val string = (argument as ReducerData).let { gson.toJson(it) }
+                FlowFragmentDirections.actionFlowFragmentToResultsActivity(string)
+            } else {
+                val list = (argument as ArrayList<ReducerData>)
+                val string = ResultListContainer(list).let { gson.toJson(it) }
+                FlowFragmentDirections.actionFlowFragmentToResultList(string)
+            }
+        findNavController().navigate(action)
+    }
+
+    private fun getLinkCallbacks(): HashMap<Destination, LinkCalledCallback> {
         val results = viewModel.sortedResults!!
         Timber.i("Got results")
         return hashMapOf(
             DestinationResult to {
                 Timber.i("Must open best result")
+                navigateToResult(true, results.simple[0])
             },
             DestinationSortedResultList(Sorted.WEIGHT) to {
                 Timber.i("Opening list of weight sorted")
+                navigateToResult(false, results.weight)
             },
             DestinationSortedResultList(Sorted.DIFF_SGD_SG) to {
                 Timber.i("Opening diff sgd - sg sorted")
+                navigateToResult(false, results.diffSGD)
             },
             DestinationSortedResultList(Sorted.VOLUME) to {
                 Timber.i("Opening volume sorted")
+                navigateToResult(false, results.volume)
             },
             DestinationSortedResultList(Sorted.SUM_AW) to {
                 Timber.i("Opening sum aw sorted")
+                navigateToResult(false, results.sumAw)
             },
             DestinationSortedResultList(Sorted.SUM_HRC) to {
                 Timber.i("Opening sum hrc ")
+                navigateToResult(false, results.hrcMin)
             },
             DestinationSortedResultList(Sorted.U_DESC) to {
                 Timber.i("Opening u desc")
+                navigateToResult(false, results.uDesc)
             }
         )
     }
@@ -166,8 +195,8 @@ class FlowFragment() : Fragment() {
 
     private fun createControlView(inflater: LayoutInflater, parent: ViewGroup) {
         val controlModule = inflater.inflate(R.layout.calculation_flow_control, parent, true)
-        controlPrev = controlModule.findViewById<Button>(R.id.controlPrev)
-        controlNext = controlModule.findViewById<Button>(R.id.controlNext)
+        controlPrev = controlModule.findViewById(R.id.controlPrev)
+        controlNext = controlModule.findViewById(R.id.controlNext)
         controlEnter = controlModule.findViewById(R.id.controlEnter)
         buttonStateDelegate = ButtonStateDelegate(controlPrev, controlNext, controlEnter)
         setupEnterButton()

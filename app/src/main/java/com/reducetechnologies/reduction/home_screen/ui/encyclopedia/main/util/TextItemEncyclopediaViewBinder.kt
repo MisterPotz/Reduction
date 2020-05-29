@@ -12,13 +12,18 @@ class TextItemEncyclopediaViewBinder(val itemView: View) : ViewBinder<CommonItem
     val text: TextView = itemView.findViewById(R.id.itemName)
     var currentItem: CommonItem? = null
 
-    override fun bind(item: CommonItem) {
-        currentItem = item
-        text.text = item.title
-    }
-
     override fun current(): CommonItem {
         Timber.i("Current  requested: $currentItem ")
         return currentItem!!
+    }
+
+    override fun bind(item: CommonItem, callback: ItemSelectedCallback<CommonItem>?) {
+        currentItem = item
+        text.text = item.title
+        if (callback != null) {
+            itemView.setOnClickListener {
+                callback(item)
+            }
+        }
     }
 }

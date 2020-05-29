@@ -47,8 +47,4 @@ class ItemActivity : AppCompatActivity() {
         }
         return true
     }
-
-    private fun addBackslashes(string : String): String {
-        return string.split("\\").joinToString(separator = "\\\\")
-    }
 }

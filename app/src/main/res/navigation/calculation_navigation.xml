@@ -18,5 +18,35 @@
         android:name="com.reducetechnologies.reduction.home_screen.ui.calculation.flow.FlowFragment"
         android:label="@string/calculation"
         tool:layout="@layout/split_control_card_layout"
-        />
+        >
+        <action
+            android:id="@+id/action_flowFragment_to_resultsActivity"
+            app:destination="@id/resultsActivity" />
+        <action
+            android:id="@+id/action_flowFragment_to_resultList"
+            app:destination="@id/resultList" />
+    </fragment>
+    <activity
+        android:id="@+id/resultsActivity"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.common.ResultsActivity"
+        android:label="@string/results"
+        tool:layout="@layout/activity_results" >
+        <argument
+            android:name="reducersData"
+            app:argType="string" />
+    </activity>
+    <activity
+        android:id="@+id/resultList"
+        android:name="com.reducetechnologies.reduction.home_screen.ui.calculation.flow.results.ResultList"
+        android:label="activity_result_list"
+        tool:layout="@layout/activity_result_list" >
+        <argument
+            android:name="reducersDataList"
+            app:argType="string" />
+    </activity>
+
+    <action
+        android:id="@+id/action_global_resultsActivity"
+        app:destination="@id/resultsActivity" />
+
 </navigation>

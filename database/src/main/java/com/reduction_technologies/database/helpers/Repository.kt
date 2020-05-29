@@ -2,17 +2,15 @@ package com.reduction_technologies.database.helpers
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.reducetechnologies.tables_utils.TableHolder
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
 import kotlinx.coroutines.*
-import timber.log.Timber
-import java.lang.Exception
-import java.lang.RuntimeException
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
-enum class AppLocale{ RU }
+enum class AppLocale { RU }
 
 /**
  * The purpose of this class is to provide the rest code of application with useful data related
@@ -35,13 +33,12 @@ class Repository @Inject internal constructor(
      */
     internal val userDatabaseHelper: UserDatabaseHelper,
 
-    private val locale : AppLocale
+    private val locale: AppLocale
 ) {
-    internal enum class LiveDataType { TABLES, ALL_ENCYCLOPEDIA }
+    internal enum class LiveDataType { TABLES, ALL_ENCYCLOPEDIA, FAVORITES }
 
     private val storageDelegate = LiveDataClassStorage<LiveDataType>()
 
-    // get all tables from the database asynchonously, suspend - for structured concurrency
     fun getTables(): TableHolder {
         val tables = constantDatabaseHelper.getTables(locale)
         return tables
@@ -55,15 +52,45 @@ class Repository @Inject internal constructor(
         return updateEncyclopediaItems()
     }
 
-    private suspend fun updateEncyclopediaItems() : LiveData<List<CommonItem>> {
+    suspend fun getFavorites(): LiveData<List<CommonItem>> {
+        if (storageDelegate.checkContains(LiveDataType.FAVORITES)) {
+            return storageDelegate.registerOrReturn<List<CommonItem>>(LiveDataType.FAVORITES)
+        }
+        return updateFavorites()
+    }
+
+    suspend fun addFavoriteItem(commonItem: CommonItem) {
+        withContext(Dispatchers.IO) {
+            userDatabaseHelper.insertCommonItem(commonItem)
+            updateFavorites()
+        }
+    }
+
+    private suspend fun updateFavorites(): LiveData<List<CommonItem>> {
+        return getLiveDataOf(LiveDataType.FAVORITES) {
+            val allItems = userDatabaseHelper.getList()
+            it.postValue(allItems)
+        }
+    }
+
+    private suspend fun updateEncyclopediaItems(): LiveData<List<CommonItem>> {
+        return getLiveDataOf(LiveDataType.ALL_ENCYCLOPEDIA) {
+            val allItems = constantDatabaseHelper.getAllItems(locale)
+            it.postValue(allItems)
+        }
+    }
+
+    private suspend fun getLiveDataOf(
+        type: LiveDataType,
+        databaseBLock: (MutableLiveData<List<CommonItem>>) -> Unit
+    ): LiveData<List<CommonItem>> {
         val liveData =
-            storageDelegate.registerOrReturn<List<CommonItem>>(LiveDataType.ALL_ENCYCLOPEDIA)
+            storageDelegate.registerOrReturn<List<CommonItem>>(type)
 
         // enforcing structured concurrency
-        val job = CoroutineScope(coroutineContext + Dispatchers.IO).launch {
+        val job = CoroutineScope(Job(coroutineContext[Job]) + Dispatchers.IO).launch {
             withTimeout(10000) {
-                val allItems = constantDatabaseHelper.getAllItems(locale)
-                liveData.postValue(allItems)
+                databaseBLock(liveData)
             }
         }
         job.invokeOnCompletion { cause: Throwable? ->
