@@ -14,7 +14,7 @@ import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.android.util.ResultListContainer
-import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.SharedViewModel
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.*
 import com.reduction_technologies.database.di.ApplicationScope
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -34,7 +34,6 @@ class FlowFragment() : Fragment() {
     private lateinit var controlNext: Button
     private lateinit var controlEnter: Button
     private lateinit var cardContainer: FrameLayout
-    private lateinit var pScreenSwitcher: PScreenSwitcher
     private lateinit var buttonStateDelegate: ButtonStateDelegate
     private lateinit var pScreenInflater: PScreenInflater
 
@@ -62,15 +61,11 @@ class FlowFragment() : Fragment() {
         controlEnter.setOnClickListener {
             if (pScreenInflater.getFilled() != null) {
                 Timber.i("Waiting for validation")
-
                 lifecycleScope.launchSupervisor {
-                    Timber.i("in coroutine $coroutineContext")
-                    val validated = pScreenSwitcher.enter()
-
-                    Timber.i("validated enter: $validated")
-                    withContext(Dispatchers.Main) {
-                        updateScreen()
-                    }
+                    val curr = pScreenInflater.getFilled()
+                    viewModel.enter(curr!!)
+                    updateScreen()
+                    fetchAllButtons()
                 }
             } else {
                 Toast.makeText(context, getString(R.string.enter_data), Toast.LENGTH_SHORT)
@@ -81,8 +76,10 @@ class FlowFragment() : Fragment() {
 
     private fun setupPrevButton() {
         controlPrev.setOnClickListener {
-            pScreenSwitcher.prev()
-            updateScreen()
+            lifecycleScope.launchSupervisor {
+                viewModel.prev()
+                updateScreen()
+            }
         }
     }
 
@@ -90,61 +87,26 @@ class FlowFragment() : Fragment() {
         controlNext.setOnClickListener {
             Timber.i("Waiting next")
             lifecycleScope.launchSupervisor {
-                if (checkCalculationStatus()) {
-                    val validated = pScreenSwitcher.next()
-                    Timber.i("Got next")
-                    withContext(Dispatchers.Main) {
-                        updateScreen()
-                    }
-                } else {
-                    onCalculationError(CalculationNotPossible)
-                }
+                viewModel.next()
+                updateScreen()
             }
         }
-    }
-
-    private fun checkCalculationStatus() : Boolean {
-        val active = viewModel.isCalculationActive()
-        Timber.i("Calculation is active: $active")
-        if (!viewModel.isCalculationActive()) {
-            return true
-        }
-        val status = viewModel.getCalculationState() ?: return true
-        // TODO закрыть фрагмент если результаты кекнуты
-        return status is CalculationResultsContainer
     }
 
     /**
      * By current contract, if pfield has non-encyclopedia links, it must be final to allow link
      */
-    private fun updateScreen() {
-        if (!viewModel.isCalculationActive()) {
-            return
-        }
-        if (checkCalculationStatus()) {
-            fetchAllButtons()
-            val currentPScreen = pScreenSwitcher.current()
-            if (currentPScreen.pScreen.hasLinks() && currentPScreen.isLast) {
-                pScreenInflater.showPScreen(
-                    currentPScreen.pScreen,
-                    !pScreenSwitcher.currentWasValidatedSuccessfully,
-                    // by the time this code is executed, callback must already be ready
-                    getLinkCallbacks()
-                )
-            } else if (!currentPScreen.pScreen.hasLinks()) {
-                pScreenInflater.showPScreen(
-                    pScreenSwitcher.current().pScreen,
-                    !pScreenSwitcher.currentWasValidatedSuccessfully,
-                    null
-                )
-            } else {
-                throw IllegalStateException(
-                    "Mutable links are not allowed in not" +
-                            "last screen"
-                )
+    private suspend fun updateScreen() {
+        val output = viewModel.requestOutput()
+        when(output) {
+            is Error -> onCalculationError(output)
+            is Screen -> {
+                val links = if (viewModel.needsAttachingLinks()) getLinkCallbacks() else null
+                withContext(Dispatchers.Main) {
+                    pScreenInflater.showPScreen(output.pScreen, viewModel.isNecessaryInput(), links)
+                    fetchAllButtons()
+                }
             }
-        } else {
-            onCalculationError(CalculationNotPossible)
         }
     }
 
@@ -258,27 +220,28 @@ class FlowFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (activity!!.application as App).appComponent.inject(this)
         // obtaining model delegate, responsible for switching screens
-        pScreenSwitcher = viewModel.screenSwitcher()!!
         pScreenInflater = PScreenInflater(
             context!!,
             cardContainer,
             activity!!.windowManager,
             resources.displayMetrics
         )
-        updateScreen()
+        lifecycleScope.launchSupervisor{
+            updateScreen()
+        }
     }
 
     private fun fetchPrevStatus() {
-        buttonStateDelegate.hasPrev(pScreenSwitcher.havePrevious())
+        buttonStateDelegate.hasPrev(viewModel.havePrev())
     }
 
     private fun fetchNeedsInput() {
-        buttonStateDelegate.mustBeEntered(!pScreenSwitcher.currentWasValidatedSuccessfully)
+        buttonStateDelegate.mustBeEntered(viewModel.isNecessaryInput())
     }
 
     private fun fetchHasNext() {
-        Timber.i("haveNextL: ${pScreenSwitcher.haveNext()}")
-        buttonStateDelegate.hasNext(pScreenSwitcher.haveNext())
+
+        buttonStateDelegate.hasNext(viewModel.haveNext())
     }
 
     private fun fetchAllButtons() {

@@ -2,6 +2,7 @@ package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 
 import com.reducetechnologies.command_infrastructure.*
 import com.reduction_technologies.database.tables_utils.TwoSidedDomain
+import timber.log.Timber
 import java.lang.NumberFormatException
 
 object PScreenValidator {
@@ -25,13 +26,15 @@ object PScreenValidator {
     }
 
     fun validatePScreen(pScreen: PScreen) : Boolean {
-        return pScreen.fields.fold(true) { prev, pField ->
-            prev && when (pField.pFieldType) {
+        return pScreen.fields.foldIndexed(true) { i, prev, pField ->
+            val result = prev && when (pField.pFieldType) {
                 PFieldType.INPUT_TEXT -> validateInputTextSelection(pField.typeSpecificData as InputTextSpec)
                 PFieldType.INPUT_PICTURE -> validatePictureSelection(pField.typeSpecificData as InputPictureSpec)
                 PFieldType.INPUT_LIST -> validateListSelection(pField.typeSpecificData as InputListSpec)
                 else -> true
             }
+            Timber.i("For $i it is $result")
+            result
         }
     }
 

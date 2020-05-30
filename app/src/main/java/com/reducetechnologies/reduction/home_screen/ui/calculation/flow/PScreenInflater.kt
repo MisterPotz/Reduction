@@ -42,8 +42,9 @@ class PScreenInflater(
         recycler.layoutManager = LinearLayoutManager(container.context)
         recycler.adapter = adapter!!*/
         currentPScreen = pScreen
-        PScreenSimpleeInflater.inflatPScreen(currentPScreen!!, container, displayMetrics, windowManager, inflater, isInputable, links)
 
+        PScreenSimpleeInflater.fillAnswersWithDefaults(currentPScreen!!)
+        PScreenSimpleeInflater.inflatPScreen(currentPScreen!!, container, displayMetrics, windowManager, inflater, isInputable, links)
     }
 
     // fills in input from view

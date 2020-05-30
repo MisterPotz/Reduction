@@ -2,33 +2,30 @@ package com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main
 
 import android.content.Context
 import androidx.lifecycle.*
+import com.google.gson.GsonBuilder
+import com.reducetechnologies.calculations_entity.CalculationsEntity
+import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.reduction.R
+import com.reducetechnologies.reduction.android.util.SortedCalculationResults
 import com.reducetechnologies.reduction.android.util.common_item_util.CommonItemUtils
-import com.reduction_technologies.database.di.GOSTableStorage
+import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFinishCallback
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationSdkHelper
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PScreenSwitcher
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.SimplePositionSaver
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.toCommonItem
 import com.reduction_technologies.database.databases_utils.CommonItem
 import com.reduction_technologies.database.di.ApplicationScope
+import com.reduction_technologies.database.di.GOSTableStorage
 import com.reduction_technologies.database.helpers.AppLocale
 import com.reduction_technologies.database.helpers.CategoryTag
 import com.reduction_technologies.database.helpers.Repository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Provider
-import androidx.lifecycle.viewModelScope
-import com.google.gson.GsonBuilder
-import com.reducetechnologies.calculations_entity.CalculationsEntity
-import com.reducetechnologies.command_infrastructure.CalculationNotPossible
-import com.reducetechnologies.command_infrastructure.CalculationResults
-import com.reducetechnologies.command_infrastructure.CalculationResultsContainer
-import com.reducetechnologies.command_infrastructure.FinishedEarly
-import com.reducetechnologies.reduction.android.util.SortedCalculationResults
-import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFinishCallback
-import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.toCommonItem
-import timber.log.Timber
-import java.lang.IllegalStateException
-import java.sql.Time
 
 @ApplicationScope
 class SharedViewModel @Inject constructor(
@@ -44,10 +41,10 @@ class SharedViewModel @Inject constructor(
         value = "Энциклопедия"
     }
 
-    val commonItemUtils = CommonItemUtils()
+    private var calculationResults: SortedCalculationResults? = null
+    private var calculationState: Output? = null
 
-    private var sortedResults: SortedCalculationResults? = null
-    private var calculationStatus: CalculationResults? = null
+    val commonItemUtils = CommonItemUtils()
 
     val calcSdkHelper: CalculationSdkHelper by lazy {
         CalculationSdkHelper(storageProvider)
@@ -99,45 +96,9 @@ class SharedViewModel @Inject constructor(
         return sortedByTagItems
     }
 
-
     fun getFavorites(): LiveData<List<CommonItem>> {
         fetchFavorites()
         return _favorites
-    }
-
-    /**
-     * UI may need to picture some graphic events that happen after calculation is finished
-     */
-    fun startCalculation(): Boolean {
-        // already calculating
-        if (calcSdkHelper.isActive) {
-            return false
-        }
-        calcSdkHelper.startCalculation(
-            object : CalculationFinishCallback {
-                override fun invoke(calculationResults: CalculationResults) {
-                    Timber.i("Got results in ViewModel")
-                    // here storing results in db with timestamps and sorting results
-                    // What if finished early at this moment?
-                    setCalculationResults(calculationResults)
-                    pushCalculationToRepository(calculationResults)
-                }
-            }
-        )
-        // TODO в будущем, когда будут результаты, pScreenSwitcher надо будет обращать в нулл, иначе будет баг и краш
-        pScreenSwitcher = PScreenSwitcher(calcSdkHelper)
-        return true
-    }
-
-    private fun setCalculationResults(calculationResults: CalculationResults) {
-        if (calculationResults is CalculationResultsContainer) {
-            Timber.i("Got ${calculationResults.reducersDataList.size} variants")
-            sortedResults = makeSortedResults(calculationResults)
-            calculationStatus = calculationResults
-        } else {
-            calculationStatus = CalculationNotPossible
-            sortedResults = null
-        }
     }
 
     private fun pushCalculationToRepository(results: CalculationResults) {
@@ -154,38 +115,14 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun finishCurrentCalculation() {
-        pScreenSwitcher = null
-        if (calcSdkHelper.isActive) {
-            calcSdkHelper.finishWithError(FinishedEarly)
-        }
-    }
-
-    fun getCalculationResults() : SortedCalculationResults {
-        if (sortedResults == null) {
-            throw IllegalStateException("Can't return results because they dont fucking exist")
-        }
-        return sortedResults!!
-    }
-
-    fun getCalculationState() : CalculationResults? {
-        return calculationStatus
-    }
-
-    fun isCalculationActive(): Boolean {
-        return calcSdkHelper.isActive
-    }
-
-    fun screenSwitcher(): PScreenSwitcher? {
-        return pScreenSwitcher
-    }
-
     fun mapCategoryToLocal(categoryTag: CategoryTag): String {
         return when (categoryTag) {
             CategoryTag.TABLE -> context.getString(R.string.tables)
             CategoryTag.VARIABLE -> context.getString(R.string.variables)
         }
     }
+
+    // CALCULATION RELATED CODE --------------------------------------------------------------------
 
     /**
      * Makes sorted results and
@@ -211,4 +148,127 @@ class SharedViewModel @Inject constructor(
             hrcMin = hrc
         )
     }
+
+    fun finishCurrentCalculation() {
+        pScreenSwitcher = null
+        if (calcSdkHelper.isActive) {
+            calcSdkHelper.finishWithError(FinishedEarly)
+        }
+        calculationState = null
+        calculationResults = null
+    }
+
+    fun getCalculationResults(): SortedCalculationResults {
+        if (calculationResults == null || calculationState is Error) {
+            throw IllegalStateException("Can't return results because they dont fucking exist")
+        }
+        return calculationResults!!
+    }
+
+    fun isCalculationActive(): Boolean {
+        return calcSdkHelper.isActive
+    }
+
+    private fun setCalculationResults(calculationResults: CalculationResults) {
+        Timber.i("Calculation results: $calculationResults")
+        when (calculationResults) {
+            is CalculationResultsContainer -> {
+                Timber.i("Got ${calculationResults.reducersDataList.size} variants")
+                this.calculationResults = makeSortedResults(calculationResults)
+                pushCalculationToRepository(calculationResults)
+            }
+            is NoVariants ->{
+                Timber.i("Calculation not possible")
+                calculationState = CalculationNotPossible
+            }
+            is FinishRequested -> {
+                Timber.i("Finished early")
+                calculationState = FinishedEarly
+            }
+        }
+    }
+
+    /**
+     * UI may need to picture some graphic events that happen after calculation is finished
+     */
+    fun startCalculation(): Boolean {
+        // already calculating
+        if (calcSdkHelper.isActive) {
+            return false
+        }
+        calcSdkHelper.startCalculation(
+            object : CalculationFinishCallback {
+                override fun invoke(calculationResults: CalculationResults) {
+                    Timber.i("Got results in ViewModel")
+                    // here storing results in db with timestamps and sorting results
+                    // What if finished early at this moment?
+                    setCalculationResults(calculationResults)
+                }
+            }
+        )
+        // TODO в будущем, когда будут результаты, pScreenSwitcher надо будет обращать в нулл, иначе будет баг и краш
+        pScreenSwitcher = PScreenSwitcher(calcSdkHelper)
+        return true
+    }
+
+    suspend fun enter(pScreen: PScreen) {
+        withContext(viewModelScope.coroutineContext) {
+            pScreenSwitcher!!.enter()
+        }
+    }
+
+    suspend fun next() {
+        withContext(viewModelScope.coroutineContext) {
+            // right time to fetch status of calculationsdk
+
+            Timber.i("Current state: $calculationState")
+
+            when(calculationState!!) {
+                is Error -> Unit
+                else -> pScreenSwitcher!!.next()
+            }
+        }
+    }
+
+    suspend fun prev() {
+        withContext(viewModelScope.coroutineContext) {
+            pScreenSwitcher!!.prev()
+        }
+    }
+
+    fun haveNext(): Boolean {
+        return pScreenSwitcher!!.haveNext()
+    }
+
+    fun havePrev(): Boolean {
+        return pScreenSwitcher!!.havePrevious()
+    }
+
+    fun isNecessaryInput(): Boolean {
+        return pScreenSwitcher!!.needsInput() && !pScreenSwitcher!!.currentWasValidatedSuccessfully
+    }
+
+    /**
+     * Returns either normal pScreen or error - this is the only output to UI that is allowed
+     */
+    fun requestOutput(): Output {
+        // если вычисления завершены с ошибкой - возвратить ее
+        return if (calculationState != null && calculationState!! is Error) {
+            calculationState!!
+        } else {
+            val screen = pScreenSwitcher!!.current().pScreen
+            Screen(screen)
+        }
+    }
+
+    fun needsAttachingLinks() : Boolean {
+        return (pScreenSwitcher!!.current().isLast)
+    }
 }
+
+sealed class Output
+sealed class Error : Output()
+object FinishedEarly : Error()
+object CalculationNotPossible : Error()
+class Screen(val pScreen: PScreen) : Output()
+
