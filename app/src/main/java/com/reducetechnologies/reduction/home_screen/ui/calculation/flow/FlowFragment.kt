@@ -1,9 +1,7 @@
 package com.reducetechnologies.reduction.home_screen.ui.calculation.flow
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -13,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import com.google.gson.GsonBuilder
 import com.reducetechnologies.calculations_entity.ReducerData
 import com.reducetechnologies.command_infrastructure.*
-import com.reducetechnologies.command_infrastructure.PField.Companion.gson
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.android.util.App
 import com.reducetechnologies.reduction.android.util.ResultListContainer
@@ -93,39 +90,61 @@ class FlowFragment() : Fragment() {
         controlNext.setOnClickListener {
             Timber.i("Waiting next")
             lifecycleScope.launchSupervisor {
-                val validated = pScreenSwitcher.next()
-                Timber.i("Got next")
-                withContext(Dispatchers.Main) {
-                    updateScreen()
+                if (checkCalculationStatus()) {
+                    val validated = pScreenSwitcher.next()
+                    Timber.i("Got next")
+                    withContext(Dispatchers.Main) {
+                        updateScreen()
+                    }
+                } else {
+                    onCalculationError(CalculationNotPossible)
                 }
             }
         }
+    }
+
+    private fun checkCalculationStatus() : Boolean {
+        val active = viewModel.isCalculationActive()
+        Timber.i("Calculation is active: $active")
+        if (!viewModel.isCalculationActive()) {
+            return true
+        }
+        val status = viewModel.getCalculationState() ?: return true
+        // TODO закрыть фрагмент если результаты кекнуты
+        return status is CalculationResultsContainer
     }
 
     /**
      * By current contract, if pfield has non-encyclopedia links, it must be final to allow link
      */
     private fun updateScreen() {
-        fetchAllButtons()
-        val currentPScreen = pScreenSwitcher.current()
-        if (currentPScreen.pScreen.hasLinks() && currentPScreen.isLast) {
-            pScreenInflater.showPScreen(
-                currentPScreen.pScreen,
-                !pScreenSwitcher.currentWasValidatedSuccessfully,
-                // by the time this code is executed, callback must already be ready
-                getLinkCallbacks()
-            )
-        } else if (!currentPScreen.pScreen.hasLinks()) {
-            pScreenInflater.showPScreen(
-                pScreenSwitcher.current().pScreen,
-                !pScreenSwitcher.currentWasValidatedSuccessfully,
-                null
-            )
+        if (!viewModel.isCalculationActive()) {
+            return
+        }
+        if (checkCalculationStatus()) {
+            fetchAllButtons()
+            val currentPScreen = pScreenSwitcher.current()
+            if (currentPScreen.pScreen.hasLinks() && currentPScreen.isLast) {
+                pScreenInflater.showPScreen(
+                    currentPScreen.pScreen,
+                    !pScreenSwitcher.currentWasValidatedSuccessfully,
+                    // by the time this code is executed, callback must already be ready
+                    getLinkCallbacks()
+                )
+            } else if (!currentPScreen.pScreen.hasLinks()) {
+                pScreenInflater.showPScreen(
+                    pScreenSwitcher.current().pScreen,
+                    !pScreenSwitcher.currentWasValidatedSuccessfully,
+                    null
+                )
+            } else {
+                throw IllegalStateException(
+                    "Mutable links are not allowed in not" +
+                            "last screen"
+                )
+            }
         } else {
-            throw IllegalStateException(
-                "Mutable links are not allowed in not" +
-                        "last screen"
-            )
+            onCalculationError(CalculationNotPossible)
         }
     }
 
@@ -145,7 +164,7 @@ class FlowFragment() : Fragment() {
     }
 
     private fun getLinkCallbacks(): HashMap<Destination, LinkCalledCallback> {
-        val results = viewModel.sortedResults!!
+        val results = viewModel.getCalculationResults()
         Timber.i("Got results")
         return hashMapOf(
             DestinationResult to {
@@ -179,6 +198,11 @@ class FlowFragment() : Fragment() {
         )
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -202,6 +226,33 @@ class FlowFragment() : Fragment() {
         setupEnterButton()
         setupNextButton()
         setupPrevButton()
+    }
+
+    private fun onCalculationError(calculationResults: Error) {
+        if (calculationResults is CalculationNotPossible) {
+            Toast.makeText(
+                context,
+                "Расчет не может быть проведен: некорректный ввод",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+        findNavController().popBackStack()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_flow, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_finish -> {
+                Timber.i("Finish called")
+                viewModel.finishCurrentCalculation()
+                onCalculationError(FinishedEarly)
+                true
+            }
+            else -> false
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

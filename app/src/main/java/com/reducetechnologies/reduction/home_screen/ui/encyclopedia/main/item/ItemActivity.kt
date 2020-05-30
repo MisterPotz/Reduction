@@ -28,6 +28,7 @@ class ItemActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setTitle(R.string.title_encyclopedia)
     }
 
     private fun showPScreen() {

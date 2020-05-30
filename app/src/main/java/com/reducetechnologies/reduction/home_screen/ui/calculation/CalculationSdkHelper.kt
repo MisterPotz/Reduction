@@ -5,6 +5,7 @@ import com.reducetechnologies.di.CalculationModule
 import com.reducetechnologies.di.DaggerCalculationsComponent
 import com.reduction_technologies.database.di.GOSTableStorage
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.lang.IllegalStateException
 import javax.inject.Provider
 
@@ -16,10 +17,10 @@ typealias CalculationFinishCallback = (CalculationResults) -> Unit
  */
 class CalculationSdkHelper(
     private val tableProvider: Provider<GOSTableStorage>
-)  {
+) {
     var isActive = false
         private set
-    private var onSessionStopped: ((CalculationResults) -> Unit)? = null
+    private var onSessionStopped: MutableList<(CalculationResults) -> Unit> = mutableListOf()
 
     // backend entry point
     private var calculationSdk: CalculationSdk? = null
@@ -37,18 +38,28 @@ class CalculationSdkHelper(
     }
 
     private fun finish() {
-        onSessionStopped = null
         isActive = false
         calculationSdk = null
-        onSessionStopped = null
+        cleanCallbacks()
+    }
+
+    fun finishWithError(error: Error) {
+        Timber.i("Helper finishing with error")
+        if (!isActive) {
+            throw IllegalStateException("Can't finish what's already finished")
+        }
+        onSessionStopped.forEach { it.invoke(error) }
+        cleanCallbacks()
+        isActive = false
+        calculationSdk = null
     }
 
     private fun pullCallbacks() {
-        onSessionStopped?.invoke(calculationSdk!!.finalResults())
+        onSessionStopped.forEach { it(calculationSdk!!.finalResults()) }
     }
 
     private fun cleanCallbacks() {
-        onSessionStopped = null
+        onSessionStopped.clear()
     }
 
     // calls given callback when calculation is finished
@@ -56,7 +67,7 @@ class CalculationSdkHelper(
         if (isActive) {
             throw IllegalStateException("isActive, can't reinit")
         }
-        this.onSessionStopped = onSessionStopped
+        this.onSessionStopped.add(onSessionStopped)
         reinit()
         val first = calculationSdk!!.init()
         return CurrentPScreenStatus(calculationSdk!!.getAllValidated(), first)
@@ -64,6 +75,7 @@ class CalculationSdkHelper(
 
     suspend fun validate(pScreen: PScreen): CurrentPScreenStatus {
         return withContext(Dispatchers.Default) {
+            // ЗДЕСЬ ЗАПУСКАЕТСЯ В КАКОЙ-ТО МОМЕНТ РАСЧЕТ
             val currentValidated = calculationSdk!!.validateCurrent(pScreen)
             val validated = calculationSdk!!.getAllValidated()
             CurrentPScreenStatus(validated, currentValidated)
@@ -74,20 +86,33 @@ class CalculationSdkHelper(
         return calculationSdk!!.hasNextPScreen()
     }
 
+    fun addCallback(onSessionStopped: (CalculationResults) -> Unit) {
+        this.onSessionStopped.add(onSessionStopped)
+    }
+
     /**
      * Когда карточка последняя - этот метод уже не должен вызываться, только финиш
      */
     suspend fun next(): CurrentPScreenStatus {
         // as calculating screens currently is CPU limited, default dispatcher is used
         return withContext(Dispatchers.Default) {
-            val next = calculationSdk!!.getNextPScreen()
-            // pull callbacks on finish
+            val previous = calculationSdk!!.getAllValidated()
             if (calculationSdk!!.isFinished()) {
-                pullCallbacks()
-                cleanCallbacks()
+                val results = calculationSdk!!.finalResults()
+                results as CalculationResultsContainer
+                val status = results.reducersDataList.size > 0
+                Timber.i("Calculation is finished: status - $status")
+                if (status) {
+                    pullCallbacks()
+                    cleanCallbacks()
+                } else {
+                    finishWithError(CalculationNotPossible)
+                }
+                CurrentPScreenStatus(previous, null)
+            } else {
+                val next = calculationSdk!!.getNextPScreen()
+                CurrentPScreenStatus(previous, next)
             }
-            val status = CurrentPScreenStatus(calculationSdk!!.getAllValidated(), next)
-            status
         }
     }
 

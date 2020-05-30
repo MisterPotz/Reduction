@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_calculation.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class CalculationFragment : Fragment(), CalculationFinishCallback {
+class CalculationFragment : Fragment() {
     @Inject
     @ApplicationScope
     lateinit var viewModel : SharedViewModel
@@ -55,7 +55,7 @@ class CalculationFragment : Fragment(), CalculationFinishCallback {
     private fun registerCalculationButton() {
         calcButton.setOnClickListener {
             val action = CalculationFragmentDirections.actionCalculationFragmentToFlowFragment()
-            viewModel.startCalculation(this)
+            viewModel.startCalculation()
             findNavController().navigate(action)
         }
     }
@@ -91,9 +91,5 @@ class CalculationFragment : Fragment(), CalculationFinishCallback {
     override fun onDestroy() {
         super.onDestroy()
         Timber.i("in onDestroy: current fragment amount: ${SingletoneContextCounter.fragments}")
-    }
-
-    override fun invoke(calculationResults : CalculationResults) {
-        Timber.i("Got calculation results")
     }
 }

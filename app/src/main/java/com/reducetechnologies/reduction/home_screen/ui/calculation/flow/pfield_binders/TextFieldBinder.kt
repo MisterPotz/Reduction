@@ -26,7 +26,6 @@ class TextFieldBinder : PFieldBinder {
             TextType.BODY -> R.style.Body2
             TextType.HEADLINE -> R.style.Headline6
         }
-        Timber.i("Text size of text: ${text!!.textSize}")
         TextViewCompat.setTextAppearance(text!!, id)
     }
 

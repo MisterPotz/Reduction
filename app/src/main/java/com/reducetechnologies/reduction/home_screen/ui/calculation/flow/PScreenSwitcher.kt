@@ -86,6 +86,7 @@ class PScreenSwitcher(
 
             fetchUpdates()
         }
+        Timber.i("Current previous amount: ${status.previous.size}")
         current += 1
         updateCurrentWasSet()
         return current()

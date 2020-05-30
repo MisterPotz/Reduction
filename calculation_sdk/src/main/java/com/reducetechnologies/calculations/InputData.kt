@@ -67,4 +67,81 @@ data class InputData(
     val HA: Float = 1f,//вроде взял из учебника, но лучше всё равно чекнуть
     val HG: Float = 0.0f,//0.4f,//взял единственное найденное в интернете вроде более-менее стандартное значение
     val C: Float = 0.25f
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as InputData
+
+        if (isED != other.isED) return false
+        if (TT != other.TT) return false
+        if (NT != other.NT) return false
+        if (LH != other.LH) return false
+        if (NRR != other.NRR) return false
+        if (KOL != other.KOL) return false
+        if (U0 != other.U0) return false
+        if (UREMA != other.UREMA) return false
+        if (TIPRE != other.TIPRE) return false
+        if (NP != other.NP) return false
+        if (BETMI != other.BETMI) return false
+        if (BETMA != other.BETMA) return false
+        if (OMEG != other.OMEG) return false
+        if (NW != other.NW) return false
+        if (!NZAC.contentEquals(other.NZAC)) return false
+        if (NWR != other.NWR) return false
+        if (BKAN != other.BKAN) return false
+        if (!SIGN.contentEquals(other.SIGN)) return false
+        if (!CONSOL.contentEquals(other.CONSOL)) return false
+        if (KPD != other.KPD) return false
+        if (ISTCol != other.ISTCol) return false
+        if (wheelType != other.wheelType) return false
+        if (!wheelSubtype.contentEquals(other.wheelSubtype)) return false
+        if (PAR != other.PAR) return false
+        if (ALF != other.ALF) return false
+        if (HL != other.HL) return false
+        if (HA != other.HA) return false
+        if (HG != other.HG) return false
+        if (C != other.C) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = isED.hashCode()
+        result = 31 * result + TT.hashCode()
+        result = 31 * result + NT.hashCode()
+        result = 31 * result + LH
+        result = 31 * result + NRR
+        result = 31 * result + KOL
+        result = 31 * result + U0.hashCode()
+        result = 31 * result + UREMA.hashCode()
+        result = 31 * result + TIPRE
+        result = 31 * result + NP
+        result = 31 * result + BETMI.hashCode()
+        result = 31 * result + BETMA.hashCode()
+        result = 31 * result + OMEG.hashCode()
+        result = 31 * result + NW
+        result = 31 * result + NZAC.contentHashCode()
+        result = 31 * result + NWR
+        result = 31 * result + BKAN
+        result = 31 * result + SIGN.contentHashCode()
+        result = 31 * result + CONSOL.contentHashCode()
+        result = 31 * result + KPD.hashCode()
+        result = 31 * result + ISTCol
+        result = 31 * result + wheelType.hashCode()
+        result = 31 * result + wheelSubtype.contentHashCode()
+        result = 31 * result + PAR.hashCode()
+        result = 31 * result + ALF.hashCode()
+        result = 31 * result + HL.hashCode()
+        result = 31 * result + HA.hashCode()
+        result = 31 * result + HG.hashCode()
+        result = 31 * result + C.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "InputData(isED=$isED, TT=$TT, NT=$NT, LH=$LH, NRR=$NRR, KOL=$KOL, U0=$U0, UREMA=$UREMA, TIPRE=$TIPRE, NP=$NP, BETMI=$BETMI, BETMA=$BETMA, OMEG=$OMEG, NW=$NW, NZAC=${NZAC.contentToString()}, NWR=$NWR, BKAN=$BKAN, SIGN=${SIGN.contentToString()}, CONSOL=${CONSOL.contentToString()}, KPD=$KPD, ISTCol=$ISTCol, wheelType=$wheelType, wheelSubtype=${wheelSubtype.contentToString()}, PAR=$PAR, ALF=$ALF, HL=$HL, HA=$HA, HG=$HG, C=$C)"
+    }
+
+}

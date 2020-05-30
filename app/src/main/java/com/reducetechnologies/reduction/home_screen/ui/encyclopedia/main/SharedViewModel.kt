@@ -19,8 +19,10 @@ import javax.inject.Provider
 import androidx.lifecycle.viewModelScope
 import com.google.gson.GsonBuilder
 import com.reducetechnologies.calculations_entity.CalculationsEntity
+import com.reducetechnologies.command_infrastructure.CalculationNotPossible
 import com.reducetechnologies.command_infrastructure.CalculationResults
 import com.reducetechnologies.command_infrastructure.CalculationResultsContainer
+import com.reducetechnologies.command_infrastructure.FinishedEarly
 import com.reducetechnologies.reduction.android.util.SortedCalculationResults
 import com.reducetechnologies.reduction.home_screen.ui.calculation.CalculationFinishCallback
 import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.util.toCommonItem
@@ -42,10 +44,10 @@ class SharedViewModel @Inject constructor(
         value = "Энциклопедия"
     }
 
-    var sortedResults: SortedCalculationResults? = null
-        private set
-
     val commonItemUtils = CommonItemUtils()
+
+    private var sortedResults: SortedCalculationResults? = null
+    private var calculationStatus: CalculationResults? = null
 
     val calcSdkHelper: CalculationSdkHelper by lazy {
         CalculationSdkHelper(storageProvider)
@@ -106,7 +108,7 @@ class SharedViewModel @Inject constructor(
     /**
      * UI may need to picture some graphic events that happen after calculation is finished
      */
-    fun startCalculation(onCalculationFinished: CalculationFinishCallback): Boolean {
+    fun startCalculation(): Boolean {
         // already calculating
         if (calcSdkHelper.isActive) {
             return false
@@ -116,17 +118,26 @@ class SharedViewModel @Inject constructor(
                 override fun invoke(calculationResults: CalculationResults) {
                     Timber.i("Got results in ViewModel")
                     // here storing results in db with timestamps and sorting results
+                    // What if finished early at this moment?
+                    setCalculationResults(calculationResults)
                     pushCalculationToRepository(calculationResults)
-                    // TODO обрабратывать пустые результаты!
-                    sortedResults = makeSortedResults(calculationResults)
-                    Timber.i("Dispatching results to store in db and invoking ui callback")
-                    onCalculationFinished(calculationResults)
                 }
             }
         )
         // TODO в будущем, когда будут результаты, pScreenSwitcher надо будет обращать в нулл, иначе будет баг и краш
         pScreenSwitcher = PScreenSwitcher(calcSdkHelper)
         return true
+    }
+
+    private fun setCalculationResults(calculationResults: CalculationResults) {
+        if (calculationResults is CalculationResultsContainer) {
+            Timber.i("Got ${calculationResults.reducersDataList.size} variants")
+            sortedResults = makeSortedResults(calculationResults)
+            calculationStatus = calculationResults
+        } else {
+            calculationStatus = CalculationNotPossible
+            sortedResults = null
+        }
     }
 
     private fun pushCalculationToRepository(results: CalculationResults) {
@@ -145,6 +156,20 @@ class SharedViewModel @Inject constructor(
 
     fun finishCurrentCalculation() {
         pScreenSwitcher = null
+        if (calcSdkHelper.isActive) {
+            calcSdkHelper.finishWithError(FinishedEarly)
+        }
+    }
+
+    fun getCalculationResults() : SortedCalculationResults {
+        if (sortedResults == null) {
+            throw IllegalStateException("Can't return results because they dont fucking exist")
+        }
+        return sortedResults!!
+    }
+
+    fun getCalculationState() : CalculationResults? {
+        return calculationStatus
     }
 
     fun isCalculationActive(): Boolean {

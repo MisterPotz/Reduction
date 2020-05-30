@@ -15,6 +15,9 @@ import java.util.logging.Logger
 import javax.management.timer.TimerMBean
 import kotlin.math.PI
 
+
+private val logger = KotlinLogging.logger { }
+
 // contains calculation classes
 internal class PScreenSourceDelegate(private val calculationsComponent: CalculationsComponent) : PScreenSource() {
     // simple stack that is consumed. Being build with some other classes (or with calculation on flow)
@@ -23,14 +26,8 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
         StandbyPScreen.getPScreen()
     )
 
-    //Нз зачем тебе здесь это
-    private fun generateInputPicturesList(): List<String> {
-        return List<String>(14) {
-            "input_pictures/${it + 1}.jpg"
-        }
-    }
-
     var reducerDataList : ArrayList<ReducerData>? = null
+
     override fun validate(pScreen: PScreen): PScreen? {
         /**
          * Сначала проверка, что содержит поля с вводом
@@ -64,6 +61,7 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
                 } else {
                     //Создаём инпут из полученных данных
                     val inputData: InputData = prepareInputData(pScreen)
+                    logger.info { "Got inputData: $inputData" }
                     //Получаем outputData
                     val reducerData: ArrayList<ReducerData> =
                         CalculationsEntity(
@@ -110,12 +108,14 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
         }
         //isED - как задаётся через answer, 0 и 1?
         val isED =
-            when ((pScreen.fields.find { it.fieldId == 3 }!!.typeSpecificData as InputListSpec)
-                .additional.answer) {
-                0 -> false
-                else//Для 1
-                    -> true
-            }
+            (pScreen.fields.find { it.fieldId == 3 }!!.typeSpecificData as InputListSpec)
+                .additional.let { it.options[it.answer!!] }.let {
+                    when(it) {
+                        "Да" -> true
+                        "Нет" -> false
+                        else -> throw IllegalStateException("Dont have such option")
+                    }
+                }
         //ТТ
         val TT = (pScreen.fields.find { it.fieldId == 4 }!!.typeSpecificData as InputTextSpec)
             .additional.answer!!.toFloat()
@@ -126,7 +126,7 @@ internal class PScreenSourceDelegate(private val calculationsComponent: Calculat
         val LH = (pScreen.fields.find { it.fieldId == 6 }!!.typeSpecificData as InputTextSpec)
             .additional.answer!!.toInt()
         val NRR = (pScreen.fields.find { it.fieldId == 7 }!!.typeSpecificData as InputListSpec)
-            .additional.answer!!.toInt()
+            .additional.let { it.options[it.answer!!] }.toInt()
         val KOL = (pScreen.fields.find { it.fieldId == 8 }!!.typeSpecificData as InputTextSpec)
             .additional.answer!!.toInt()
         val U0 = (pScreen.fields.find { it.fieldId == 9 }!!.typeSpecificData as InputTextSpec)
