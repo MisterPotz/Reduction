@@ -7,9 +7,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.reducetechnologies.command_infrastructure.Destination
-import com.reducetechnologies.command_infrastructure.LinkCalledCallback
-import com.reducetechnologies.command_infrastructure.PScreen
+import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.reduction.R
 import com.reducetechnologies.reduction.home_screen.ui.calculation.flow.PFieldAdapter
 
@@ -34,5 +32,28 @@ object PScreenSimpleeInflater {
         recycler.layoutManager = LinearLayoutManager(container.context)
         recycler.adapter = adapter
         recycler.setHasFixedSize(true)
+    }
+
+    fun fillAnswersWithDefaults(pScreen: PScreen) {
+        pScreen.fields.forEach {
+            val type = it.pFieldType
+            when (type) {
+                PFieldType.INPUT_TEXT -> (it.typeSpecificData as InputTextSpec).let { spec ->
+                    if (spec.additional.answer == null && spec.default != null) {
+                        spec.additional.answer = spec.default
+                    }
+                }
+                PFieldType.INPUT_PICTURE -> (it.typeSpecificData as InputPictureSpec).let { spec ->
+                    if (spec.additional.answer == null && spec.default != null) {
+                        spec.additional.answer = spec.default
+                    }
+                }
+                PFieldType.INPUT_LIST -> (it.typeSpecificData as InputListSpec).let { spec ->
+                    if (spec.additional.answer == null && spec.default != null) {
+                        spec.additional.answer = spec.default
+                    }
+                }
+            }
+        }
     }
 }

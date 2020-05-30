@@ -20,10 +20,8 @@ class InputListBinder(val inputable: Boolean) : PFieldBinder {
     private var spec: InputListSpec? = null
 
     override fun bind(spec: PTypeSpecific) {
-        Timber.i("Binding radio")
         this.spec = spec as InputListSpec
         reinflateRadioGroup()
-        Timber.i("spec != null: $spec, current: ${spec?.additional.answer}")
         this.spec!!.additional.answer?.let {
             radioGroup.clearCheck()
             radioGroup.check(it)
@@ -47,7 +45,6 @@ class InputListBinder(val inputable: Boolean) : PFieldBinder {
         this.view = view
         radioGroup = view.findViewById(R.id.radioGroup)
         radioGroup.setOnCheckedChangeListener { radioGroup: RadioGroup, i: Int ->
-            Timber.i("Radio button $i selected")
             spec!!.additional.answer = i
         }
         title = view.findViewById(R.id.title)

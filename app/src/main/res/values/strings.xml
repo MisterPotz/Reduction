@@ -48,4 +48,5 @@
     <string name="view_result_here">View result here</string>
     <string name="results">Результаты</string>
     <string name="see_result">"Результат %1$d"</string>
+    <string name="finish_calculations">Закончить вычисления</string>
 </resources>

@@ -1023,16 +1023,33 @@ internal class CalculationsModuleTest {
     }
 
     @org.junit.Test
-    fun test_zcred_method_one_staged_second_scheme() {
+    fun test_zcred_method_one_staged_8_scheme_FUCKING_SHIT() {
+        /*testScheme(
+            isED = false,
+            TT = 774.3f,
+            NT = 44.4f,
+            LH = 10000,
+            NRR = 1,
+            KOL = 1000,
+            UREMA = 35f,
+            ind = 8,
+            isChevrone = true,
+            isInner = false,
+            ISTCol = 2,
+            PAR = false
+        )*/
+        //More or less correctly
+        //Здесь уже есть углы больше минимального, это хорошо, показывает, что это работает более-менее
+        //Это Мишин Вариант
         val inputO = setInput(
             isED = false,
-            TT = 510f,
-            NT = 303f,
-            LH = 32000,
+            TT = 300f,
+            NT = 100f,
+            LH = 10000,
             NRR = 3,
-            KOL = 10000,
-            UREMA = 4.8f,
-            ind = 2,
+            KOL = 15000,
+            UREMA = 6.5f,
+            ind = 3,
             isChevrone = true,
             isInner = false,
             ISTCol = 1,
@@ -1064,33 +1081,13 @@ internal class CalculationsModuleTest {
             }
             println(element.zcredScope.toString())
         }
-        masreMethod = MasreMethod(inputO, creationDataList)
-        var masreScope: ArrayList<MasreScope> = masreMethod.enterLoopMasre()
-        masreScope.forEachIndexed { index, masreScope ->
-            println(index)
-            println(masreScope)
-        }
         //More or less correctly
-        //1. Почему всегда принимает наименьший угол в шевронной передаче?
-        //2. Почему такой большой коэффициент осевого перекрытия?
-        val properCreationDataArrList: ArrayList<CreationData> =
-            weedOutCreationDataList(inputO, creationDataList, masreScope)
-        properCreationDataArrList.forEachIndexed { index, creationData ->
-            println(index)
-            creationData.gearWheelStepsArray.forEach {
-                var toPrint = it.dopnScope.toString()
-                println(toPrint)
-                toPrint = it.zuc1hScope.toString()
-                println(toPrint)
-                toPrint = it.zucepScope.toString()
-                println(toPrint)
-                toPrint = it.zuc2hScope.toString()
-                println(toPrint)
-                toPrint = it.zucfScope.toString()
-                println(toPrint)
-            }
-            println(creationData.zcredScope.toString())
-        }
+        val calcEnt: CalculationsEntity = CalculationsEntity(
+            inputData = inputO,
+            calculationsComponent = calculationComponent
+        )
+        println(calcEnt.reducerDataList.size)
+        println(CalculationsEntity.sortByMinSumHRC(calcEnt.reducerDataList))
     }
 
     @org.junit.Test

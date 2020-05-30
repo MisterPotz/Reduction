@@ -59,7 +59,6 @@ class InputTextBinder(val inputable: Boolean) : PFieldBinder {
 
     private fun validateCurrentInput() {
         val currentText = inputText.text.toString()
-        Timber.i("Validating input")
         val number = PScreenValidator.tryExtractNumber(currentText, inputTextSpec!!.type)
         if (number != null) {
             val validated = validateNumber(number, inputTextSpec!!.additional.domain)

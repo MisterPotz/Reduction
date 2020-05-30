@@ -46,8 +46,8 @@ internal object StandbyPScreenFields {
                     "изгиба в стальных зубчатых колёсах при действии номинальной и максимальной\n" +
                     "нагрузок ([σ] H , [σ] H max , [σ] F , [σ] F max ).",
             additional = AdditionalText(
-                type = TextType.BODY
-                //не забыть заполнить по возможности ссылки на энциклопедию
+                type = TextType.BODY,
+                encyclodpediaId = 27
             )
         ),
         fieldId = 2
@@ -62,8 +62,8 @@ internal object StandbyPScreenFields {
                     "модуля зацепления m, угол наклона зубьев β в косозубых передачах, коэффициенты\n" +
                     "смещения исходного контура из условия неподрезания зубьев X и т.д.",
             additional = AdditionalText(
-                type = TextType.BODY
-                //не забыть заполнить по возможности ссылки на энциклопедию
+                type = TextType.BODY,
+                encyclodpediaId = 31
             )
         ),
         fieldId = 3
@@ -75,8 +75,8 @@ internal object StandbyPScreenFields {
             text = "4. Потом определяются все геометрические размеры колёс в ступени, все диаметры\n" +
                     "колёс, качественные параметры зацепления.",
             additional = AdditionalText(
-                type = TextType.BODY
-                //не забыть заполнить по возможности ссылки на энциклопедию
+                type = TextType.BODY,
+                encyclodpediaId = 32
             )
         ),
         fieldId = 4
@@ -88,8 +88,8 @@ internal object StandbyPScreenFields {
             text = "5. После этого рассчитываются контактные напряжения и напряжения при изгибе\n" +
                     "зубьев.",
             additional = AdditionalText(
-                type = TextType.BODY
-                //не забыть заполнить по возможности ссылки на энциклопедию
+                type = TextType.BODY,
+                encyclodpediaId = 39
             )
         ),
         fieldId = 5

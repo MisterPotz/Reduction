@@ -3,8 +3,11 @@ package com.reducetechnologies.reduction.home_screen.ui.calculation
 import com.reducetechnologies.command_infrastructure.*
 import com.reducetechnologies.di.CalculationModule
 import com.reducetechnologies.di.DaggerCalculationsComponent
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.CalculationNotPossible
+import com.reducetechnologies.reduction.home_screen.ui.encyclopedia.main.Error
 import com.reduction_technologies.database.di.GOSTableStorage
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.lang.IllegalStateException
 import javax.inject.Provider
 
@@ -16,57 +19,62 @@ typealias CalculationFinishCallback = (CalculationResults) -> Unit
  */
 class CalculationSdkHelper(
     private val tableProvider: Provider<GOSTableStorage>
-)  {
+) {
     var isActive = false
         private set
-    private var onSessionStopped: ((CalculationResults) -> Unit)? = null
+    private var onSessionStopped: MutableList<(CalculationResults) -> Unit> = mutableListOf()
 
     // backend entry point
     private var calculationSdk: CalculationSdk? = null
 
-    private fun reinitCalculationSdk() {
+    private fun reinit() {
+        isActive = true
         val calculationModule = CalculationModule(tableProvider.get().obtain())
         val component =
             DaggerCalculationsComponent.builder().calculationModule(calculationModule).build()
         calculationSdk = CalculationSdkBuilder(component).buildSdk()
     }
 
-    private fun reinit() {
-        isActive = true
-        reinitCalculationSdk()
-    }
-
     private fun finish() {
-        onSessionStopped = null
         isActive = false
         calculationSdk = null
-        onSessionStopped = null
+        cleanCallbacks()
+    }
+
+    fun finishWithError(error: Error) {
+        Timber.i("Helper finishing with error")
+        if (!isActive) {
+            throw IllegalStateException("Can't finish what's already finished")
+        }
+
+        onSessionStopped.forEach { it.invoke(FinishRequested) }
+        cleanCallbacks()
+        isActive = false
+        calculationSdk = null
     }
 
     private fun pullCallbacks() {
-        onSessionStopped?.invoke(calculationSdk!!.finalResults())
+        onSessionStopped.forEach { it(calculationSdk!!.finalResults()) }
     }
 
     private fun cleanCallbacks() {
-        onSessionStopped = null
+        onSessionStopped.clear()
     }
 
     // calls given callback when calculation is finished
-    fun startCalculation(onSessionStopped: ((CalculationResults) -> Unit)): CurrentPScreenStatus {
+    fun startCalculation(onSessionStopped: ((CalculationResults) -> Unit)) {
         if (isActive) {
             throw IllegalStateException("isActive, can't reinit")
         }
-        this.onSessionStopped = onSessionStopped
+        this.onSessionStopped.add(onSessionStopped)
         reinit()
-        val first = calculationSdk!!.init()
-        return CurrentPScreenStatus(calculationSdk!!.getAllValidated(), first)
+        calculationSdk!!.init()
     }
 
-    suspend fun validate(pScreen: PScreen): CurrentPScreenStatus {
+    suspend fun validate(pScreen: PScreen) {
         return withContext(Dispatchers.Default) {
+            // ЗДЕСЬ ЗАПУСКАЕТСЯ В КАКОЙ-ТО МОМЕНТ РАСЧЕТ
             val currentValidated = calculationSdk!!.validateCurrent(pScreen)
-            val validated = calculationSdk!!.getAllValidated()
-            CurrentPScreenStatus(validated, currentValidated)
         }
     }
 
@@ -77,17 +85,24 @@ class CalculationSdkHelper(
     /**
      * Когда карточка последняя - этот метод уже не должен вызываться, только финиш
      */
-    suspend fun next(): CurrentPScreenStatus {
+    suspend fun next() {
         // as calculating screens currently is CPU limited, default dispatcher is used
-        return withContext(Dispatchers.Default) {
-            val next = calculationSdk!!.getNextPScreen()
-            // pull callbacks on finish
+        withContext(Dispatchers.Default) {
             if (calculationSdk!!.isFinished()) {
-                pullCallbacks()
-                cleanCallbacks()
+                val results = calculationSdk!!.finalResults()
+                results as CalculationResultsContainer
+                val status = results.reducersDataList.size > 0
+                Timber.i("Calculation is finished: status - $status")
+                if (status) {
+                    pullCallbacks()
+                    cleanCallbacks()
+                    calculationSdk!!.getNextPScreen()
+                } else {
+                    finishWithError(CalculationNotPossible)
+                }
+            } else {
+                calculationSdk!!.getNextPScreen()
             }
-            val status = CurrentPScreenStatus(calculationSdk!!.getAllValidated(), next)
-            status
         }
     }
 

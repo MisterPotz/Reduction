@@ -95,7 +95,8 @@ internal class InputPScreenFields() {
                 domain = TwoSidedDomain(
                     OneSidedDomain(">", 0F),
                     OneSidedDomain("<", 1000000F)
-                )
+                ),
+                encyclodpediaId = 20
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -111,7 +112,8 @@ internal class InputPScreenFields() {
                 domain = TwoSidedDomain(
                     OneSidedDomain(">", 0F),
                     OneSidedDomain("<", 1000000F)
-                )
+                ),
+                encyclodpediaId = 21
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -139,7 +141,8 @@ internal class InputPScreenFields() {
             title = "Номер типового режима нагружения передачи",
             default = null,
             additional = AdditionalInputList(
-                options = List(5) { (it + 1).toString()}
+                options = List(5) { (it + 1).toString()},
+                encyclodpediaId = 26
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -213,7 +216,8 @@ internal class InputPScreenFields() {
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 14.5F),
                     OneSidedDomain("<=", 45F)
-                )
+                ),
+                encyclodpediaId = 1
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -229,7 +233,8 @@ internal class InputPScreenFields() {
                 domain = TwoSidedDomain(
                     OneSidedDomain(">", 0F),
                     OneSidedDomain("<", 1F)
-                )
+                ),
+                encyclodpediaId = 19
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -245,7 +250,8 @@ internal class InputPScreenFields() {
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 0F),
                     OneSidedDomain("<=", 2F)
-                )
+                ),
+                encyclodpediaId = 22
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -261,7 +267,8 @@ internal class InputPScreenFields() {
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 1F),
                     OneSidedDomain("<=", 1.1F)
-                )
+                ),
+                encyclodpediaId = 23
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -277,7 +284,8 @@ internal class InputPScreenFields() {
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 0F),
                     OneSidedDomain("<=", 0.45F)
-                )
+                ),
+                encyclodpediaId = 24
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),
@@ -293,7 +301,8 @@ internal class InputPScreenFields() {
                 domain = TwoSidedDomain(
                     OneSidedDomain(">=", 0.25F),
                     OneSidedDomain("<=", 0.4F)
-                )
+                ),
+                encyclodpediaId = 25
             )
             //задать потом encyclopediaId; answer как я понимаю не нужен
         ),

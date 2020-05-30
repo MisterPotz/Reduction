@@ -72,7 +72,6 @@ class PictureBinder(val context: Context, val windowManager: WindowManager) : PF
         windowManager.defaultDisplay.getSize(size)
         val width = size.x
         val height = size.y
-        Timber.i("Current screen width: $width, height: $height")
         val sharedOptions: RequestOptions = RequestOptions()
             .override((width.toDouble() / 1.2).toInt(), (height.toDouble() / 3).toInt())
             .fitCenter()
