@@ -46,7 +46,8 @@ class AllReducersOptionsClass(val HRCTable: HRCTable,
         if (pedCalculated < 15f)
             return enterOptions(inputData, pedCalculated)
         else
-            throw Exception("P is more than 15, so we wont choose ED for you")
+            //throw Exception("P is more than 15, so we wont choose ED for you")
+            return enterOptions(inputData, pedCalculated = 0f)
     }
     private fun enterOptions(inputData: InputData, pedCalculated: Float): List<ReducerOptionTemplate> {
         var options: MutableList<ReducerOptionTemplate> = mutableListOf()

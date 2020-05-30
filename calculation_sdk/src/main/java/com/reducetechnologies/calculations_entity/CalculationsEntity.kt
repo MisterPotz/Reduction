@@ -101,8 +101,20 @@ class CalculationsEntity constructor(private val inputData: InputData,
                 }
             }
             // Отсеиваем по несоответствию передаточного отношения
+            val percentage: Float =
+            if (inputData.isED) {
+                0.6f
+            }
+            else {
+                if (inputData.UREMA > 40f) {
+                    0.95f
+                }
+                else {
+                    0.9f
+                }
+            }
             if (creationData.gearWheelStepsArray.size == 1) {
-                if (creationData.gearWheelStepsArray[0].zuc1hScope.UCalculated <= 0.9f*inputData.UREMA) {
+                if (creationData.gearWheelStepsArray[0].zuc1hScope.UCalculated <= percentage*inputData.UREMA) {
                     return@loop
                 }
                 //Отсеиваем по максимальному углу наклона зубьев
@@ -113,13 +125,13 @@ class CalculationsEntity constructor(private val inputData: InputData,
             else {
                 if (inputData.UREMA <= 40f) {
                     if (creationData.gearWheelStepsArray[0].zuc1hScope.UCalculated*
-                        creationData.gearWheelStepsArray[1].zuc1hScope.UCalculated <= 0.9f*inputData.UREMA) {
+                        creationData.gearWheelStepsArray[1].zuc1hScope.UCalculated <= percentage*inputData.UREMA) {
                         return@loop
                     }
                 }
                 else {
                     if (creationData.gearWheelStepsArray[0].zuc1hScope.UCalculated*
-                        creationData.gearWheelStepsArray[1].zuc1hScope.UCalculated <= 0.95f*inputData.UREMA) {
+                        creationData.gearWheelStepsArray[1].zuc1hScope.UCalculated <= percentage*inputData.UREMA) {
                         return@loop
                     }
                 }

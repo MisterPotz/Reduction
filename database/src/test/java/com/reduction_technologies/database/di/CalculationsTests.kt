@@ -1025,9 +1025,9 @@ internal class CalculationsModuleTest {
     @org.junit.Test
     fun test_zcred_method_one_staged_second_scheme() {
         val inputO = setInput(
-            isED = false,
+            isED = true,
             TT = 510f,
-            NT = 303f,
+            NT = 200f,
             LH = 32000,
             NRR = 3,
             KOL = 10000,
@@ -1091,6 +1091,14 @@ internal class CalculationsModuleTest {
             }
             println(creationData.zcredScope.toString())
         }
+        val calcEnt: CalculationsEntity = CalculationsEntity(
+            inputData = inputO,
+            calculationsComponent = calculationComponent
+        )
+        val reducers = calcEnt.reducerDataList
+        println("With CalculationsEntity")
+        println(reducers.size)
+        println(reducers)
     }
 
     @org.junit.Test
@@ -1403,12 +1411,12 @@ internal class CalculationsModuleTest {
     fun test_masre_method_on_5_scheme() {
         val inputO = setInput(
             isED = false,
-            TT = 774.3f,
-            NT = 44.4f,
+            TT = 300f,
+            NT = 100f,
             LH = 10000,
-            NRR = 1,
-            KOL = 1000,
-            UREMA = 35f,
+            NRR = 3,
+            KOL = 10000,
+            UREMA = 19.6f,
             ind = 5,
             isChevrone = false,
             isInner = false,
@@ -1519,6 +1527,10 @@ internal class CalculationsModuleTest {
             inputData = inputO,
             calculationsComponent = calculationComponent
         )
+        val reducers = calcEnt.reducerDataList
+        println("With CalculationsEntity")
+        println(reducers.size)
+        println(reducers)
     }
 
 
