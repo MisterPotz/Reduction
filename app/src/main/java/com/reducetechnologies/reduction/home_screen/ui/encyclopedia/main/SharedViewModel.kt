@@ -152,7 +152,7 @@ class SharedViewModel @Inject constructor(
     fun finishCurrentCalculation() {
         pScreenSwitcher = null
         if (calcSdkHelper.isActive) {
-            calcSdkHelper.finishWithError(FinishedEarly)
+            calcSdkHelper.finishWithError(FinishRequested)
         }
         calculationState = null
         calculationResults = null
@@ -223,10 +223,23 @@ class SharedViewModel @Inject constructor(
 
             Timber.i("Current state: $calculationState")
 
-            when(calculationState!!) {
-                is Error -> Unit
-                else -> pScreenSwitcher!!.next()
+            try {
+                if (calculationState == null) {
+                    pScreenSwitcher!!.next()
+                    return@withContext
+                }
+
+                when(calculationState!!) {
+                    is Error -> Unit
+                    else -> pScreenSwitcher!!.next()
+                }
+            } catch (e : Throwable) {
+                Timber.i("in catch: calculationState: $calculationState")
+                if (calculationState !is Error) {
+                    throw e
+                }
             }
+
         }
     }
 

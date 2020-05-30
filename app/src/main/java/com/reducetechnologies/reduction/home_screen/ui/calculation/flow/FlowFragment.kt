@@ -99,7 +99,11 @@ class FlowFragment() : Fragment() {
     private suspend fun updateScreen() {
         val output = viewModel.requestOutput()
         when(output) {
-            is Error -> onCalculationError(output)
+            is Error -> {
+                withContext(Dispatchers.Main) {
+                    onCalculationError(output)
+                }
+            }
             is Screen -> {
                 val links = if (viewModel.needsAttachingLinks()) getLinkCallbacks() else null
                 withContext(Dispatchers.Main) {
