@@ -6,6 +6,8 @@ sealed class CalculationResults
 
 data class CalculationResultsContainer(val reducersDataList: ArrayList<ReducerData>) : CalculationResults()
 
-object NoVariants : CalculationResults()
+sealed class CalculationError() : CalculationResults()
 
-object FinishRequested : CalculationResults()
+object NoVariants : CalculationError()
+
+object FinishRequested : CalculationError()

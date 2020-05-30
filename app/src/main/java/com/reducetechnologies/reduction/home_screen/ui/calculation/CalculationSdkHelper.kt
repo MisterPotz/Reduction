@@ -41,14 +41,15 @@ class CalculationSdkHelper(
         cleanCallbacks()
     }
 
-    fun finishWithError(error: Error) {
+    fun finishWithError(error: CalculationError) {
         Timber.i("Helper finishing with error")
         if (!isActive) {
             throw IllegalStateException("Can't finish what's already finished")
         }
 
-        onSessionStopped.forEach { it.invoke(FinishRequested) }
+//        onSessionStopped.forEach { it.invoke(error) }
         cleanCallbacks()
+        finish()
         isActive = false
         calculationSdk = null
     }
@@ -98,7 +99,7 @@ class CalculationSdkHelper(
                     cleanCallbacks()
                     calculationSdk!!.getNextPScreen()
                 } else {
-                    finishWithError(CalculationNotPossible)
+                    finishWithError(NoVariants)
                 }
             } else {
                 calculationSdk!!.getNextPScreen()
